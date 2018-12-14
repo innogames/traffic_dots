@@ -1,0 +1,10 @@
+{
+    "name": "Components",
+    "references": [
+        "Unity.Entities"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

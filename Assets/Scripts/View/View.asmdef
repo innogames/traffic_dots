@@ -1,0 +1,10 @@
+{
+    "name": "View",
+    "references": [
+        "Systems"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
