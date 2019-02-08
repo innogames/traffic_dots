@@ -1,7 +1,8 @@
 {
-    "name": "View",
+    "name": "Config",
     "references": [
-        "Systems",
+        "Components",
+        "Unity.Entities.Hybrid",
         "Unity.Entities"
     ],
     "optionalUnityReferences": [],

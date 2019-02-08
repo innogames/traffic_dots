@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestView : MonoBehaviour {
+public class AllViewComps : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
