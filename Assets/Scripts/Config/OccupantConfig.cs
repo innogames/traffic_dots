@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace Config
 {
-	public class OccupantConfig : ComponentDataWrapper<Occupant>
+	public class OccupantConfig : ComponentDataProxy<Occupant>
 	{
 	}
 }
