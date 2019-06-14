@@ -32,8 +32,8 @@ namespace Tests
 			// From Unity 2019.2 on this field is always implicitly true and therefore removed.
 
 			UnityEngine.Assertions.Assert.raiseExceptions = true;
-#endif  // #if !UNITY_2019_2_OR_NEWER
-#endif  // #if !UNITY_DOTSPLAYER
+#endif // #if !UNITY_2019_2_OR_NEWER
+#endif // #if !UNITY_DOTSPLAYER
 		}
 
 		[TearDown]
@@ -59,22 +59,6 @@ namespace Tests
 			}
 		}
 
-		public void AssertDoesNotExist(Entity entity)
-		{
-			Assert.IsFalse(m_Manager.Exists(entity));
-		}
-
-		public void AssertComponentData(Entity entity, int index)
-		{
-			Assert.IsTrue(m_Manager.Exists(entity));
-		}
-
-		public EmptySystem EmptySystem
-		{
-			get
-			{
-				return World.Active.GetOrCreateSystem<EmptySystem>();
-			}
-		}
+		public EmptySystem EmptySystem => World.Active.GetOrCreateSystem<EmptySystem>();
 	}
 }
