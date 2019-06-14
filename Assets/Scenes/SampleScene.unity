@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedData:
     LaneCount: 0
-    IsVertical: 0
+    IsVertical: 1
     X: 1
     Y: 0
 --- !u!114 &190892479

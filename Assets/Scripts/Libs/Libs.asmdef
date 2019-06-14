@@ -1,19 +1,12 @@
 {
-    "name": "Systems",
+    "name": "Libs",
     "references": [
-        "Components",
-        "Unity.Entities",
-        "Unity.Transforms",
-        "Unity.Jobs",
-        "Unity.Burst",
-        "Unity.Mathematics",
-        "Unity.Collections",
-        "Libs"
+        "GUID:d8b63aba1907145bea998dd612889d6b"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
