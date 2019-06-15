@@ -9,17 +9,17 @@ namespace Tests
 {
 	public class NetworkSystemTest: ECSTestsFixture
 	{
-		[UnityTest]
-		public IEnumerator NodeCreation()
+		[Test]
+		public void NodeCreation()
 		{
 			var nodeEnt = m_Manager.CreateEntity(typeof(Node));
 			m_Manager.SetComponentData(nodeEnt, new Node
 			{
 				Position = new float3(0, 0, 0),
 			});
-			yield return null;
-			var networkSystem = World.Systems.OfType<NetworkSystem>();
-			Assert.IsTrue(networkSystem != null);
+			var networkSystem = World.CreateSystem<NetworkSystem>();
+			networkSystem.Update();
+			Assert.IsTrue(networkSystem.NodeData.Length > 0);
 		}
 	}
 }

@@ -50,6 +50,68 @@ namespace Model.Systems
 		public Entity Node;
 	}
 
+	public struct NodeData
+	{
+		/// <summary>
+		///     array of networks
+		///     index 0 is the top network, which encompass ALL nodes
+		///     last network is the smallest network that the node belongs to
+		///     this network array form the node's address!
+		/// </summary>
+		public NativeList<int> Networks;
+	}
+
+	/// <summary>
+	///     a network is a collection of connected nodes
+	/// </summary>
+	public struct NetworkData
+	{
+		public int Depth;
+		public NativeHashMap<Entity, int> NodeToIndex;
+		public NativeList<float> Dist;
+		public NativeList<int> Next;
+		public NativeHashMap<int, Entity> CoordToConnection;
+
+		/// <summary>
+		///     nodes that are in both current network and upper network
+		/// </summary>
+		public NativeList<Entity> UpperNodes;
+		public NativeList<Entity> AllNodes;
+
+		public int UpperNetworkIdx;
+		public int Size;
+
+		public float Distance(Entity startNode, Entity endNode)
+		{
+			int startIdx = NodeToIndex[startNode];
+			int endIdx = NodeToIndex[endNode];
+			return Dist[CoordToIndex(startIdx, endIdx)];
+		}
+
+		public Entity NextConnection(Entity currentNode, Entity destinationNode)
+		{
+			int curIdx = NodeToIndex[currentNode];
+			int endIdx = NodeToIndex[destinationNode];
+			int nextNodeIdx = Next[CoordToIndex(curIdx, endIdx)];
+			return CoordToConnection[CoordToIndex(curIdx, nextNodeIdx)];
+		}
+
+		private int CoordToIndex(int x, int y)
+		{
+			return x * Size + y;
+		}
+
+		public void AddNode(Entity node)
+		{
+			//TODO
+		}
+
+		public void AddConnection(Entity connection)
+		{
+			//TODO
+		}
+	}
+
 	public class NetworkSystem : ComponentSystem
 	{
 		private ComponentDataFromEntity<AgentAttachment> _agentAttachments;
@@ -61,6 +123,7 @@ namespace Model.Systems
 		private ComponentDataFromEntity<NodeAttachment> _nodeAttachments;
 
 		private NativeHashMap<Entity, NodeData> _nodeData;
+		public NativeHashMap<Entity, NodeData> NodeData => _nodeData;
 
 		private ComponentDataFromEntity<Node> _nodes;
 
@@ -74,7 +137,7 @@ namespace Model.Systems
 			return _networkData.Length - 1;
 		}
 
-		public int AddNode(Entity node)
+		private int AddNode(Entity node)
 		{
 			int networkDataIdx = GetNetworkData(_nodes[node].Position);
 			var networks = new NativeList<int>();
@@ -234,8 +297,13 @@ namespace Model.Systems
 		protected override void OnCreate()
 		{
 			base.OnCreate();
-			_openList = new BinaryHeap<PathData, float>(100, Allocator.Persistent);
+			const int capacity = 100;
+			const Allocator allocator = Allocator.Persistent;
+			_openList = new BinaryHeap<PathData, float>(capacity, allocator);
 			_closeList = new NativeHashMap<Entity, PathData>();
+
+			_networkData = new NativeList<NetworkData>(capacity, allocator);
+			_nodeData = new NativeHashMap<Entity, NodeData>(capacity, allocator);
 		}
 
 		public Entity FollowPath(Entity agentEntity)
@@ -261,70 +329,6 @@ namespace Model.Systems
 			Entities.ForEach((Entity entity, ref Node node) => { AddNode(entity); });
 		}
 
-		private struct NodeData
-		{
-			/// <summary>
-			///     array of networks
-			///     index 0 is the top network, which encompass ALL nodes
-			///     last network is the smallest network that the node belongs to
-			///     this network array form the node's address!
-			/// </summary>
-			public NativeList<int> Networks;
-		}
-
-		/// <summary>
-		///     a network is a collection of connected nodes
-		/// </summary>
-		public struct NetworkData
-		{
-			public int Depth;
-			public NativeHashMap<Entity, int> NodeToIndex;
-			public NativeList<float> Dist;
-			public NativeList<int> Next;
-			public NativeHashMap<int, Entity> CoordToConnection;
-
-			/// <summary>
-			///     nodes that are in both current network and upper network
-			/// </summary>
-			public NativeList<Entity> UpperNodes;
-
-			public NativeList<Entity> AllNodes;
-
-			public int UpperNetworkIdx;
-
-			private int _size;
-
-			public float Distance(Entity startNode, Entity endNode)
-			{
-				int startIdx = NodeToIndex[startNode];
-				int endIdx = NodeToIndex[endNode];
-				return Dist[CoordToIndex(startIdx, endIdx)];
-			}
-
-			public Entity NextConnection(Entity currentNode, Entity destinationNode)
-			{
-				int curIdx = NodeToIndex[currentNode];
-				int endIdx = NodeToIndex[destinationNode];
-				int nextNodeIdx = Next[CoordToIndex(curIdx, endIdx)];
-				return CoordToConnection[CoordToIndex(curIdx, nextNodeIdx)];
-			}
-
-			private int CoordToIndex(int x, int y)
-			{
-				return x * _size + y;
-			}
-
-			public void AddNode(Entity node)
-			{
-				//TODO
-			}
-
-			public void AddConnection(Entity connection)
-			{
-				//TODO
-			}
-		}
-
 		private struct PathData
 		{
 			public Entity Node;
@@ -342,3 +346,18 @@ namespace Model.Systems
 		}
 	}
 }
+
+//approach 1: flatten data structure
+//NodeData: list of Pair<int, int>
+//int networkId
+//int index in that network
+//NetworkData
+//Dist: flatten to become NativeSlice
+//Next: flatten to become NativeSlice
+//CoordToConnection: make it a list, then flatten to NativeSlice
+//UpperNodes: flatten
+//AllNodes: flatten
+
+//approach 2: use component instead of native container
+//Node in multiple networks: convert to multiple node, with 0 cost connection
+//Make NetworkData SharedComponent (its own entity) of all nodes within the same network!
