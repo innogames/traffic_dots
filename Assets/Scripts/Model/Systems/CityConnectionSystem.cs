@@ -75,7 +75,7 @@ namespace Model.Systems.City
 		public Entity CurrentConnection;
 		public float Lerp;
 	}
-	
+
 	///approach 3: City System: change to alley, road, highway
 	///algorithm: find the closest exit to the higher network
 	///e.g: from the alley, find the closest road, then the closest highway to the destination!
@@ -113,36 +113,18 @@ namespace Model.Systems.City
 	///
 	/// use Entity as index
 	/// HashMap<Entity, float> dist; HashMap<Entity, Entity> next; per entity! NOT POSSIBLE!
+	[UpdateInGroup(typeof(CitySystemGroup))]
+	[UpdateAfter(typeof(NodeDataCommandBufferSystem))]
 	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
-	public class CitySystem : JobComponentSystem
+	public class CityConnectionSystem : JobComponentSystem
 	{
-		private EntityArchetype _networkArchetype;
-		
+		private EndSimulationEntityCommandBufferSystem _endFrameBarrier;
+
 		protected override void OnCreate()
 		{
 			base.OnCreate();
 			
 			_endFrameBarrier = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(NetworkSharedData)),
-				new ComponentType(typeof(NetCount)));
-		}
-
-//		[BurstCompile]
-		[ExcludeComponent(typeof(NodeData))]
-		private struct AddNodeJob : IJobForEachWithEntity<Node>
-		{
-			public EntityCommandBuffer.Concurrent CommandBuffer;
-			public EntityArchetype NetworkEntity;
-			public void Execute(Entity entity, int index, [ReadOnly] ref Node node)
-			{
-				var network = CommandBuffer.CreateEntity(index, NetworkEntity);
-				CommandBuffer.SetComponent(index, network, new NetCount {Count = 1});
-				CommandBuffer.AddComponent(index, entity, new NodeData
-				{
-					ClosestExit = Entity.Null,
-					Network = network,
-				});
-			}
 		}
 
 		//[BurstCompile]
@@ -192,17 +174,10 @@ namespace Model.Systems.City
 				}
 			}
 		}
-		
-		private EndSimulationEntityCommandBufferSystem _endFrameBarrier;
 
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			var commandBuffer = _endFrameBarrier.CreateCommandBuffer().ToConcurrent();
-			var addNodeJob = new AddNodeJob
-			{
-				CommandBuffer = commandBuffer,
-				NetworkEntity = _networkArchetype,
-			}.Schedule(this, inputDeps);
 			
 			var connectionJob = new AddConnectionJob
 			{
@@ -210,7 +185,7 @@ namespace Model.Systems.City
 				NodesData = GetComponentDataFromEntity<NodeData>(),
 				NetCounts = GetComponentDataFromEntity<NetCount>(),
 				CommandBuffer = commandBuffer,
-			}.Schedule(this, addNodeJob);
+			}.Schedule(this, inputDeps);
 			
 			return connectionJob;
 

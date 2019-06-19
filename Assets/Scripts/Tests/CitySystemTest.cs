@@ -64,8 +64,10 @@ namespace Tests
 
 		private void UpdateSystems()
 		{
-			var citySystem = World.GetOrCreateSystem<CitySystem>();
-			citySystem.Update();
+			World.GetOrCreateSystem<CityNodeSystem>().Update();			
+			m_Manager.CompleteAllJobs();
+			World.GetOrCreateSystem<NodeDataCommandBufferSystem>().Update();
+			World.GetOrCreateSystem<CityConnectionSystem>().Update();
 			m_Manager.CompleteAllJobs();
 			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
 		}
@@ -95,7 +97,7 @@ namespace Tests
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
 			var nodeC = AddNode(new float3(1, 1, 0));
-			var citySystem = World.CreateSystem<CitySystem>();
+			var citySystem = World.CreateSystem<CityConnectionSystem>();
 			citySystem.Update();
 			var roadAB = AddConnection(nodeA, nodeB);
 			citySystem.Update();
@@ -116,7 +118,7 @@ namespace Tests
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
 			var nodeC = AddNode(new float3(1, 1, 0));
-			var citySystem = World.CreateSystem<CitySystem>();
+			var citySystem = World.CreateSystem<CityConnectionSystem>();
 			citySystem.Update();
 			var roadAB = AddConnection(nodeA, nodeB);
 			citySystem.Update();
