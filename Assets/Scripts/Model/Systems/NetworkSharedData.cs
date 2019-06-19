@@ -4,7 +4,7 @@ using Unity.Entities;
 
 namespace Model.Systems.City
 {
-	public struct NetworkData : ISharedComponentData, IEquatable<NetworkData>
+	public struct NetworkSharedData : ISharedComponentData, IEquatable<NetworkSharedData>
 	{
 		public NativeHashMap<Entity, int> NodeToIndex;
 		public NativeList<Entity> Nodes;
@@ -108,10 +108,31 @@ namespace Model.Systems.City
 				}
 			}
 		}
-
-		public static NetworkData Create()
+		
+		public void UpdateNodeBuffer(BufferFromEntity<NodeNetworkBuffer> buffers)
 		{
-			return new NetworkData
+			
+			int len = NodeToIndex.Length;
+			for (int i = 0; i < len; i++)
+			{
+				var node = Nodes[i];
+				var buffer = buffers[node];
+				buffer.Clear();
+				for (int j = 0; j < len; j++)
+				{
+					int ij = ComputeCoord(i, j);
+					var nextHop = Nodes[Next[ij]];
+					buffer.Add(new NodeNetworkBuffer
+					{
+						NextHop = nextHop,
+					});
+				}
+			}
+		}
+
+		public static NetworkSharedData Create()
+		{
+			return new NetworkSharedData
 			{
 				Dist = new NativeArray<float>(SizeSqr, Allo),
 				Next = new NativeArray<int>(SizeSqr, Allo),
@@ -121,7 +142,7 @@ namespace Model.Systems.City
 			};
 		}
 
-		public bool Equals(NetworkData other)
+		public bool Equals(NetworkSharedData other)
 		{
 			return NodeToIndex.Equals(other.NodeToIndex);
 		}
@@ -129,7 +150,7 @@ namespace Model.Systems.City
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			return obj is NetworkData other && Equals(other);
+			return obj is NetworkSharedData other && Equals(other);
 		}
 
 		public override int GetHashCode()

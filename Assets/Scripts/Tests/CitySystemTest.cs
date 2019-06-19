@@ -55,26 +55,34 @@ namespace Tests
 		{
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
-			var citySystem = World.CreateSystem<CitySystem>();
-			citySystem.Update();
+
+			UpdateSystems();
+
 			Assert.IsTrue(m_Manager.HasComponent<NodeData>(nodeA));
 			Assert.IsTrue(m_Manager.HasComponent<NodeData>(nodeB));
 		}
-		
+
+		private void UpdateSystems()
+		{
+			var citySystem = World.GetOrCreateSystem<CitySystem>();
+			citySystem.Update();
+			m_Manager.CompleteAllJobs();
+			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
+		}
+
 		[Test]
 		public void ConnectionCreation()
 		{
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
-			var citySystem = World.CreateSystem<CitySystem>();
-			citySystem.Update();
 			var road = AddConnection(nodeA, nodeB);
-			citySystem.Update();
+			
+			UpdateSystems();
 
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkData>(networkEntity);
+				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
+				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
 			}
 
 			Assert.IsTrue(m_Manager.GetComponentData<NodeData>(nodeA).Network != Entity.Null);
@@ -95,8 +103,8 @@ namespace Tests
 			citySystem.Update();
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkData>(networkEntity);
+				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
+				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
 				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
 				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
 			}
@@ -122,8 +130,8 @@ namespace Tests
 			
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkData>(networkEntity);
+				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
+				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
 				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
 				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
 			}

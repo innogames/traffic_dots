@@ -1,4 +1,7 @@
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Model.Systems.City
@@ -36,12 +39,19 @@ namespace Model.Systems.City
 	{
 		public Entity ClosestExit;
 		public Entity Network;
-		public int IndexInNetwork;
 	}
 
-	public struct NodeNetworkAssociation : ISharedComponentData
+	public struct NetCount : ISystemStateComponentData
 	{
-		public Entity Network;
+		public int Count;
+	}
+
+	public struct NetAdjust : IBufferElementData
+	{
+		public Entity Connection;
+		public Entity StartNode;
+		public Entity EndNode;
+		public float Cost;
 	}
 
 	public struct NodeNetworkBuffer : IBufferElementData
@@ -52,6 +62,12 @@ namespace Model.Systems.City
 	public struct ConnectionData : ISystemStateComponentData
 	{
 		//TODO add traffic information here
+	}
+	
+	public struct ConnectionColor : ISystemStateComponentData
+	{
+		//TODO add traffic information here
+		public int NetworkId;
 	}
 
 	public struct PathIntentData : ISystemStateComponentData
@@ -97,138 +113,136 @@ namespace Model.Systems.City
 	///
 	/// use Entity as index
 	/// HashMap<Entity, float> dist; HashMap<Entity, Entity> next; per entity! NOT POSSIBLE!
-	public class CitySystem : ComponentSystem
+	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
+	public class CitySystem : JobComponentSystem
 	{
 		private EntityArchetype _networkArchetype;
 		
-		private void AddNode(Entity entity, ref Node node)
-		{
-			PostUpdateCommands.AddComponent(entity, new NodeData
-			{
-				ClosestExit = Entity.Null,
-				Network = Entity.Null,
-				IndexInNetwork = -1,
-			});
-		}
-
-		private void AddNodeNow(Entity entity, ref Node node)
-		{
-			EntityManager.AddComponentData(entity, new NodeData
-			{
-				ClosestExit = Entity.Null,
-				Network = Entity.Null,
-				IndexInNetwork = -1,
-			});
-		}
-
-		private void AddConnection(Entity entity, ref Connection connection, 
-			ComponentDataFromEntity<NodeData> nodesData)
-		{
-			var startNode = nodesData[connection.StartNode];
-			var endNode = nodesData[connection.EndNode];
-			PostUpdateCommands.AddComponent(entity, new ConnectionData
-			{
-			});
-
-			//the first network!
-			if (startNode.Network == Entity.Null && endNode.Network == Entity.Null)
-			{
-				var network = PostUpdateCommands.CreateEntity(_networkArchetype);
-				
-				var networkData = NetworkData.Create();
-				networkData.AddNode(connection.StartNode);
-				networkData.AddNode(connection.EndNode);
-				networkData.AddConnection(entity, connection);
-				networkData.UpdateNodeBuffer(EntityManager);
-				
-				PostUpdateCommands.SetSharedComponent(network, networkData);
-
-				startNode.Network = network;
-				startNode.IndexInNetwork = 0;
-				
-				endNode.Network = network;
-				endNode.IndexInNetwork = 1;
-				
-				PostUpdateCommands.SetComponent(connection.StartNode, startNode);
-				PostUpdateCommands.SetComponent(connection.EndNode, endNode);
-
-#if USE_NETWORK_ASSOCIATION
-				var networkAssociation = new NodeNetworkAssociation
-				{
-					Network = network,
-				};
-				PostUpdateCommands.AddSharedComponent(connection.StartNode, networkAssociation);
-				PostUpdateCommands.AddSharedComponent(connection.EndNode, networkAssociation);
-#endif
-			}
-			else if (endNode.Network == Entity.Null)//assume that isolated node is always endNode
-			{
-				endNode.Network = startNode.Network;
-				//TODO rewrite without using EntityManager
-				var networkData = EntityManager.GetSharedComponentData<NetworkData>(startNode.Network);
-				networkData.AddNode(connection.EndNode);
-				networkData.AddConnection(entity, connection);
-				networkData.UpdateNodeBuffer(EntityManager);
-				
-				PostUpdateCommands.SetComponent(connection.EndNode, endNode);
-				PostUpdateCommands.SetSharedComponent(startNode.Network, networkData);
-			}
-			
-			//two nodes same level
-			//  two nodes same network
-			//  different network
-
-			//different level
-		}
-
-		private void AddPathIntent(Entity entity, ref NodeAttachment node, ref PathIntent pathIntent,
-			ComponentDataFromEntity<NodeData> nodesData)
-		{
-			//check network
-			var startNodeData = nodesData[node.Node];
-			var endNodeData = nodesData[pathIntent.EndNode];
-
-			//same network
-			if (startNodeData.Network == endNodeData.Network)
-			{
-				var network = EntityManager.GetSharedComponentData<NetworkData>(startNodeData.Network);
-			
-				PostUpdateCommands.AddComponent(entity, new PathIntentData
-				{
-					CurrentConnection = network.NextConnection(node.Node, pathIntent.EndNode),
-					Lerp = 0f,
-				});
-			}
-			
-			//TODO different networks
-		}
-
 		protected override void OnCreate()
 		{
 			base.OnCreate();
-
-			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(NetworkData)));
+			
+			_endFrameBarrier = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(NetworkSharedData)),
+				new ComponentType(typeof(NetCount)));
 		}
 
-		protected override void OnUpdate()
+//		[BurstCompile]
+		[ExcludeComponent(typeof(NodeData))]
+		private struct AddNodeJob : IJobForEachWithEntity<Node>
 		{
-			Entities.WithNone<NodeData>().ForEach((Entity entity, ref Node node) =>
+			public EntityCommandBuffer.Concurrent CommandBuffer;
+			public EntityArchetype NetworkEntity;
+			public void Execute(Entity entity, int index, [ReadOnly] ref Node node)
 			{
-				AddNode(entity, ref node);
-			});
-			
-			var nodesData = GetComponentDataFromEntity<NodeData>(true);
-			
-			Entities.WithNone<ConnectionData>().ForEach((Entity entity, ref Connection connection) =>
+				var network = CommandBuffer.CreateEntity(index, NetworkEntity);
+				CommandBuffer.SetComponent(index, network, new NetCount {Count = 1});
+				CommandBuffer.AddComponent(index, entity, new NodeData
+				{
+					ClosestExit = Entity.Null,
+					Network = network,
+				});
+			}
+		}
+
+		//[BurstCompile]
+		[ExcludeComponent(typeof(ConnectionData))]
+		private struct AddConnectionJob : IJobForEachWithEntity<Connection>
+		{
+			public EntityCommandBuffer.Concurrent CommandBuffer;
+			[ReadOnly] public BufferFromEntity<NetAdjust> Buffers;
+			[ReadOnly] public ComponentDataFromEntity<NodeData> NodesData;
+			[ReadOnly] public ComponentDataFromEntity<NetCount> NetCounts;
+			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection)
 			{
-				AddConnection(entity, ref connection, nodesData);
-			});
-			
-			Entities.WithAll<Agent>().WithNone<PathIntentData>()
-				.ForEach((Entity entity, ref NodeAttachment node, ref PathIntent pathIntent) =>
+				var startNode = NodesData[connection.StartNode];
+				var endNode = NodesData[connection.EndNode];
+				CommandBuffer.AddComponent(index, entity, new ConnectionData
+				{
+				});
+
+				if (startNode.Network == endNode.Network)
+				{
+					DynamicBuffer<NetAdjust> netAdjust;
+					netAdjust = Buffers.Exists(startNode.Network)
+						? Buffers[startNode.Network]
+						: CommandBuffer.AddBuffer<NetAdjust>(index, startNode.Network);
+					netAdjust.Add(new NetAdjust
+					{
+						Connection = entity,
+						Cost = connection.Cost,
+						StartNode = connection.StartNode,
+						EndNode = connection.EndNode,
+					});
+				}
+				else
+				{
+					var startCount = NetCounts[startNode.Network];
+					var endCount = NetCounts[endNode.Network];
+					CommandBuffer.SetComponent(index, startNode.Network, new NetCount
+					{
+						Count = startCount.Count + endCount.Count,
+					});
+					CommandBuffer.SetComponent(index, endNode.Network, new NetCount
+					{
+						Count = 0,
+					});
+					endNode.Network = startNode.Network;
+					CommandBuffer.SetComponent(index, connection.EndNode, endNode);
+				}
+			}
+		}
+		
+		private EndSimulationEntityCommandBufferSystem _endFrameBarrier;
+
+		protected override JobHandle OnUpdate(JobHandle inputDeps)
+		{
+			var commandBuffer = _endFrameBarrier.CreateCommandBuffer().ToConcurrent();
+			var addNodeJob = new AddNodeJob
 			{
-				AddPathIntent(entity, ref node, ref pathIntent, nodesData);
-			});
+				CommandBuffer = commandBuffer,
+				NetworkEntity = _networkArchetype,
+			}.Schedule(this, inputDeps);
+			
+			var connectionJob = new AddConnectionJob
+			{
+				Buffers = GetBufferFromEntity<NetAdjust>(),
+				NodesData = GetComponentDataFromEntity<NodeData>(),
+				NetCounts = GetComponentDataFromEntity<NetCount>(),
+				CommandBuffer = commandBuffer,
+			}.Schedule(this, addNodeJob);
+			
+			return connectionJob;
+
+			//NetworkData
+			//NativeHashMap<EntityPair, Entity> Next
+			//key: from & to Node
+			//value: next connection!
+			
+			//add node:
+			//+ Node
+			//- NodeData
+			//create NetworkSharedData entity: to store index mapping & count
+			//add NodeData.Network to that new entity
+			
+			//add connection:
+			//if in the same network: add connection to NetAdjust
+			//if dif network: merge network, change NetCount
+			
+			//query all networkData with changed NetCount
+			//delete all with NetCount == 0
+			
+			//all Network with NetAdjust
+			//recompute Dist & Next
+			//remove NetAdjust
+			
+			//(agent) PathIntent
+			//if same network: create SameNetwork (shared)
+			//if dif network: create HigherNetwork & LowerNetwork
+			
+			//in order to use Next, NodeToIndex must be presented! Must group Agent by Network!
+			
+			//SameNetwork: group by SameNetwork
 		}
 	}
 
@@ -253,6 +267,7 @@ namespace Model.Systems.City
 	/// - whoever arrive register with the segment to enter
 	/// - the segment will pull in car from the queue when it becomes empty!
 	/// </summary>
+	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public class RoadVisualizerSystem : ComponentSystem
 	{
 		protected override void OnUpdate()
