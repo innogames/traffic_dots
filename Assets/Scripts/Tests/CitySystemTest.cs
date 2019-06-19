@@ -26,8 +26,28 @@ namespace Tests
 			{
 				StartNode = startNode,
 				EndNode = endNode,
+				Cost = 1f,
 			});
 			return connection;
+		}
+		
+		private Entity AddAgent(Entity node, Entity destination)
+		{
+			var agent = m_Manager.CreateEntity(typeof(Agent), typeof(NodeAttachment),typeof(PathIntent));
+			m_Manager.SetComponentData(agent, new Agent
+			{
+				Speed = 1f,
+			});
+			m_Manager.SetComponentData(agent, new NodeAttachment
+			{
+				Node = node,
+			});
+			m_Manager.SetComponentData(agent, new PathIntent
+			{
+				EndNode = destination,
+			});
+			
+			return agent;
 		}
 		
 		[Test]
@@ -78,6 +98,34 @@ namespace Tests
 				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkData>(entity));
 				var networkData = m_Manager.GetSharedComponentData<NetworkData>(networkEntity);
 				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
+				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
+			}
+		}
+		
+		[Test]
+		public void AgentWithPathIntent()
+		{
+			var nodeA = AddNode(new float3(0, 0, 0));
+			var nodeB = AddNode(new float3(1, 0, 0));
+			var nodeC = AddNode(new float3(1, 1, 0));
+			var citySystem = World.CreateSystem<CitySystem>();
+			citySystem.Update();
+			var roadAB = AddConnection(nodeA, nodeB);
+			citySystem.Update();
+			var roadBC = AddConnection(nodeB, nodeC);
+			citySystem.Update();
+
+			var agent = AddAgent(nodeA, nodeC);
+			citySystem.Update();
+			
+			
+			
+			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
+			{
+				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkData>(entity));
+				var networkData = m_Manager.GetSharedComponentData<NetworkData>(networkEntity);
+				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
+				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
 			}
 		}
 	}

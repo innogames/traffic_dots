@@ -1,5 +1,3 @@
-using System;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -19,113 +17,19 @@ namespace Model.Systems.City
 		public int Level;
 	}
 
-	public struct NetworkData : ISharedComponentData, IEquatable<NetworkData>
+	public struct Agent : IComponentData
 	{
-		public NativeHashMap<Entity, int> NodeToIndex;
-		public NativeArray<float> Dist;
-		public NativeArray<int> Next;
-		public NativeHashMap<int, Entity> CoordToConnection;
+		public float Speed;
+	}
 
-		private const int Size = 20;
-		private const int SizeSqr = Size * Size;
-		private const Allocator Allo = Allocator.Persistent;
+	public struct NodeAttachment : IComponentData
+	{
+		public Entity Node;
+	}
 
-		public float Distance(Entity startNode, Entity endNode)
-		{
-			int startIdx = NodeToIndex[startNode];
-			int endIdx = NodeToIndex[endNode];
-			return Dist[ComputeCoord(startIdx, endIdx)];
-		}
-
-		public Entity NextConnection(Entity currentNode, Entity destinationNode)
-		{
-			int curIdx = NodeToIndex[currentNode];
-			int endIdx = NodeToIndex[destinationNode];
-			int nextNodeIdx = Next[ComputeCoord(curIdx, endIdx)];
-			return CoordToConnection[ComputeCoord(curIdx, nextNodeIdx)];
-		}
-
-		private int ComputeCoord(int x, int y)
-		{
-			return x * Size + y;
-		}
-
-		public void AddNode(Entity node)
-		{
-			int len = NodeToIndex.Length;
-			NodeToIndex.TryAdd(node, len);
-			for (int i = 0; i < len; i++)
-			{
-				int iToNode = ComputeCoord(i, len);
-				Dist[iToNode] = float.MaxValue;
-				Next[iToNode] = -1;
-				int nodeToI = ComputeCoord(len, i);
-				Dist[nodeToI] = float.MaxValue;
-				Next[nodeToI] = -1;
-			}
-			Dist[ComputeCoord(len, len)] = 0;
-		}
-
-		public void AddConnection(Entity entity, Connection connection)
-		{
-			//TODO optimize this
-			
-			int startIdx = NodeToIndex[connection.StartNode];
-			int endIdx = NodeToIndex[connection.EndNode];
-			CoordToConnection.TryAdd(ComputeCoord(startIdx, endIdx), entity);
-			CoordToConnection.TryAdd(ComputeCoord(endIdx, startIdx), entity);	
-
-			Dist[ComputeCoord(startIdx, endIdx)] = connection.Cost;
-			Dist[ComputeCoord(endIdx, startIdx)] = connection.Cost;
-
-			int len = NodeToIndex.Length;
-			
-			for (int k = 0; k < len; k++)
-			{
-				for (int i = 0; i < len; i++)
-				{
-					for (int j = 0; j < len; j++)
-					{
-						int ij = ComputeCoord(i, j);
-						int ik = ComputeCoord(i, k);
-						int kj = ComputeCoord(k, j);
-
-						if (Dist[ij] > Dist[ik] + Dist[kj])
-						{
-							Dist[ij] = Dist[ik] + Dist[kj];
-							Next[ij] = k;
-						}
-					}
-				}
-			}
-		}
-
-		public static NetworkData Create()
-		{
-			return new NetworkData
-			{
-				Dist = new NativeArray<float>(SizeSqr, Allo),
-				Next = new NativeArray<int>(SizeSqr, Allo),
-				NodeToIndex = new NativeHashMap<Entity, int>(Size, Allo),
-				CoordToConnection = new NativeHashMap<int, Entity>(Size, Allo)
-			};
-		}
-
-		public bool Equals(NetworkData other)
-		{
-			return NodeToIndex.Equals(other.NodeToIndex);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			return obj is NetworkData other && Equals(other);
-		}
-
-		public override int GetHashCode()
-		{
-			return NodeToIndex.GetHashCode();
-		}
+	public struct PathIntent : IComponentData
+	{
+		public Entity EndNode;
 	}
 
 	public struct NodeData : ISystemStateComponentData
@@ -135,9 +39,25 @@ namespace Model.Systems.City
 		public int IndexInNetwork;
 	}
 
+	public struct NodeNetworkAssociation : ISharedComponentData
+	{
+		public Entity Network;
+	}
+
+	public struct NodeNetworkBuffer : IBufferElementData
+	{
+		public Entity NextHop;
+	}
+
 	public struct ConnectionData : ISystemStateComponentData
 	{
 		//TODO add traffic information here
+	}
+
+	public struct PathIntentData : ISystemStateComponentData
+	{
+		public Entity CurrentConnection;
+		public float Lerp;
 	}
 	
 	///approach 3: City System: change to alley, road, highway
@@ -219,6 +139,7 @@ namespace Model.Systems.City
 				networkData.AddNode(connection.StartNode);
 				networkData.AddNode(connection.EndNode);
 				networkData.AddConnection(entity, connection);
+				networkData.UpdateNodeBuffer(EntityManager);
 				
 				PostUpdateCommands.SetSharedComponent(network, networkData);
 
@@ -230,16 +151,27 @@ namespace Model.Systems.City
 				
 				PostUpdateCommands.SetComponent(connection.StartNode, startNode);
 				PostUpdateCommands.SetComponent(connection.EndNode, endNode);
+
+#if USE_NETWORK_ASSOCIATION
+				var networkAssociation = new NodeNetworkAssociation
+				{
+					Network = network,
+				};
+				PostUpdateCommands.AddSharedComponent(connection.StartNode, networkAssociation);
+				PostUpdateCommands.AddSharedComponent(connection.EndNode, networkAssociation);
+#endif
 			}
 			else if (endNode.Network == Entity.Null)//assume that isolated node is always endNode
 			{
 				endNode.Network = startNode.Network;
-				var network = EntityManager.GetSharedComponentData<NetworkData>(startNode.Network);
-				network.AddNode(connection.EndNode);
-				network.AddConnection(entity, connection);
+				//TODO rewrite without using EntityManager
+				var networkData = EntityManager.GetSharedComponentData<NetworkData>(startNode.Network);
+				networkData.AddNode(connection.EndNode);
+				networkData.AddConnection(entity, connection);
+				networkData.UpdateNodeBuffer(EntityManager);
 				
 				PostUpdateCommands.SetComponent(connection.EndNode, endNode);
-				PostUpdateCommands.SetSharedComponent(startNode.Network, network);
+				PostUpdateCommands.SetSharedComponent(startNode.Network, networkData);
 			}
 			
 			//two nodes same level
@@ -247,6 +179,28 @@ namespace Model.Systems.City
 			//  different network
 
 			//different level
+		}
+
+		private void AddPathIntent(Entity entity, ref NodeAttachment node, ref PathIntent pathIntent,
+			ComponentDataFromEntity<NodeData> nodesData)
+		{
+			//check network
+			var startNodeData = nodesData[node.Node];
+			var endNodeData = nodesData[pathIntent.EndNode];
+
+			//same network
+			if (startNodeData.Network == endNodeData.Network)
+			{
+				var network = EntityManager.GetSharedComponentData<NetworkData>(startNodeData.Network);
+			
+				PostUpdateCommands.AddComponent(entity, new PathIntentData
+				{
+					CurrentConnection = network.NextConnection(node.Node, pathIntent.EndNode),
+					Lerp = 0f,
+				});
+			}
+			
+			//TODO different networks
 		}
 
 		protected override void OnCreate()
@@ -262,11 +216,48 @@ namespace Model.Systems.City
 			{
 				AddNode(entity, ref node);
 			});
-			var nodesData = GetComponentDataFromEntity<NodeData>();
+			
+			var nodesData = GetComponentDataFromEntity<NodeData>(true);
+			
 			Entities.WithNone<ConnectionData>().ForEach((Entity entity, ref Connection connection) =>
 			{
 				AddConnection(entity, ref connection, nodesData);
 			});
+			
+			Entities.WithAll<Agent>().WithNone<PathIntentData>()
+				.ForEach((Entity entity, ref NodeAttachment node, ref PathIntent pathIntent) =>
+			{
+				AddPathIntent(entity, ref node, ref pathIntent, nodesData);
+			});
+		}
+	}
+
+	/// <summary>
+	///	a connection:
+	/// - transform entrance
+	/// - transform exit
+	/// - visualize: spline interpolation for the car
+	/// 
+	/// road segment: is one connection
+	///
+	/// lane merge: is two connections from two lanes to one
+	///
+	/// lane split: is two connections from one lane to two: path finding will decide
+	///
+	/// four-way intersection: each lane has three connections to three lanes on other roads
+	///
+	/// full traffic:
+	/// - a connection has a capacity on how many car
+	/// - when full, the connection is blocked
+	/// - it's a queue? implemented with buffer
+	/// - whoever arrive register with the segment to enter
+	/// - the segment will pull in car from the queue when it becomes empty!
+	/// </summary>
+	public class RoadVisualizerSystem : ComponentSystem
+	{
+		protected override void OnUpdate()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
