@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -12,12 +13,31 @@ namespace Model.Systems.City
 		public int Level;
 	}
 
-	public struct Connection : IComponentData
+	public struct Connection : IComponentData, IEquatable<Connection>
 	{
 		public Entity StartNode;
 		public Entity EndNode;
 		public float Cost;
 		public int Level;
+
+		public bool Equals(Connection other)
+		{
+			return StartNode.Equals(other.StartNode) && EndNode.Equals(other.EndNode);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			return obj is Connection other && Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (StartNode.GetHashCode() * 397) ^ EndNode.GetHashCode();
+			}
+		}
 	}
 
 	public struct Agent : IComponentData
@@ -59,8 +79,9 @@ namespace Model.Systems.City
 		public Entity NextHop;
 	}
 
-	public struct ConnectionData : ISystemStateComponentData
+	public struct ConnectionData : ISharedComponentData
 	{
+		public Entity Network;
 		//TODO add traffic information here
 	}
 	
@@ -139,10 +160,6 @@ namespace Model.Systems.City
 			{
 				var startNode = NodesData[connection.StartNode];
 				var endNode = NodesData[connection.EndNode];
-				CommandBuffer.AddComponent(index, entity, new ConnectionData
-				{
-				});
-
 				if (startNode.Network == endNode.Network)
 				{
 					DynamicBuffer<NetAdjust> netAdjust;
@@ -156,21 +173,44 @@ namespace Model.Systems.City
 						StartNode = connection.StartNode,
 						EndNode = connection.EndNode,
 					});
+					CommandBuffer.AddSharedComponent(index, entity, new ConnectionData
+					{
+					});
 				}
 				else
 				{
 					var startCount = NetCounts[startNode.Network];
 					var endCount = NetCounts[endNode.Network];
-					CommandBuffer.SetComponent(index, startNode.Network, new NetCount
+					Entity growNetwork;
+					Entity shrinkNetwork;
+					Entity changedNode;
+					NodeData changedData;
+					
+					if (startCount.Count >= endCount.Count)
 					{
-						Count = startCount.Count + endCount.Count,
-					});
-					CommandBuffer.SetComponent(index, endNode.Network, new NetCount
+						growNetwork = startNode.Network;
+						shrinkNetwork = endNode.Network;
+						changedNode = connection.EndNode;
+						changedData = endNode;
+					}
+					else
 					{
-						Count = 0,
+						growNetwork = endNode.Network;
+						shrinkNetwork = startNode.Network;
+						changedNode = connection.StartNode;
+						changedData = startNode;
+					}
+
+					CommandBuffer.SetComponent(index, growNetwork, new NetCount
+					{
+						Count = math.max(startCount.Count, endCount.Count) + 1,
 					});
-					endNode.Network = startNode.Network;
-					CommandBuffer.SetComponent(index, connection.EndNode, endNode);
+					CommandBuffer.SetComponent(index, shrinkNetwork, new NetCount
+					{
+						Count = math.min(startCount.Count, endCount.Count) - 1,
+					});
+					changedData.Network = growNetwork;
+					CommandBuffer.SetComponent(index, changedNode, changedData);
 				}
 			}
 		}
@@ -200,7 +240,7 @@ namespace Model.Systems.City
 			//create NetworkSharedData entity: to store index mapping & count
 			//add NodeData.Network to that new entity
 			
-			//add connection:
+			//add connection: SEQUENTIAL
 			//if in the same network: add connection to NetAdjust
 			//if dif network: merge network, change NetCount
 			

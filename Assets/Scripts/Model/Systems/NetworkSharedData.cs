@@ -12,8 +12,6 @@ namespace Model.Systems.City
 		public NativeArray<int> Next;
 		public NativeHashMap<int, Entity> CoordToConnection;
 
-		private const int Size = 20;
-		private const int SizeSqr = Size * Size;
 		private const Allocator Allo = Allocator.Persistent;
 
 		public float Distance(Entity startNode, Entity endNode)
@@ -33,7 +31,7 @@ namespace Model.Systems.City
 
 		private int ComputeCoord(int x, int y)
 		{
-			return x * Size + y;
+			return x * CityConstants.NetworkSize + y;
 		}
 
 		public void AddNode(Entity node)
@@ -134,11 +132,11 @@ namespace Model.Systems.City
 		{
 			return new NetworkSharedData
 			{
-				Dist = new NativeArray<float>(SizeSqr, Allo),
-				Next = new NativeArray<int>(SizeSqr, Allo),
-				NodeToIndex = new NativeHashMap<Entity, int>(Size, Allo),
-				Nodes = new NativeList<Entity>(Size, Allo),
-				CoordToConnection = new NativeHashMap<int, Entity>(Size, Allo)
+				Dist = new NativeArray<float>(CityConstants.NetworkSizeSqr, Allo),
+				Next = new NativeArray<int>(CityConstants.NetworkSizeSqr, Allo),
+				NodeToIndex = new NativeHashMap<Entity, int>(CityConstants.NetworkSize, Allo),
+				Nodes = new NativeList<Entity>(CityConstants.NetworkSize, Allo),
+				CoordToConnection = new NativeHashMap<int, Entity>(CityConstants.NetworkSize, Allo)
 			};
 		}
 

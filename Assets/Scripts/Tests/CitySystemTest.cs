@@ -67,8 +67,7 @@ namespace Tests
 			World.GetOrCreateSystem<CityNodeSystem>().Update();			
 			m_Manager.CompleteAllJobs();
 			World.GetOrCreateSystem<NodeDataCommandBufferSystem>().Update();
-			World.GetOrCreateSystem<CityConnectionSystem>().Update();
-			m_Manager.CompleteAllJobs();
+			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
 			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
 		}
 
@@ -87,8 +86,7 @@ namespace Tests
 				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
 			}
 
-			Assert.IsTrue(m_Manager.GetComponentData<NodeData>(nodeA).Network != Entity.Null);
-			Assert.IsTrue(m_Manager.GetComponentData<NodeData>(nodeB).Network != Entity.Null);
+			Assert.IsTrue(m_Manager.HasComponent<ConnectionData>(road));
 		}
 		
 		[Test]
@@ -97,12 +95,11 @@ namespace Tests
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
 			var nodeC = AddNode(new float3(1, 1, 0));
-			var citySystem = World.CreateSystem<CityConnectionSystem>();
-			citySystem.Update();
 			var roadAB = AddConnection(nodeA, nodeB);
-			citySystem.Update();
 			var roadBC = AddConnection(nodeB, nodeC);
-			citySystem.Update();
+			
+			UpdateSystems();
+			
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
 				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
