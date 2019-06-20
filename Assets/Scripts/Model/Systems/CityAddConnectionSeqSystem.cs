@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -5,6 +6,10 @@ using Unity.Mathematics;
 
 namespace Model.Systems.City
 {
+	public struct Network : ISystemStateComponentData
+	{
+		public int Index;
+	}
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(NodeDataCommandBufferSystem))]
 	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
@@ -14,7 +19,8 @@ namespace Model.Systems.City
 		protected override void OnCreate()
 		{
 			base.OnCreate();
-			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(NetworkSharedData)));
+			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(Network)),
+				new ComponentType(typeof(NetAdjust)));
 		}
 
 		protected override void OnUpdate()
@@ -23,7 +29,7 @@ namespace Model.Systems.City
 			var nodeToColor = new NativeHashMap<Entity, int>(CityConstants.MapNodeSize, Allocator.Temp);
 			var colorToColor = new NativeHashMap<int, int>(CityConstants.MapNodeSize, Allocator.Temp);
 			int newColor = 0;
-			Entities.WithNone<ConnectionData>().ForEach((ref Connection connection) =>
+			Entities.WithNone<NetworkGroup>().ForEach((ref Connection connection) =>
 			{
 				if (!nodeToColor.TryGetValue(connection.StartNode, out int startColor))
 				{
@@ -94,13 +100,21 @@ namespace Model.Systems.City
 				keys.Dispose();
 				values.Dispose();
 
-				Entities.WithNone<ConnectionData>().ForEach((Entity connectionEnt, ref Connection connection) =>
+				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection) =>
 				{
 					int color = finalColor[connection.StartNode];
 					var network = colorToNetwork[color];
-					PostUpdateCommands.AddSharedComponent(connectionEnt, new ConnectionData
+					PostUpdateCommands.AddSharedComponent(connectionEnt, new NetworkGroup
 					{
-						Network = network,
+						NetworkId = network.Index,
+					});
+					var buffer = PostUpdateCommands.SetBuffer<NetAdjust>(network);
+					buffer.Add(new NetAdjust
+					{
+						Connection = connectionEnt,
+						Cost = connection.Cost,
+						StartNode = connection.StartNode,
+						EndNode = connection.EndNode,
 					});
 				});
 				colorToNetwork.Dispose();
@@ -108,7 +122,7 @@ namespace Model.Systems.City
 			
 			finalColor.Dispose();
 			nodeToColor.Dispose();
-			colorToColor.Dispose();
+			colorToColor.Dispose();			
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Model.Systems.City;
 using NUnit.Framework;
@@ -11,7 +12,7 @@ namespace Tests
 	{
 		private Entity AddNode(float3 position)
 		{
-			var node = m_Manager.CreateEntity(typeof(Node));
+			var node = m_Manager.CreateEntity(typeof(Node), typeof(NextBuffer));
 			m_Manager.SetComponentData(node, new Node
 			{
 				Position = position,
@@ -68,6 +69,11 @@ namespace Tests
 			m_Manager.CompleteAllJobs();
 			World.GetOrCreateSystem<NodeDataCommandBufferSystem>().Update();
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
+//			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
+			
+			World.GetOrCreateSystem<PathSystem>().Update();
+			m_Manager.CompleteAllJobs();
+			
 			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
 		}
 
@@ -82,11 +88,11 @@ namespace Tests
 
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
+				var networkEntity = entities.First(entity => m_Manager.HasComponent<Network>(entity));
+				Assert.IsTrue(m_Manager.GetBuffer<NetAdjust>(networkEntity)[0].Connection == road);
 			}
 
-			Assert.IsTrue(m_Manager.HasComponent<ConnectionData>(road));
+			Assert.IsTrue(m_Manager.HasComponent<NetworkGroup>(road));
 		}
 		
 		[Test]
@@ -102,11 +108,17 @@ namespace Tests
 			
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
-				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
-				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
+				Assert.IsTrue(entities.Count(entity => m_Manager.HasComponent<Network>(entity)) == 1);
+				var networkEntity = entities.First(entity => m_Manager.HasComponent<Network>(entity));
+				Assert.AreEqual(2, m_Manager.GetBuffer<NetAdjust>(networkEntity).Length);
 			}
+			
+			Assert.IsTrue(m_Manager.GetSharedComponentData<NetworkGroup>(roadAB).NetworkId == 
+			              m_Manager.GetSharedComponentData<NetworkGroup>(roadBC).NetworkId);
+
+			var nextA = m_Manager.GetBuffer<NextBuffer>(nodeA);
+			var indexB = m_Manager.GetComponentData<IndexInNetwork>(nodeB);
+			Assert.IsTrue(nextA[indexB.Index].Connection == roadAB);
 		}
 		
 		[Test]

@@ -61,6 +61,11 @@ namespace Model.Systems.City
 		public Entity Network;
 	}
 
+	public struct IndexInNetwork : ISystemStateComponentData
+	{
+		public int Index;
+	}
+
 	public struct NetCount : ISystemStateComponentData
 	{
 		public int Count;
@@ -79,10 +84,19 @@ namespace Model.Systems.City
 		public Entity NextHop;
 	}
 
-	public struct ConnectionData : ISharedComponentData
+	public struct NextBuffer : IBufferElementData
 	{
-		public Entity Network;
+		public Entity Connection;
+	}
+
+	public struct ConnectionData : IComponentData
+	{
 		//TODO add traffic information here
+	}
+
+	public struct NetworkGroup : ISharedComponentData
+	{
+		public int NetworkId;		
 	}
 	
 	public struct ConnectionColor : ISystemStateComponentData
@@ -173,7 +187,7 @@ namespace Model.Systems.City
 						StartNode = connection.StartNode,
 						EndNode = connection.EndNode,
 					});
-					CommandBuffer.AddSharedComponent(index, entity, new ConnectionData
+					CommandBuffer.AddComponent(index, entity, new ConnectionData
 					{
 					});
 				}
@@ -237,19 +251,17 @@ namespace Model.Systems.City
 			//add node:
 			//+ Node
 			//- NodeData
-			//create NetworkSharedData entity: to store index mapping & count
-			//add NodeData.Network to that new entity
 			
 			//add connection: SEQUENTIAL
-			//if in the same network: add connection to NetAdjust
-			//if dif network: merge network, change NetCount
+			//all connected connection share the same network
+			//shared comp NetworkAssociation has Network entity pointer
+			//create NetworkSharedData entities to store Dist and Next
+			//add NetAdjust to NetworkSharedData
 			
-			//query all networkData with changed NetCount
-			//delete all with NetCount == 0
-			
-			//all Network with NetAdjust
-			//recompute Dist & Next
-			//remove NetAdjust
+			//compute Dist & Next
+			//+ NetworkSharedData
+			//+ NetAdjust
+			//compute Dist & Next & delete NetAdjust
 			
 			//(agent) PathIntent
 			//if same network: create SameNetwork (shared)
@@ -258,6 +270,12 @@ namespace Model.Systems.City
 			//in order to use Next, NodeToIndex must be presented! Must group Agent by Network!
 			
 			//SameNetwork: group by SameNetwork
+			
+			//new method of using ComponentDataFromEntity!
+			//NativeHashMap<EntityPair, Entity> becomes
+			//NextBuffers[fromNode][IndexInNetworks[toNode].Value].Connection == next connection!
+			//Exits[fromNode] == exit node in the same network!
+			//DirectExits[fromNode] == exit connection 
 		}
 	}
 
