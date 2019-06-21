@@ -99,6 +99,8 @@ namespace Model.Systems.City
 				
 				keys.Dispose();
 				values.Dispose();
+				
+				var networkToBuffer = new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(CityConstants.MapNodeSize, Allocator.Temp);
 
 				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection) =>
 				{
@@ -108,7 +110,12 @@ namespace Model.Systems.City
 					{
 						NetworkId = network.Index,
 					});
-					var buffer = PostUpdateCommands.SetBuffer<NetAdjust>(network);
+					DynamicBuffer<NetAdjust> buffer;
+					if (!networkToBuffer.TryGetValue(network, out buffer))
+					{
+						buffer = PostUpdateCommands.SetBuffer<NetAdjust>(network);
+						networkToBuffer.TryAdd(network, buffer);
+					}
 					buffer.Add(new NetAdjust
 					{
 						Connection = connectionEnt,
@@ -118,6 +125,8 @@ namespace Model.Systems.City
 					});
 				});
 				colorToNetwork.Dispose();
+				
+				networkToBuffer.Dispose();
 			}
 			
 			finalColor.Dispose();

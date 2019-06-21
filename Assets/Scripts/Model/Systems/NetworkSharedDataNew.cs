@@ -1,6 +1,7 @@
 using System;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Model.Systems.City
 {
@@ -69,33 +70,14 @@ namespace Model.Systems.City
 		{
 			int len = Nodes.Length;
 			var nodes = Nodes.GetKeyArray(Allocator.Temp);
-			
-			var buffers = new NativeArray<DynamicBuffer<NextBuffer>>(len, Allocator.Temp);
 
 			for (int k = 0; k < len; k++)
 			{
 				var nodeK = nodes[k];
 				commandBuffer.AddComponent(index, nodeK, new IndexInNetwork {Index = k});
-				var bufferK = commandBuffer.SetBuffer<NextBuffer>(index, nodeK);
-				bufferK.Reserve(len);
-				for (int i = 0; i < len; i++)
-				{
-					bufferK.Add(new NextBuffer
-					{
-						Connection = Entity.Null,
-					});
-				}
-
-				buffers[k] = bufferK;
-			}
-
-			for (int k = 0; k < len; k++)
-			{
-				var nodeK = nodes[k];
 				for (int i = 0; i < len; i++)
 				{
 					var nodeI = nodes[i];
-					var bufferI = buffers[i];
 					for (int j = 0; j < len; j++)
 					{
 						var nodeJ = nodes[j];
@@ -107,16 +89,32 @@ namespace Model.Systems.City
 						{
 							WriteDist(ij, newDist);
 							var connection = Connections[ik];
-//							WriteNext(ij, connection);
-							bufferI[j] = new NextBuffer {Connection = connection};
+							WriteNext(ij, connection);
 						}
 					}
 				}
 			}
 			
-			nodes.Dispose();
-			buffers.Dispose();
+			for (int i = 0; i < len; i++)
+			{
+				var nodeI = nodes[i];
+				var buffer = commandBuffer.SetBuffer<NextBuffer>(index, nodeI);
+				for (int j = 0; j < len; j++)
+				{
+					var nodeJ = nodes[j];
+					var ij = new Path(nodeI, nodeI);
 
+					buffer.Add(new NextBuffer
+					{
+						Connection = Next.TryGetValue(ij, out var connection)
+							? connection
+							: Entity.Null
+					});
+				}
+			}
+			
+			nodes.Dispose();
+			Next.Dispose();
 			Dist.Dispose();
 			Nodes.Dispose();
 			Connections.Dispose();
