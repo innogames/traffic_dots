@@ -117,8 +117,12 @@ namespace Tests
 			              m_Manager.GetSharedComponentData<NetworkGroup>(roadBC).NetworkId);
 
 			var nextA = m_Manager.GetBuffer<NextBuffer>(nodeA);
-			var indexB = m_Manager.GetComponentData<IndexInNetwork>(nodeB);
-			Assert.IsTrue(nextA[indexB.Index].Connection == roadAB);
+			var indexC = m_Manager.GetComponentData<IndexInNetwork>(nodeC);
+			Assert.IsTrue(nextA[indexC.Index].Connection == roadAB);
+
+			var nextC = m_Manager.GetBuffer<NextBuffer>(nodeC);			
+			var indexA = m_Manager.GetComponentData<IndexInNetwork>(nodeA);
+			Assert.IsTrue(nextC[indexA.Index].Connection == roadBC);
 		}
 		
 		[Test]
