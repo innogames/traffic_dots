@@ -125,5 +125,35 @@ namespace Model.Systems
 		//Exits[fromNode] == exit node in the same network!
 		//DirectExits[fromNode] == exit connection 
 
+		
+		//multi-lane & one direction road?
+		//each lane has a number of slots as Buffer
+		//first car: go into slot 1: need to know car number
+		//second car: go into slot 2: need to know car number
+		//first car exit: slot 1 vacate
+		//second car: go into slot 1: need to know either:
+		//- first car trigger second car
+		//- the road needs to know which car is in 2nd? and 3rd, so on
+		//each lane has a buffer, pointing to car, in a queue
+		
+		//one or two directions connection
+		//one direction:
+		//- easier path finding
+		//- easier intersection modeling
+		//two directions:
+		//- less connection entity
+		//- faster path finding?
+		//- not possible to model one-direction road!
+		
+		//intersection?
+		//has a number of "pipe" connecting lanes
+		//intersection is a connection that car can't stay
+		//when entering an intersection, look ahead to the next connection for empty slot
+		//so, the road slot of the next connection is "pro-long" in "receiving" its car
+		//"pipe" connects two connections!
+		//"pipe" forms intersection, traffic light, lane merge, lane split & parking!
+		
+		
+		//lane switching?
 	}
 }
