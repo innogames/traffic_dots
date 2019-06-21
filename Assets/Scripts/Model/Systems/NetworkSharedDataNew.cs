@@ -35,6 +35,8 @@ namespace Model.Systems.City
 			Dist.TryAdd(toFrom, cost);
 			Connections.TryAdd(fromTo, connection);
 			Connections.TryAdd(toFrom, connection);
+			WriteNext(fromTo, connection);
+			WriteNext(toFrom, connection);
 		}
 
 		private float ReadDist(Path path)
@@ -74,6 +76,13 @@ namespace Model.Systems.City
 			for (int k = 0; k < len; k++)
 			{
 				var nodeK = nodes[k];
+				var kk = new Path(nodeK, nodeK);
+				WriteDist(kk, 0);
+			}
+
+			for (int k = 0; k < len; k++)
+			{
+				var nodeK = nodes[k];
 				commandBuffer.AddComponent(index, nodeK, new IndexInNetwork {Index = k});
 				for (int i = 0; i < len; i++)
 				{
@@ -81,15 +90,14 @@ namespace Model.Systems.City
 					for (int j = 0; j < len; j++)
 					{
 						var nodeJ = nodes[j];
-						var ij = new Path(nodeI, nodeI);
+						var ij = new Path(nodeI, nodeJ);
 						var ik = new Path(nodeI, nodeK);
 						float newDist = ReadDist(ik) + ReadDist(new Path(nodeK, nodeJ));
 
 						if (ReadDist(ij) > newDist)
 						{
 							WriteDist(ij, newDist);
-							var connection = Connections[ik];
-							WriteNext(ij, connection);
+							WriteNext(ij, Next[ik]);
 						}
 					}
 				}
@@ -102,7 +110,7 @@ namespace Model.Systems.City
 				for (int j = 0; j < len; j++)
 				{
 					var nodeJ = nodes[j];
-					var ij = new Path(nodeI, nodeI);
+					var ij = new Path(nodeI, nodeJ);
 
 					buffer.Add(new NextBuffer
 					{
