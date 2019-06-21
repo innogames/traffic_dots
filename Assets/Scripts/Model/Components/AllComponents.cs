@@ -1,30 +1,8 @@
 ﻿using System;
 using Unity.Entities;
-using Unity.Mathematics;
 
 namespace Model.Components
 {
-	[Serializable]
-	public struct Node: IComponentData
-	{
-		public float3 position;
-	}
-
-	[Serializable]
-	public struct Connection : IComponentData
-	{
-		public float weight;
-		public Entity startNode;
-		public Entity endNode;
-	}
-	
-	[Serializable]
-	public struct Intersection : IComponentData
-	{
-		public int X;
-		public int Y;
-	}
-
 	public struct Occupant : IComponentData
 	{
 	}

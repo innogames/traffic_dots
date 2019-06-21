@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace Model.Systems.City
+namespace Model.Systems
 {
 	[DisableAutoCreation]
 	[ExecuteAlways]

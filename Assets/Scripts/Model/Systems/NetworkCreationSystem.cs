@@ -1,9 +1,7 @@
-using System;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace Model.Systems.City
+namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(CityAddConnectionSeqSystem))]
@@ -12,7 +10,6 @@ namespace Model.Systems.City
 	{
 		private PathCacheCommandBufferSystem _endFrameBarrier;
 		
-		[ExcludeComponent(typeof(NetworkSharedDataNew))]
 		private struct CacheCompute : IJobForEachWithEntity<Network>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
@@ -20,15 +17,16 @@ namespace Model.Systems.City
 
 			public void Execute(Entity entity, int index, [Unity.Collections.ReadOnly] ref Network network)
 			{
-				var networkShared = NetworkSharedDataNew.Create(entity);
+				var networkCache = NetworkCache.Create(entity);
 				var adjusts = NetAdjusts[entity];
 				for (int i = 0; i < adjusts.Length; i++)
 				{
 					var adjust = adjusts[i];
-					networkShared.AddConnection(adjust.StartNode, adjust.EndNode, adjust.Cost, adjust.Connection);
+					networkCache.AddConnection(adjust.StartNode, adjust.EndNode, adjust.Cost, adjust.Connection);
 				}
 
-				networkShared.Compute(index, CommandBuffer);
+				networkCache.Compute(index, CommandBuffer);
+				networkCache.Dispose();
 			}
 		}
 

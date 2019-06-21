@@ -1,21 +1,16 @@
-using System.Collections.Generic;
+using Model.Components;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace Model.Systems.City
+namespace Model.Systems
 {
-	public struct Network : ISystemStateComponentData
-	{
-		public int Index;
-	}
 	[UpdateInGroup(typeof(CitySystemGroup))]
-	[UpdateAfter(typeof(NodeDataCommandBufferSystem))]
 	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
 	public class CityAddConnectionSeqSystem : ComponentSystem
 	{
 		private EntityArchetype _networkArchetype;
+
 		protected override void OnCreate()
 		{
 			base.OnCreate();
@@ -31,14 +26,9 @@ namespace Model.Systems.City
 			int newColor = 0;
 			Entities.WithNone<NetworkGroup>().ForEach((ref Connection connection) =>
 			{
-				if (!nodeToColor.TryGetValue(connection.StartNode, out int startColor))
-				{
-					startColor = int.MaxValue;
-				};
-				if (!nodeToColor.TryGetValue(connection.EndNode, out int endColor))
-				{
-					endColor = int.MaxValue;
-				}
+				if (!nodeToColor.TryGetValue(connection.StartNode, out int startColor)) startColor = int.MaxValue;
+				;
+				if (!nodeToColor.TryGetValue(connection.EndNode, out int endColor)) endColor = int.MaxValue;
 
 				if (startColor == endColor)
 				{
@@ -59,15 +49,9 @@ namespace Model.Systems.City
 					{
 					}
 
-					if (maxColor < int.MaxValue)
-					{
-						nodeToColor.Remove(changedNode);
-					}
+					if (maxColor < int.MaxValue) nodeToColor.Remove(changedNode);
 
-					if (colorToColor.TryGetValue(maxColor, out int temp))
-					{
-						colorToColor.Remove(maxColor);
-					}
+					if (colorToColor.TryGetValue(maxColor, out int temp)) colorToColor.Remove(maxColor);
 
 					nodeToColor.TryAdd(changedNode, trueColor);
 					colorToColor.TryAdd(maxColor, trueColor);
@@ -96,11 +80,12 @@ namespace Model.Systems.City
 						colorToNetwork.TryAdd(trueColor, network);
 					}
 				}
-				
+
 				keys.Dispose();
 				values.Dispose();
-				
-				var networkToBuffer = new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(CityConstants.MapNodeSize, Allocator.Temp);
+
+				var networkToBuffer =
+					new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(CityConstants.MapNodeSize, Allocator.Temp);
 
 				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection) =>
 				{
@@ -108,7 +93,7 @@ namespace Model.Systems.City
 					var network = colorToNetwork[color];
 					PostUpdateCommands.AddSharedComponent(connectionEnt, new NetworkGroup
 					{
-						NetworkId = network.Index,
+						NetworkId = network.Index
 					});
 					DynamicBuffer<NetAdjust> buffer;
 					if (!networkToBuffer.TryGetValue(network, out buffer))
@@ -116,22 +101,23 @@ namespace Model.Systems.City
 						buffer = PostUpdateCommands.SetBuffer<NetAdjust>(network);
 						networkToBuffer.TryAdd(network, buffer);
 					}
+
 					buffer.Add(new NetAdjust
 					{
 						Connection = connectionEnt,
 						Cost = connection.Cost,
 						StartNode = connection.StartNode,
-						EndNode = connection.EndNode,
+						EndNode = connection.EndNode
 					});
 				});
 				colorToNetwork.Dispose();
-				
+
 				networkToBuffer.Dispose();
 			}
-			
+
 			finalColor.Dispose();
 			nodeToColor.Dispose();
-			colorToColor.Dispose();			
+			colorToColor.Dispose();
 		}
 	}
 }

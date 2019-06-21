@@ -50,5 +50,80 @@ namespace Model.Systems
 		//- - - openList = {{node, otherNode}, {otherNode, node}}				
 		//- - - while (var check = openList.pop())
 		//- - - - check.key.neighbours.each(nei => update(next[nei, check.val], openList)
+		
+		
+		///approach 3: City System: change to alley, road, highway
+		///algorithm: find the closest exit to the higher network
+		///e.g: from the alley, find the closest road, then the closest highway to the destination!
+		///e.g: from the house, walk to the bus station, then to the train station, and so on!
+		///cached info:
+		///within the network: dist and next of all nodes
+		///for each node: exit to the closest higher network node
+		///e.g: house to intersection (how to prevent wrong one?), alley to road, road to highway
+	
+		///network separation?
+		///if the shortest path between two nodes have to go through a higher node ==> they belong to two networks!
+		///==> use coloring algorithm!
+		///how to know before adding to a network? just append to an existing network, compute, then split!
+		/// the new node is appended at the end, easy to split!
+		///
+		/// prevent wrong intersection from house: not allowing u-turn!
+		/// so there is only one valid intersection from and to a house!
+		/// for walking: can test 2x2 combination of start and end intersection!
+		///
+		/// NetworkData should be a SharedComponent on each node: to use shared component filter & cache locality!
+		/// NetworkData could just have an ID for filter purpose!
+		/// Dist and Next should be DynamicBuffer on each Node
+		///
+		/// Highway node should not belong to road network
+		/// Road exit to high-way will first exit to the road node connected to highway (outer-node)
+		/// These outer-node has exit directly to high-way node
+		///
+		/// update Dist and Next
+		/// a new connection is created
+		/// retrieve the network
+		/// how to access dist[i][j]?
+		/// NetworkData should link to another entity, for NetworkInternalData
+		/// from Entity to index: indexInNetwork
+		/// from index to Entity?
+		///
+		/// use Entity as index
+		/// HashMap<Entity, float> dist; HashMap<Entity, Entity> next; per entity! NOT POSSIBLE!
+
+		
+		//NetworkData
+		//NativeHashMap<EntityPair, Entity> Next
+		//key: from & to Node
+		//value: next connection!
+			
+		//add node:
+		//+ Node
+		//- NodeData
+			
+		//add connection: SEQUENTIAL
+		//all connected connection share the same network
+		//shared comp NetworkAssociation has Network entity pointer
+		//create NetworkSharedData entities to store Dist and Next
+		//add NetAdjust to NetworkSharedData
+			
+		//compute Dist & Next
+		//+ NetworkSharedData
+		//+ NetAdjust
+		//compute Dist & Next & delete NetAdjust
+			
+		//(agent) PathIntent
+		//if same network: create SameNetwork (shared)
+		//if dif network: create HigherNetwork & LowerNetwork
+			
+		//in order to use Next, NodeToIndex must be presented! Must group Agent by Network!
+			
+		//SameNetwork: group by SameNetwork
+			
+		//new method of using ComponentDataFromEntity!
+		//NativeHashMap<EntityPair, Entity> becomes
+		//NextBuffers[fromNode][IndexInNetworks[toNode].Value].Connection == next connection!
+		//Exits[fromNode] == exit node in the same network!
+		//DirectExits[fromNode] == exit connection 
+
 	}
 }

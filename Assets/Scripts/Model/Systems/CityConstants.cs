@@ -1,4 +1,4 @@
-namespace Model.Systems.City
+namespace Model.Systems
 {
 	public static class CityConstants
 	{

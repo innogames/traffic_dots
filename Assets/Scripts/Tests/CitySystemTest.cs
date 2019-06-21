@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
-using Model.Systems.City;
+using Model.Components;
+using Model.Systems;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -46,25 +46,9 @@ namespace Tests
 			});
 			return agent;
 		}
-		
-		[Test]
-		public void NodeCreation()
-		{
-			var nodeA = AddNode(new float3(0, 0, 0));
-			var nodeB = AddNode(new float3(1, 0, 0));
-
-			UpdateSystems();
-
-			Assert.IsTrue(m_Manager.HasComponent<NodeData>(nodeA));
-			Assert.IsTrue(m_Manager.HasComponent<NodeData>(nodeB));
-		}
 
 		private void UpdateSystems()
 		{
-			World.GetOrCreateSystem<CityNodeSystem>().Update();			
-			m_Manager.CompleteAllJobs();
-			World.GetOrCreateSystem<NodeDataCommandBufferSystem>().Update();
-			
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
 
 			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
