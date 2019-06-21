@@ -43,43 +43,28 @@ namespace Model.Systems.City
 	{
 		private EndSimulationEntityCommandBufferSystem _endFrameBarrier;
 		
-		[ExcludeComponent(typeof(PathIntentData))]
-		private struct PathCompute : IJobForEachWithEntity<PathIntent, NodeAttachment>
-		{
-			[ReadOnly] public NativeHashMap<Path, Entity> Next;
-			public EntityCommandBuffer.Concurrent CommandBuffer;
-
-			public void Execute(Entity entity, int index, ref PathIntent pathIntent, ref NodeAttachment nodeAttachment)
-			{
-				CommandBuffer.AddComponent(index, entity, new PathIntentData
-				{
-					CurrentConnection = Next[new Path
-					{
-						From = nodeAttachment.Node,
-						To = pathIntent.EndNode,
-					}],
-					Lerp = 0f,
-				});
-			}
-		}
-
-		[ExcludeComponent(typeof(NetworkSharedDataNew))]
-		private struct CacheCompute : IJobForEachWithEntity<Network>
+		private struct PathCompute : IJobForEachWithEntity<Agent, PathIntent>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
-			[ReadOnly] public BufferFromEntity<NetAdjust> NetAdjusts;
+			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
+			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
+			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref Network network)
+			public void Execute(Entity entity, int index, [ReadOnly] ref Agent agent, [ReadOnly] ref PathIntent pathIntent)
 			{
-				var networkShared = NetworkSharedDataNew.Create(entity);
-				var adjusts = NetAdjusts[entity];
-				for (int i = 0; i < adjusts.Length; i++)
+				var startNode = Connections[agent.Connection].EndNode; //assume that it is one way road!
+				var endNode = pathIntent.EndNode;
+				if (startNode == endNode)
 				{
-					var adjust = adjusts[i];
-					networkShared.AddConnection(adjust.StartNode, adjust.EndNode, adjust.Cost, adjust.Connection);
+					CommandBuffer.RemoveComponent<PathIntent>(index, entity);
 				}
-
-				networkShared.Compute(index, CommandBuffer);
+				else
+				{
+					//TODO handle different network here
+					var next = Next[startNode][Indexes[endNode].Index].Connection;
+					agent.Connection = next;
+					CommandBuffer.SetComponent(index, entity, agent);					
+				}
 			}
 		}
 
@@ -92,11 +77,15 @@ namespace Model.Systems.City
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			var commandBuffer = _endFrameBarrier.CreateCommandBuffer().ToConcurrent();
-			return new CacheCompute
+			var pathCompute = new PathCompute
 			{
 				CommandBuffer = commandBuffer,
-				NetAdjusts = GetBufferFromEntity<NetAdjust>(),
+				Next = GetBufferFromEntity<NextBuffer>(),
+				Connections = GetComponentDataFromEntity<Connection>(),
+				Indexes = GetComponentDataFromEntity<IndexInNetwork>(),
 			}.Schedule(this, inputDeps);
+
+			return pathCompute;
 		}
 	}
 }

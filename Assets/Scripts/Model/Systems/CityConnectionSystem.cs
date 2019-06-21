@@ -40,19 +40,9 @@ namespace Model.Systems.City
 		}
 	}
 
-	public struct Agent : IComponentData
-	{
-		public float Speed;
-	}
-
 	public struct NodeAttachment : IComponentData
 	{
 		public Entity Node;
-	}
-
-	public struct PathIntent : IComponentData
-	{
-		public Entity EndNode;
 	}
 
 	public struct NodeData : ISystemStateComponentData

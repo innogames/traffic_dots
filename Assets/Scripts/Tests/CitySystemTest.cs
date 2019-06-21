@@ -31,23 +31,19 @@ namespace Tests
 			});
 			return connection;
 		}
-		
-		private Entity AddAgent(Entity node, Entity destination)
+
+		private Entity AddAgent(Entity connection, Entity endNode)
 		{
-			var agent = m_Manager.CreateEntity(typeof(Agent), typeof(NodeAttachment),typeof(PathIntent));
+			var agent = m_Manager.CreateEntity(typeof(Agent), typeof(PathIntent));
 			m_Manager.SetComponentData(agent, new Agent
 			{
-				Speed = 1f,
-			});
-			m_Manager.SetComponentData(agent, new NodeAttachment
-			{
-				Node = node,
+				Connection = connection,
+				Speed = 1.0f,
 			});
 			m_Manager.SetComponentData(agent, new PathIntent
 			{
-				EndNode = destination,
+				EndNode = endNode,
 			});
-			
 			return agent;
 		}
 		
@@ -68,8 +64,12 @@ namespace Tests
 			World.GetOrCreateSystem<CityNodeSystem>().Update();			
 			m_Manager.CompleteAllJobs();
 			World.GetOrCreateSystem<NodeDataCommandBufferSystem>().Update();
+			
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
-//			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
+
+			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
+			m_Manager.CompleteAllJobs();
+			World.GetOrCreateSystem<PathCacheCommandBufferSystem>().Update();
 			
 			World.GetOrCreateSystem<PathSystem>().Update();
 			m_Manager.CompleteAllJobs();
@@ -131,25 +131,13 @@ namespace Tests
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
 			var nodeC = AddNode(new float3(1, 1, 0));
-			var citySystem = World.CreateSystem<CityConnectionSystem>();
-			citySystem.Update();
 			var roadAB = AddConnection(nodeA, nodeB);
-			citySystem.Update();
 			var roadBC = AddConnection(nodeB, nodeC);
-			citySystem.Update();
 
-			var agent = AddAgent(nodeA, nodeC);
-			citySystem.Update();
+			var agent = AddAgent(roadAB, nodeC);
 			
-			
-			
-			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
-			{
-				var networkEntity = entities.FirstOrDefault(entity => m_Manager.HasComponent<NetworkSharedData>(entity));
-				var networkData = m_Manager.GetSharedComponentData<NetworkSharedData>(networkEntity);
-				Assert.IsTrue(networkData.NextConnection(nodeA, nodeC) == roadAB);
-				Assert.IsTrue(networkData.Distance(nodeA, nodeC) <= 2.0f);
-			}
+			UpdateSystems();
+			Assert.IsTrue(m_Manager.GetComponentData<Agent>(agent).Connection == roadBC);
 		}
 	}
 }
