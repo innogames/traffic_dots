@@ -29,6 +29,7 @@ namespace Model.Systems
 				Indexes = GetComponentDataFromEntity<IndexInNetwork>()
 			}.Schedule(this, inputDeps);
 
+			pathCompute.Complete();
 			return pathCompute;
 		}
 

@@ -28,7 +28,7 @@ namespace Model.Systems
 	{
 		protected override void OnUpdate()
 		{
-			throw new System.NotImplementedException();
+			//TODO
 		}
 	}
 }

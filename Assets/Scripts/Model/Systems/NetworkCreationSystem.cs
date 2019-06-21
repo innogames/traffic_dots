@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
@@ -10,12 +11,13 @@ namespace Model.Systems
 	{
 		private PathCacheCommandBufferSystem _endFrameBarrier;
 		
+		[ExcludeComponent(typeof(NetworkDone))]
 		private struct CacheCompute : IJobForEachWithEntity<Network>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
-			[Unity.Collections.ReadOnly] public BufferFromEntity<NetAdjust> NetAdjusts;
+			[ReadOnly] public BufferFromEntity<NetAdjust> NetAdjusts;
 
-			public void Execute(Entity entity, int index, [Unity.Collections.ReadOnly] ref Network network)
+			public void Execute(Entity entity, int index, [ReadOnly] ref Network network)
 			{
 				var networkCache = NetworkCache.Create(entity);
 				var adjusts = NetAdjusts[entity];
@@ -27,6 +29,7 @@ namespace Model.Systems
 
 				networkCache.Compute(index, CommandBuffer);
 				networkCache.Dispose();
+				CommandBuffer.AddComponent(index, entity, new NetworkDone());
 			}
 		}
 
@@ -45,6 +48,7 @@ namespace Model.Systems
 				NetAdjusts = GetBufferFromEntity<NetAdjust>(),
 			}.Schedule(this, inputDeps);
 
+			cacheCompute.Complete();
 			return cacheCompute;
 		}
 	}
