@@ -58,11 +58,8 @@ namespace Model.Systems
 			_nodes.TryAdd(from, _nodes.Length);
 			_nodes.TryAdd(to, _nodes.Length);
 			var fromTo = new Path(from, to);
-			var toFrom = new Path(to, from);
 			_dist.TryAdd(fromTo, cost);
-			_dist.TryAdd(toFrom, cost);
 			WriteNext(fromTo, connection);
-			WriteNext(toFrom, connection);
 		}
 
 		private float ReadDist(Path path)

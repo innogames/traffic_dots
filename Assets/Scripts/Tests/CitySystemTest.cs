@@ -104,7 +104,7 @@ namespace Tests
 
 			var nextC = m_Manager.GetBuffer<NextBuffer>(nodeC);
 			var indexA = m_Manager.GetComponentData<IndexInNetwork>(nodeA);
-			Assert.IsTrue(nextC[indexA.Index].Connection == roadBC);
+			Assert.IsTrue(nextC[indexA.Index].Connection == Entity.Null);
 		}
 
 		[Test]

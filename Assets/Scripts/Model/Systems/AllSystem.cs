@@ -155,5 +155,16 @@ namespace Model.Systems
 		
 		
 		//lane switching?
+		//- the inner lane has higher speed limit
+		//- outer lane can turn right
+		//- other road turn into the outer lane
+		//path finding will prioritize inner lane for straight car 
+		//car does a final lane switch before turning!
+		//only possible if each lane is modeled as a connection!
+		//BUT that would not allow lane balancing, the outer lane will be vacated!
+		
+		//road has multi-lane
+		//common buffer for all lanes
+		//visualization will be offset
 	}
 }
