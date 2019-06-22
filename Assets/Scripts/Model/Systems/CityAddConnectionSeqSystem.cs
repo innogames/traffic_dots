@@ -19,9 +19,9 @@ namespace Model.Systems
 
 		protected override void OnUpdate()
 		{
-			var finalColor = new NativeHashMap<Entity, int>(CityConstants.MapNodeSize, Allocator.Temp);
-			var nodeToColor = new NativeHashMap<Entity, int>(CityConstants.MapNodeSize, Allocator.Temp);
-			var colorToColor = new NativeHashMap<int, int>(CityConstants.MapNodeSize, Allocator.Temp);
+			var finalColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
+			var nodeToColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
+			var colorToColor = new NativeHashMap<int, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			int newColor = 0;
 			Entities.WithNone<NetworkGroup>().ForEach((ref Connection connection) =>
 			{
@@ -62,7 +62,7 @@ namespace Model.Systems
 
 			if (nodeToColor.Length > 0)
 			{
-				var colorToNetwork = new NativeHashMap<int, Entity>(CityConstants.MapNodeSize, Allocator.Temp);
+				var colorToNetwork = new NativeHashMap<int, Entity>(SystemConstants.MapNodeSize, Allocator.Temp);
 				var keys = nodeToColor.GetKeyArray(Allocator.Temp);
 				var values = nodeToColor.GetValueArray(Allocator.Temp);
 
@@ -88,7 +88,7 @@ namespace Model.Systems
 				values.Dispose();
 
 				var networkToBuffer =
-					new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(CityConstants.MapNodeSize, Allocator.Temp);
+					new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(SystemConstants.MapNodeSize, Allocator.Temp);
 
 				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection) =>
 				{

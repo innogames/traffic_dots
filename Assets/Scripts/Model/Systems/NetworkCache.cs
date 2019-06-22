@@ -47,9 +47,9 @@ namespace Model.Systems
 			return new NetworkCache
 			{
 				_networkEntityIndex = networkEntity.Index,
-				_next = new NativeHashMap<Path, Entity>(CityConstants.NetworkSizeSqr, Allocator.Temp),
-				_dist = new NativeHashMap<Path, float>(CityConstants.NetworkSizeSqr, Allocator.Temp),
-				_nodes = new NativeHashMap<Entity, int>(CityConstants.MapNodeSize, Allocator.Temp)
+				_next = new NativeHashMap<Path, Entity>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
+				_dist = new NativeHashMap<Path, float>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
+				_nodes = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp)
 			};
 		}
 
@@ -121,7 +121,7 @@ namespace Model.Systems
 			for (int i = 0; i < len; i++)
 			{
 				var nodeI = nodes[i];
-				var buffer = commandBuffer.SetBuffer<NextBuffer>(index, nodeI);
+				var buffer = commandBuffer.AddBuffer<NextBuffer>(index, nodeI);
 				for (int j = 0; j < len; j++)
 				{
 					var nodeJ = nodes[j];

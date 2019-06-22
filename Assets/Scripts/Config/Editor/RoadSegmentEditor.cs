@@ -31,8 +31,12 @@ namespace Config
 			}
 		}
 
-		private const int IconSize = 100;
-		private const float Epsilon = 1.0f;
+		private void OnEnable()
+		{
+			AssetPreview.SetPreviewTextureCacheSize(IconSize);
+		}
+
+		private const int IconSize = 128;
 
 		public override void OnInspectorGUI()
 		{
@@ -52,15 +56,10 @@ namespace Config
 							foreach (var other in connectors)
 							{
 								if (other != connector && other.ConnectedTo == null &&
-								    (other.transform.position - connector.transform.position).sqrMagnitude < Epsilon)
+								    ConfigConstants.Connected(other.transform, connector.transform))
 								{
-									connector.ConnectedTo = other;
-									other.ConnectedTo = connector;
 									//TODO provide correct index for edge case usability
-									connector.ConnectedToIndex = 0;
-									other.ConnectedToIndex = 0;
-									EditorUtility.SetDirty(connector);
-									EditorUtility.SetDirty(other);
+									Connect(connector, 0, other, 0);
 								}
 							}
 						}
@@ -85,16 +84,13 @@ namespace Config
 				int perRow = Screen.width / IconSize;
 				if (_selectedConnector != null)
 				{
-					AssetPreview.SetPreviewTextureCacheSize(IconSize);
-
 					var validSegments = segment.Config.Segments.Where(seg =>
 						seg.Connectors.Any(con => con.ConnectorType == _selectedConnector.ConnectorType));
 					int buttonId = 0;
 					foreach (var other in validSegments)
 					{
 						if (buttonId % perRow == 0) EditorGUILayout.BeginHorizontal();
-						var texture = AssetPreview.GetAssetPreview(other.gameObject);
-						if (GUILayout.Button(texture, GUILayout.Width(IconSize), GUILayout.Height(IconSize)))
+						if (GUILayout.Button(AssetPreview.GetAssetPreview(other.gameObject), GUILayout.Width(IconSize), GUILayout.Height(IconSize)))
 						{
 							int index = 0;
 							if (_selectedConnector.ConnectedTo != null)
@@ -153,14 +149,26 @@ namespace Config
 			newSegment.transform.position =
 				position - newSegment.transform.rotation * otherConnector.transform.localPosition;
 
-			myConnector.ConnectedTo = otherConnector;
-			myConnector.ConnectedToIndex = otherConnectorId;
-			otherConnector.ConnectedTo = myConnector;
-			otherConnector.ConnectedToIndex = _selectedIndex;
+			Connect(myConnector, otherConnectorId, otherConnector, _selectedIndex);
 
 			Undo.RecordObject(newSegment.gameObject, "Newly connect Segment");
-			EditorUtility.SetDirty(myConnector);
-			EditorUtility.SetDirty(otherConnector);
+		}
+
+		private void Connect(Connector conA, int aIndex, Connector conB, int bIndex)
+		{
+			conA.ConnectedTo = conB;
+			conA.ConnectedToIndex = aIndex;
+			conB.ConnectedTo = conA;
+			conB.ConnectedToIndex = bIndex;
+			
+			conA.ConnectNodes();
+			
+			EditorUtility.SetDirty(conA);
+			EditorUtility.SetDirty(conB);
+			foreach (var node in conA.SharedNodes.Concat(conB.SharedNodes))
+			{
+				EditorUtility.SetDirty(node);
+			}
 		}
 	}
 }

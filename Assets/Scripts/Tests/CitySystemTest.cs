@@ -13,7 +13,7 @@ namespace Tests
 	{
 		private Entity AddNode(float3 position)
 		{
-			var node = m_Manager.CreateEntity(typeof(Node), typeof(NextBuffer));
+			var node = m_Manager.CreateEntity(typeof(Node));
 			m_Manager.SetComponentData(node, new Node
 			{
 				Position = position,

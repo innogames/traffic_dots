@@ -58,8 +58,8 @@ namespace Config
 			var connection = gameObject.AddComponent<ConnectionProxy>();
 			connection.Value = new Model.Components.Connection
 			{
-				StartNode = StartNode.GetComponent<GameObjectEntity>().Entity,
-				EndNode = EndNode.GetComponent<GameObjectEntity>().Entity,
+				StartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
+				EndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
 				Cost = 1.0f,
 				Level = Level,
 			};

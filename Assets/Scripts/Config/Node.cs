@@ -6,6 +6,8 @@ namespace Config
 {
 	public class Node : MonoBehaviour
 	{
+		public Node NodePointer;
+		
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.blue;
@@ -14,13 +16,16 @@ namespace Config
 
 		private void Awake()
 		{
-			gameObject.AddComponent<GameObjectEntity>();
-			var node = gameObject.AddComponent<NodeProxy>();
-			node.Value = new Model.Components.Node
+			if (this == NodePointer)
 			{
-				Position = new float3(transform.position),
-				Level = 0, //TODO
-			};
+				gameObject.AddComponent<GameObjectEntity>();
+				var node = gameObject.AddComponent<NodeProxy>();
+				node.Value = new Model.Components.Node
+				{
+					Position = new float3(transform.position),
+					Level = 0, //TODO
+				};				
+			}
 		}
 	}
 }
