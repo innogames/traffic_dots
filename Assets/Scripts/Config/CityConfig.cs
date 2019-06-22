@@ -6,5 +6,6 @@ namespace Config
 	public class CityConfig : ScriptableObject
 	{
 		public RoadSegment[] Segments;
+		public AgentProxy[] Vehicles;
 	}
 }

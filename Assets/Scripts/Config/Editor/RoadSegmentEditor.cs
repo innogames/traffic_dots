@@ -29,6 +29,14 @@ namespace Config
 					}
 				}
 			}
+
+			foreach (var connection in segment.GetComponentsInChildren<Connection>())
+			{
+				foreach (var pos in connection.SlotSteps(connection.BezierFunc()))
+				{
+					Handles.Button(pos, Quaternion.identity, 1, 1, Handles.ArrowHandleCap);
+				}
+			}
 		}
 
 		private void OnEnable()
