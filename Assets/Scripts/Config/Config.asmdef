@@ -4,7 +4,8 @@
         "Components",
         "Unity.Entities.Hybrid",
         "Unity.Entities",
-        "Unity.Jobs"
+        "Unity.Jobs",
+        "Unity.Mathematics"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
@@ -13,5 +14,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
