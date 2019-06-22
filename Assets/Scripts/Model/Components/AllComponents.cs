@@ -16,15 +16,6 @@ namespace Model.Components
 	{
 	}
 
-	[Serializable]
-	public struct RoadSegment : IComponentData
-	{
-		public int LaneCount;
-		public bool IsVertical;
-		public int X;
-		public int Y;
-	}
-
 	public struct RoadSegmentState : ISystemStateComponentData
 	{
 		public Entity IntersectionStart;
