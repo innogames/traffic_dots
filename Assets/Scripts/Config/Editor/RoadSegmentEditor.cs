@@ -29,11 +29,21 @@ namespace Config
 			base.OnInspectorGUI();
 			
 			RoadSegment segment = (RoadSegment)target;
+
+			if (GUILayout.Button("Populate"))
+			{
+				segment.Connectors = segment.gameObject.GetComponentsInChildren<Connector>();
+				if (segment.Config == null)
+				{
+					segment.Config = Resources.FindObjectsOfTypeAll<CityConfig>().First();
+				}
+				EditorUtility.SetDirty(segment);
+			}
 			
+			EditorGUILayout.BeginVertical();
 			if (_selectedConnector != null)
 			{
 				AssetPreview.SetPreviewTextureCacheSize(IconSize);
-				EditorGUILayout.BeginVertical();
 
 				var validSegments = segment.Config.Segments.Where(seg =>
 					seg.Connectors.Any(con => con.ConnectorType == _selectedConnector.ConnectorType));
@@ -57,8 +67,8 @@ namespace Config
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,
 //					GUILayout.Width(IconSize), GUILayout.Height(IconSize));
-				EditorGUILayout.EndVertical();
 			}
+			EditorGUILayout.EndVertical();
 		}
 		
 		public void PlaceSegment(Transform curSegment, Connector myConnector, RoadSegment otherSegment, int otherConnectorId)
