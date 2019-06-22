@@ -13,19 +13,22 @@ namespace Config
 		{
 			var segment = (RoadSegment)target;
 			
-			for (int i = 0; i < segment.Connectors.Length; i++)
+			if (segment.Connectors != null)
 			{
-				var connector = segment.Connectors[i];
-				Handles.color = connector == _selectedConnector ? Color.green : Color.white;
-				if (Handles.Button(connector.transform.position, connector.transform.rotation, 3f, 3f, Handles.ConeHandleCap))
+				for (int i = 0; i < segment.Connectors.Length; i++)
 				{
-					_selectedConnector = connector;
-					_selectedIndex = i;
-				}
+					var connector = segment.Connectors[i];
+					Handles.color = connector == _selectedConnector ? Color.green : Color.white;
+					if (Handles.Button(connector.transform.position, connector.transform.rotation, 3f, 3f, Handles.ConeHandleCap))
+					{
+						_selectedConnector = connector;
+						_selectedIndex = i;
+					}
+				}				
 			}
 		}
 
-		private const int IconSize = 50;
+		private const int IconSize = 100;
 
 		public override void OnInspectorGUI()
 		{
@@ -42,7 +45,8 @@ namespace Config
 				}
 				EditorUtility.SetDirty(segment);
 			}
-			
+
+			int perRow = Screen.width / IconSize;
 			EditorGUILayout.BeginVertical();
 			if (_selectedConnector != null)
 			{
@@ -50,8 +54,10 @@ namespace Config
 
 				var validSegments = segment.Config.Segments.Where(seg =>
 					seg.Connectors.Any(con => con.ConnectorType == _selectedConnector.ConnectorType));
+				int buttonId = 0;
 				foreach (var other in validSegments)
 				{
+					if (buttonId % perRow == 0) EditorGUILayout.BeginHorizontal();
 					var texture = AssetPreview.GetAssetPreview(other.gameObject);
 					if (GUILayout.Button(texture, GUILayout.Width(IconSize), GUILayout.Height(IconSize)))
 					{
@@ -77,7 +83,10 @@ namespace Config
 						}
 						PlaceSegment(segment.transform, _selectedConnector, other, index);							
 					}
+					if (buttonId % perRow == perRow - 1) EditorGUILayout.EndHorizontal();
+					buttonId++;
 				}
+				if (buttonId % perRow < perRow - 1) EditorGUILayout.EndHorizontal();
 
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,
