@@ -1064,7 +1064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []
 --- !u!1 &5590800331192972938
 GameObject:
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []
 --- !u!1 &8058189279628602761
 GameObject:
@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []
 --- !u!1 &8601341631425949483
 GameObject:
@@ -1205,5 +1205,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []

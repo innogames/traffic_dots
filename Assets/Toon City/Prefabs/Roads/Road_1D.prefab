@@ -266,7 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes:
   - {fileID: 5433893267565389505}
   - {fileID: 3857412688330807210}
@@ -591,7 +591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes:
   - {fileID: 6139416225305153919}
   - {fileID: 973133260596041706}

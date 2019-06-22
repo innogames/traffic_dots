@@ -39,6 +39,7 @@ namespace Config
 						1, 1, Handles.CylinderHandleCap))
 					{
 						connection.Vehicles[index] = !connection.Vehicles[index];
+						EditorUtility.SetDirty(connection);
 					};
 					index++;
 				}
@@ -99,7 +100,7 @@ namespace Config
 				if (_selectedConnector != null)
 				{
 					var validSegments = segment.Config.Segments.Where(seg =>
-						seg.Connectors.Any(con => con.ConnectorType == _selectedConnector.ConnectorType));
+						seg.Connectors.Any(con => con.ConnectorType.Compatible(_selectedConnector.ConnectorType)));
 					int buttonId = 0;
 					foreach (var other in validSegments)
 					{
@@ -122,7 +123,7 @@ namespace Config
 
 							for (; index < other.Connectors.Length; index++)
 							{
-								if (_selectedConnector.ConnectorType == other.Connectors[index].ConnectorType)
+								if (_selectedConnector.ConnectorType.Compatible(other.Connectors[index].ConnectorType))
 								{
 									break;
 								}
@@ -136,7 +137,7 @@ namespace Config
 					}
 
 					if (buttonId != perRow) EditorGUILayout.EndHorizontal();
-
+					Repaint();
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,
 //					GUILayout.Width(IconSize), GUILayout.Height(IconSize));

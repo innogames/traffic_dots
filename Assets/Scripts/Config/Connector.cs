@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Config
@@ -6,7 +7,7 @@ namespace Config
 	{
 		public Connector ConnectedTo;
 		public int ConnectedToIndex = 0;
-		public ConnectorType ConnectorType;
+		[EnumFlags] public ConnectorType ConnectorType = ConnectorType.TwoLane;
 		public Node[] SharedNodes;
 
 		private void OnDrawGizmos()

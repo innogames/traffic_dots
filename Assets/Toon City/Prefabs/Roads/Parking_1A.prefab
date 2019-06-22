@@ -686,7 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []
 --- !u!1 &4517771941503207197
 GameObject:
@@ -733,5 +733,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 0
+  ConnectorType: 1
   SharedNodes: []

@@ -445,6 +445,11 @@ PrefabInstance:
       propertyPath: NodePointer
       value: 
       objectReference: {fileID: 1228237779}
+    - target: {fileID: 8152402312376144669, guid: 8aac75e6aadf149a49501c11ad7779d6,
+        type: 3}
+      propertyPath: Vehicles.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8aac75e6aadf149a49501c11ad7779d6, type: 3}
 --- !u!114 &1228237778 stripped
@@ -1103,6 +1108,11 @@ PrefabInstance:
       propertyPath: NodePointer
       value: 
       objectReference: {fileID: 1111347395}
+    - target: {fileID: 2372234625824400833, guid: 8aac75e6aadf149a49501c11ad7779d6,
+        type: 3}
+      propertyPath: Vehicles.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8aac75e6aadf149a49501c11ad7779d6, type: 3}
 --- !u!114 &2082458146 stripped
