@@ -30,7 +30,7 @@ namespace Model.Systems
 				networkCache.Compute(index, CommandBuffer);
 				networkCache.Dispose();
 				CommandBuffer.AddComponent(index, entity, new NetworkDone());
-//				CommandBuffer.RemoveComponent<NetAdjust>(index, entity);
+				CommandBuffer.RemoveComponent<NetAdjust>(index, entity);
 			}
 		}
 

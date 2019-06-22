@@ -70,8 +70,7 @@ namespace Tests
 
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				var networkEntity = entities.First(entity => m_Manager.HasComponent<Network>(entity));
-				Assert.IsTrue(m_Manager.GetBuffer<NetAdjust>(networkEntity)[0].Connection == road);
+				Assert.AreEqual(1, entities.Count(entity => m_Manager.HasComponent<Network>(entity)));
 			}
 
 			Assert.IsTrue(m_Manager.HasComponent<NetworkGroup>(road));
@@ -90,9 +89,7 @@ namespace Tests
 
 			using (var entities = m_Manager.GetAllEntities(Allocator.Temp))
 			{
-				Assert.IsTrue(entities.Count(entity => m_Manager.HasComponent<Network>(entity)) == 1);
-				var networkEntity = entities.First(entity => m_Manager.HasComponent<Network>(entity));
-				Assert.AreEqual(2, m_Manager.GetBuffer<NetAdjust>(networkEntity).Length);
+				Assert.AreEqual(1, entities.Count(entity => m_Manager.HasComponent<Network>(entity)));
 			}
 
 			Assert.IsTrue(m_Manager.GetSharedComponentData<NetworkGroup>(roadAB).NetworkId ==
