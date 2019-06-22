@@ -8,5 +8,14 @@ namespace Config
 		public int ConnectedToIndex = 0;
 		public ConnectorType ConnectorType;
 		public Node[] SharedNodes;
+
+		private void OnDrawGizmos()
+		{
+			if (ConnectedTo == null)
+			{
+				Gizmos.color = Color.red;
+				Gizmos.DrawSphere(transform.position, 1f);
+			}
+		}
 	}
 }
