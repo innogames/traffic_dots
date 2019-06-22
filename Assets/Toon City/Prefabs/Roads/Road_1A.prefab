@@ -139,7 +139,7 @@ Transform:
   m_GameObject: {fileID: 575714279729116177}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2, y: 0.1, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 8955459493112679070}
   m_RootOrder: 1
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &2379097382160279614
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +183,7 @@ Transform:
   m_GameObject: {fileID: 2379097382160279614}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -2, y: 0.1, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 1685250292656190279}
   m_RootOrder: 1
@@ -199,6 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &2617190760429428171
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,8 +247,9 @@ MonoBehaviour:
   StartNode: {fileID: 1489695081523340009}
   EndNode: {fileID: 1498099675632986338}
   Level: 1
-  Slots: 3
+  Slots: 2
   LaneCount: 1
+  CurveIn: 4.12
 --- !u!1 &2876274081828616300
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,7 +276,7 @@ Transform:
   m_GameObject: {fileID: 2876274081828616300}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -2, y: 0.1, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 8955459493112679070}
   m_RootOrder: 0
@@ -290,6 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &4654837752298724930
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,8 +340,9 @@ MonoBehaviour:
   StartNode: {fileID: 8045645725739998650}
   EndNode: {fileID: 4274970405164182184}
   Level: 1
-  Slots: 3
+  Slots: 2
   LaneCount: 1
+  CurveIn: 4.12
 --- !u!1 &6279840766225300711
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,7 +420,7 @@ Transform:
   m_GameObject: {fileID: 7280248286085644862}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2, y: 0.1, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 1685250292656190279}
   m_RootOrder: 0
@@ -432,6 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &7806774474038892906
 GameObject:
   m_ObjectHideFlags: 0

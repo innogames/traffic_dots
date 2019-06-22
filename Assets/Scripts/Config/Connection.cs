@@ -13,8 +13,9 @@ namespace Config
 		public int Level = 1;
 		public int Slots = 1;
 		public int LaneCount = 1;
+		public float CurveIn = 1.0f;
 
-		private IEnumerable<Mesh> _meshes;
+		private IReadOnlyList<Mesh> _meshes;
 
 		private void GetMeshes()
 		{
@@ -23,7 +24,7 @@ namespace Config
 				var config = GetComponentInParent<RoadSegment>().Config;
 				if (config == null || config.Vehicles == null) return;
 				_meshes = config.Vehicles
-					.Select(vehicle => vehicle.GetComponent<MeshFilter>().sharedMesh);
+					.Select(vehicle => vehicle.GetComponent<MeshFilter>().sharedMesh).ToArray();
 			}
 		}
 
@@ -34,55 +35,52 @@ namespace Config
 				Gizmos.color = Color.red;
 				GetMeshes();
 
-				using (var tangents = SlotSteps(TangentFunc()).GetEnumerator())
+				using (var tangents = SlotSteps(BezierFunc(true)).GetEnumerator())
 				{
 					foreach (var pos in SlotSteps(BezierFunc()))
 					{
 						tangents.MoveNext();
 						var forward = tangents.Current;
-						Gizmos.DrawWireMesh(_meshes.First(), pos, Quaternion.LookRotation(forward, Vector3.up));
+						var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
+						Gizmos.DrawWireMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));
 					}
 				}
 			}
 		}
 
-		public Func<float, Vector3> BezierFunc()
+		public Func<float, Vector3> BezierFunc(bool isTangent = false)
 		{
 			var start = StartNode.transform;
 			var end = EndNode.transform;
 			var p0 = start.position;
-			var p1 = p0 + Vector3.Scale(start.forward, start.localScale);
+			var p1 = p0 + start.forward * CurveIn;
 			var p3 = end.position;
-			var p2 = p3 - Vector3.Scale(end.forward, end.localScale);
-			return t =>
+			var p2 = p3 - end.forward * CurveIn;
+			if (isTangent)
 			{
-				float t1 = 1 - t;
-				float t12 = t1 * t1;
-				float t13 = t1 * t1 * t1;
-				return t13 * p0
-				       + 3 * t12 * t * p1
-				       + 3 * t1 * t * t * p2
-				       + t * t * t * p3;
-			};
-		}
-
-		public Func<float, Vector3> TangentFunc()
-		{
-			var start = StartNode.transform;
-			var end = EndNode.transform;
-			var p0 = start.position;
-			var p1 = p0 + Vector3.Scale(start.forward, start.localScale);
-			var p3 = end.position;
-			var p2 = p3 - Vector3.Scale(end.forward, end.localScale);
-			return t =>
+				return t =>
+				{
+					float t1 = 1 - t;
+					float t12 = t1 * t1;
+					return -3 * t12 * p0
+					       + (3 * t12 - 6 * t1 * t) * p1
+					       + (-3 * t * t + 6 * t * t1) * p2
+					       + 3 * t * t * p3;
+				};				
+			}
+			else
 			{
-				float t1 = 1 - t;
-				float t12 = t1 * t1;
-				return -3 * t12 * p0
-				       + (3 * t12 - 6 * t1 * t) * p1
-				       + (-3 * t * t + 6 * t * t1) * p2
-				       + 3 * t * t * p3;
-			};
+				return t =>
+				{
+					float t1 = 1 - t;
+					float t12 = t1 * t1;
+					float t13 = t1 * t1 * t1;
+					return t13 * p0
+					       + 3 * t12 * t * p1
+					       + 3 * t1 * t * t * p2
+					       + t * t * t * p3;
+				};				
+			}
 		}
 
 		public IEnumerable<Vector3> SlotSteps(Func<float, Vector3> func)

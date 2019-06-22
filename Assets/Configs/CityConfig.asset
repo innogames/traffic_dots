@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CityConfig
   m_EditorClassIdentifier: 
   Segments:
-  - {fileID: 3830019372405552527, guid: 087cb5e3f18b54759a62ff74f6a64058, type: 3}
   - {fileID: 1101635072241640843, guid: b5c54f57db90f4134bb8a815c58cc505, type: 3}
+  - {fileID: 3830019372405552527, guid: 087cb5e3f18b54759a62ff74f6a64058, type: 3}
   - {fileID: 4250765613482740959, guid: ac0de92ad754946e3a7df189f7abc953, type: 3}
   - {fileID: 8803849368524914580, guid: 7d6eb72bee7d64d3aa776a7fac7bb613, type: 3}
   - {fileID: 699313684623980779, guid: df3224345dee64bb58b784a004221620, type: 3}
@@ -28,3 +28,8 @@ MonoBehaviour:
   - {fileID: 240547474410176636, guid: 40bca1fb68b11493d91c27dfa1a24732, type: 3}
   - {fileID: 6508781703632547440, guid: eb77b8db0039245e9b1748bf2a19f815, type: 3}
   - {fileID: 3171476420155611947, guid: 9022964f16d44406ab9a26ce911b511b, type: 3}
+  Vehicles:
+  - {fileID: 6546211914466163488, guid: 9017d95f607e942a7aa0dbd619ded6cc, type: 3}
+  - {fileID: 6560582018296956040, guid: 73fead72e0aaf46a3a96b621e7ef02bb, type: 3}
+  - {fileID: 693177805191083035, guid: 9c89b8165b9d54e90a47b1663eefb92f, type: 3}
+  - {fileID: 5331018659451856322, guid: 0c6f22b3334224c8483ffb3c90e63898, type: 3}

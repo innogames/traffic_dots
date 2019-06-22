@@ -313,6 +313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &3004483826397734474
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,8 +360,9 @@ MonoBehaviour:
   StartNode: {fileID: 6139416225305153919}
   EndNode: {fileID: 5433893267565389505}
   Level: 1
-  Slots: 2
+  Slots: 1
   LaneCount: 1
+  CurveIn: 3.09
 --- !u!1 &3874994038690917124
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,6 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &4598787462713833202
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,8 +453,9 @@ MonoBehaviour:
   StartNode: {fileID: 3857412688330807210}
   EndNode: {fileID: 973133260596041706}
   Level: 1
-  Slots: 4
+  Slots: 2
   LaneCount: 1
+  CurveIn: 5.07
 --- !u!1 &8057935603011103829
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,6 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &8362389592309920517
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,6 +543,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePointer: {fileID: 0}
 --- !u!1 &8904066402299214691
 GameObject:
   m_ObjectHideFlags: 0
