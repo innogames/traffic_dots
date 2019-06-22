@@ -86,7 +86,7 @@ namespace Config
 					if (buttonId % perRow == perRow - 1) EditorGUILayout.EndHorizontal();
 					buttonId++;
 				}
-				if (buttonId % perRow < perRow - 1) EditorGUILayout.EndHorizontal();
+				if (buttonId != perRow) EditorGUILayout.EndHorizontal();
 
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,
