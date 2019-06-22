@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Model.Systems
 {
-	[DisableAutoCreation]
+	[UpdateInGroup(typeof(CitySystemGroup))]
 	[ExecuteAlways]
 	public class PathCacheCommandBufferSystem : EntityCommandBufferSystem
 	{

@@ -6,8 +6,7 @@ using Unity.Jobs;
 namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
-	[UpdateAfter(typeof(CityAddConnectionSeqSystem))]
-	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
+	[UpdateAfter(typeof(NetworkCreationSystem))]
 	public class PathSystem : JobComponentSystem
 	{
 		private EndSimulationEntityCommandBufferSystem _endFrameBarrier;

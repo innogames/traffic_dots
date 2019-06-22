@@ -13,7 +13,6 @@ namespace Config
 
 		private void OnSceneGUI()
 		{
-			if (targets.Length > 1) return;
 			var segment = (RoadSegment) target;
 
 			if (segment.Connectors != null)
@@ -45,14 +44,14 @@ namespace Config
 				if (GUILayout.Button("Merge Connectors"))
 				{
 					var connectors = targets.OfType<RoadSegment>()
-						.SelectMany(segment => segment.Connectors);
+						.SelectMany(segment => segment.Connectors).ToArray();
 					foreach (var connector in connectors)
 					{
 						if (connector.ConnectedTo == null)
 						{
 							foreach (var other in connectors)
 							{
-								if (other.ConnectedTo == null &&
+								if (other != connector && other.ConnectedTo == null &&
 								    (other.transform.position - connector.transform.position).sqrMagnitude < Epsilon)
 								{
 									connector.ConnectedTo = other;
@@ -60,6 +59,8 @@ namespace Config
 									//TODO provide correct index for edge case usability
 									connector.ConnectedToIndex = 0;
 									other.ConnectedToIndex = 0;
+									EditorUtility.SetDirty(connector);
+									EditorUtility.SetDirty(other);
 								}
 							}
 						}
@@ -158,6 +159,8 @@ namespace Config
 			otherConnector.ConnectedToIndex = _selectedIndex;
 
 			Undo.RecordObject(newSegment.gameObject, "Newly connect Segment");
+			EditorUtility.SetDirty(myConnector);
+			EditorUtility.SetDirty(otherConnector);
 		}
 	}
 }

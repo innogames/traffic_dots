@@ -6,7 +6,6 @@ using Unity.Mathematics;
 namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
-	[UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
 	public class CityAddConnectionSeqSystem : ComponentSystem
 	{
 		private EntityArchetype _networkArchetype;
@@ -43,18 +42,21 @@ namespace Model.Systems
 				{
 					int minColor = math.min(startColor, endColor);
 					int maxColor = math.max(startColor, endColor);
-					var changedNode = startColor < endColor ? connection.StartNode : connection.EndNode;
+					var changedNode = startColor > endColor ? connection.StartNode : connection.EndNode;
 					int trueColor = minColor;
-					while (colorToColor.TryGetValue(trueColor, out trueColor))
+					while (colorToColor.TryGetValue(trueColor, out int nextColor))
 					{
+						trueColor = nextColor;
 					}
 
 					if (maxColor < int.MaxValue) nodeToColor.Remove(changedNode);
-
-					if (colorToColor.TryGetValue(maxColor, out int temp)) colorToColor.Remove(maxColor);
-
 					nodeToColor.TryAdd(changedNode, trueColor);
-					colorToColor.TryAdd(maxColor, trueColor);
+
+					if (maxColor < int.MaxValue)
+					{
+						if (colorToColor.TryGetValue(maxColor, out int temp)) colorToColor.Remove(maxColor);
+						colorToColor.TryAdd(maxColor, trueColor);						
+					}
 				}
 			});
 
@@ -68,8 +70,9 @@ namespace Model.Systems
 				{
 					var node = keys[i];
 					int trueColor = values[i];
-					while (colorToColor.TryGetValue(trueColor, out trueColor))
+					while (colorToColor.TryGetValue(trueColor, out int nextColor))
 					{
+						trueColor = nextColor;
 					}
 
 					finalColor.TryAdd(node, trueColor);

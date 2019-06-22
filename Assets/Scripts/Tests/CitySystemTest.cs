@@ -167,13 +167,17 @@ namespace Tests
 			var endNode = nodes[Coord(size - 1, size - 1)];
 			var agent = AddAgent(horiCon[Coord(0, 0)], endNode);
 
+			UpdateSystems();
+			using (var entities = m_Manager.GetAllEntities())
+			{
+				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));				
+			}
+
 			for (int i = 0; i < size * 2; i++)
 			{
 				UpdateSystems();
 			}
-
 			var agent_end_con = m_Manager.GetComponentData<Agent>(agent).Connection;
-
 			Assert.IsTrue(m_Manager.GetComponentData<Connection>(agent_end_con).EndNode == endNode);
 		}
 	}

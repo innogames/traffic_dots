@@ -3,6 +3,7 @@ using Unity.Entities;
 
 namespace Model.Components
 {
+	[Serializable]
 	public struct Connection : IComponentData, IEquatable<Connection>
 	{
 		public Entity StartNode;
