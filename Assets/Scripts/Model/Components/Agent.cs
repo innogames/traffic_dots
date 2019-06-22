@@ -8,5 +8,6 @@ namespace Model.Components
 	{
 		public float Speed;
 		public Entity Connection;
+		public int Slot;
 	}
 }

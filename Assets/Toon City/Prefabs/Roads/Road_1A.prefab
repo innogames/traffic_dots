@@ -247,9 +247,9 @@ MonoBehaviour:
   StartNode: {fileID: 1489695081523340009}
   EndNode: {fileID: 1498099675632986338}
   Level: 1
-  Slots: 2
   LaneCount: 1
   CurveIn: 4.12
+  Vehicles: 0000
 --- !u!1 &2876274081828616300
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,9 +340,9 @@ MonoBehaviour:
   StartNode: {fileID: 8045645725739998650}
   EndNode: {fileID: 4274970405164182184}
   Level: 1
-  Slots: 2
   LaneCount: 1
   CurveIn: 4.12
+  Vehicles: 0000
 --- !u!1 &6279840766225300711
 GameObject:
   m_ObjectHideFlags: 0

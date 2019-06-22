@@ -11,9 +11,13 @@ namespace Config
 		public Node StartNode;
 		public Node EndNode;
 		public int Level = 1;
-		public int Slots = 1;
+
+		private int SlotCount => Vehicles.Count;
+		
 		public int LaneCount = 1;
 		public float CurveIn = 1.0f;
+
+		public List<bool> Vehicles = new List<bool>();
 
 		private IReadOnlyList<Mesh> _meshes;
 
@@ -30,19 +34,34 @@ namespace Config
 
 		private void OnDrawGizmosSelected()
 		{
+			DrawVehicle(false, Color.gray);
+		}
+
+		private void OnDrawGizmos()
+		{
+			DrawVehicle(true, Color.green);
+		}
+
+		private void DrawVehicle(bool vehicleEnable, Color color)
+		{
 			if (StartNode != null && EndNode != null)
 			{
-				Gizmos.color = Color.red;
+				Gizmos.color = color;
 				GetMeshes();
 
 				using (var tangents = SlotSteps(BezierFunc(true)).GetEnumerator())
 				{
+					int index = 0;
 					foreach (var pos in SlotSteps(BezierFunc()))
 					{
 						tangents.MoveNext();
-						var forward = tangents.Current;
-						var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
-						Gizmos.DrawWireMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));
+						if (Vehicles[index] == vehicleEnable)
+						{
+							var forward = tangents.Current;						
+							var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
+							Gizmos.DrawMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));							
+						}
+						index++;
 					}
 				}
 			}
@@ -85,9 +104,9 @@ namespace Config
 
 		public IEnumerable<Vector3> SlotSteps(Func<float, Vector3> func)
 		{
-			for (int i = 0; i < Slots; i++)
+			for (int i = 0; i < SlotCount; i++)
 			{
-				float t = (i + 0.5f) / Slots;
+				float t = (i + 0.5f) / SlotCount;
 				yield return func(t);
 			}
 		}

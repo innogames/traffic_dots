@@ -32,9 +32,15 @@ namespace Config
 
 			foreach (var connection in segment.GetComponentsInChildren<Connection>())
 			{
+				int index = 0;
 				foreach (var pos in connection.SlotSteps(connection.BezierFunc()))
 				{
-					Handles.Button(pos, Quaternion.identity, 1, 1, Handles.ArrowHandleCap);
+					if (Handles.Button(pos, Quaternion.LookRotation(Vector3.up), 
+						1, 1, Handles.CylinderHandleCap))
+					{
+						connection.Vehicles[index] = !connection.Vehicles[index];
+					};
+					index++;
 				}
 			}
 		}
