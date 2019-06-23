@@ -21,11 +21,12 @@ namespace Model.Systems
 		{
 			var commandBuffer = _endFrameBarrier.CreateCommandBuffer().ToConcurrent();
 			var segmentBuffer = GetBufferFromEntity<SplineSegmentBuffer>();
+			var slotBuffer = GetBufferFromEntity<EntitySlotBuffer>();
 
 			var moveToNext = new MoveToNextSlot
 			{
 				SegmentBuffer = segmentBuffer,
-				SlotBuffer = GetBufferFromEntity<EntitySlotBuffer>(),
+				SlotBuffer = slotBuffer,
 			}.Schedule(this, inputDeps);
 			
 			var pathCompute = new PathCompute
@@ -34,7 +35,7 @@ namespace Model.Systems
 				Next = GetBufferFromEntity<NextBuffer>(),
 				Connections = GetComponentDataFromEntity<Connection>(),
 				Indexes = GetComponentDataFromEntity<IndexInNetwork>(),
-				EntitySlots = GetComponentDataFromEntity<EntitySlot>(),
+				SlotBuffer = slotBuffer,
 				SegmentBuffer = segmentBuffer,
 			}.Schedule(this, moveToNext);
 
@@ -47,7 +48,7 @@ namespace Model.Systems
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
-			[ReadOnly] public ComponentDataFromEntity<EntitySlot> EntitySlots;
+			[ReadOnly] public BufferFromEntity<EntitySlotBuffer> SlotBuffer;
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
 			[ReadOnly] public BufferFromEntity<SplineSegmentBuffer> SegmentBuffer;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
@@ -65,18 +66,30 @@ namespace Model.Systems
 					}
 					else
 					{
-						if (location.Slot == EntitySlots[location.Connection].SlotCount - 1)
+						var curSlot = SlotBuffer[location.Connection];
+						if (location.Slot == curSlot.Length - 1)
 						{
 							var startNode = Connections[location.Connection].EndNode;
 							var endNode = Connections[destination.Connection].StartNode;
-							var next = startNode == endNode
+							var nextConnection = startNode == endNode
 								? destination.Connection
 								: Next[startNode][Indexes[endNode].Index].Connection;
-							location.Connection = next;
-							location.Slot = 0;
+							var nextSlot = SlotBuffer[nextConnection];
+							if (nextSlot[0].Agent == Entity.Null)
+							{
+								curSlot[location.Slot] = new EntitySlotBuffer {Agent = Entity.Null};
+								nextSlot[0] = new EntitySlotBuffer {Agent = entity};
+								
+								location.Connection = nextConnection;
+								location.Slot = 0;
 							
-							timer.Frames = SegmentBuffer[next][0].Length;
-							timerState.CountDown = timer.Frames;
+								timer.Frames = SegmentBuffer[nextConnection][0].Length;
+								timerState.CountDown = timer.Frames;								
+							}
+							else
+							{
+								//TODO freeze timer here
+							}
 						}
 					}
 				}
