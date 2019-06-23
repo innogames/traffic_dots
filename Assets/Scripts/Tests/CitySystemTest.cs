@@ -28,28 +28,36 @@ namespace Tests
 			{
 				StartNode = startNode,
 				EndNode = endNode,
-				Cost = 1f,
+				Speed = 1f,
 			});
 			return connection;
 		}
 
-		private Entity AddAgent(Entity connection, Entity endNode)
+		private Entity AddAgent(Entity connectionLocation, Entity connectionTarget)
 		{
-			var agent = m_Manager.CreateEntity(typeof(Agent), typeof(PathIntent));
-			m_Manager.SetComponentData(agent, new Agent
+			var agent = m_Manager.CreateEntity(typeof(Agent),
+				typeof(ConnectionLocation),
+				typeof(ConnectionDestination));
+			m_Manager.SetComponentData(agent, new ConnectionLocation
 			{
-				Connection = connection,
-				Speed = 1.0f,
+				Connection = connectionLocation,
+				Slot = 0,
 			});
-			m_Manager.SetComponentData(agent, new PathIntent
+			m_Manager.SetComponentData(agent, new ConnectionDestination
 			{
-				EndNode = endNode,
+				Connection = connectionTarget,
+				Slot = 0,
 			});
 			return agent;
 		}
 
 		private void UpdateSystems()
 		{
+			World.GetOrCreateSystem<TimerSystem>().Update();
+			World.GetOrCreateSystem<TimerBufferSystem>().Update();
+			
+			World.GetOrCreateSystem<AgentSpawningSystem>().Update();
+
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
 			
 			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
@@ -113,10 +121,10 @@ namespace Tests
 			var roadAB = AddConnection(nodeA, nodeB);
 			var roadBC = AddConnection(nodeB, nodeC);
 
-			var agent = AddAgent(roadAB, nodeC);
+			var agent = AddAgent(roadAB, roadBC);
 
 			UpdateSystems();
-			Assert.IsTrue(m_Manager.GetComponentData<Agent>(agent).Connection == roadBC);
+			Assert.IsTrue(m_Manager.GetComponentData<ConnectionLocation>(agent).Connection == roadBC);
 		}
 
 		const int size = 4;
@@ -161,8 +169,8 @@ namespace Tests
 				}
 			}
 
-			var endNode = nodes[Coord(size - 1, size - 1)];
-			var agent = AddAgent(horiCon[Coord(0, 0)], endNode);
+			var endCon = horiCon[Coord(size - 2, size - 2)];
+			var agent = AddAgent(horiCon[Coord(0, 0)], endCon);
 
 			UpdateSystems();
 			using (var entities = m_Manager.GetAllEntities())
@@ -174,8 +182,8 @@ namespace Tests
 			{
 				UpdateSystems();
 			}
-			var agent_end_con = m_Manager.GetComponentData<Agent>(agent).Connection;
-			Assert.IsTrue(m_Manager.GetComponentData<Connection>(agent_end_con).EndNode == endNode);
+			var agent_end_con = m_Manager.GetComponentData<ConnectionLocation>(agent).Connection;
+			Assert.AreEqual(endCon, agent_end_con);
 		}
 	}
 }

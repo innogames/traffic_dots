@@ -8,7 +8,7 @@ namespace Model.Components
 	{
 		public Entity StartNode;
 		public Entity EndNode;
-		public float Cost;
+		public float Speed;
 		public int Level;
 
 		public bool Equals(Connection other)

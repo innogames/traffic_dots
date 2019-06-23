@@ -119,7 +119,7 @@ namespace Config
 			{
 				StartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
 				EndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
-				Cost = 1.0f,
+				Speed = 1.0f,
 				Level = Level,
 			};
 		}

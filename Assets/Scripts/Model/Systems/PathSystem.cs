@@ -32,28 +32,31 @@ namespace Model.Systems
 			return pathCompute;
 		}
 
-		private struct PathCompute : IJobForEachWithEntity<Agent, PathIntent>
+		[RequireComponentTag(typeof(Agent))]
+		private struct PathCompute : IJobForEachWithEntity<ConnectionLocation, ConnectionDestination>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref Agent agent,
-				[ReadOnly] ref PathIntent pathIntent)
+			public void Execute(Entity entity, int index,
+				[ReadOnly] ref ConnectionLocation location,
+				[ReadOnly] ref ConnectionDestination destination)
 			{
-				var startNode = Connections[agent.Connection].EndNode; //assume that it is one way road!
-				var endNode = pathIntent.EndNode;
+				var startNode = Connections[location.Connection].EndNode; //assume that it is one way road!
+				var endNode = Connections[destination.Connection].EndNode;
 				if (startNode == endNode)
 				{
-					CommandBuffer.RemoveComponent<PathIntent>(index, entity);
+					//TODO remove agent here!
+					CommandBuffer.RemoveComponent<ConnectionDestination>(index, entity);
 				}
 				else
 				{
 					//TODO handle different network here
 					var next = Next[startNode][Indexes[endNode].Index].Connection;
-					agent.Connection = next;
-					CommandBuffer.SetComponent(index, entity, agent);
+					location.Connection = next;
+					CommandBuffer.SetComponent(index, entity, location);
 				}
 			}
 		}

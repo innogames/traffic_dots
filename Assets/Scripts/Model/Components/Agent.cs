@@ -6,8 +6,5 @@ namespace Model.Components
 	[Serializable]
 	public struct Agent : IComponentData
 	{
-		public float Speed;
-		public Entity Connection;
-		public int Slot;
 	}
 }
