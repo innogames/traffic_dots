@@ -23,12 +23,25 @@ namespace Tests
 
 		private Entity AddConnection(Entity startNode, Entity endNode)
 		{
-			var connection = m_Manager.CreateEntity(typeof(Connection));
+			var connection = m_Manager.CreateEntity(typeof(Connection),
+				typeof(Spline), typeof(EntitySlot));
 			m_Manager.SetComponentData(connection, new Connection
 			{
 				StartNode = startNode,
 				EndNode = endNode,
 				Speed = 1f,
+			});
+			m_Manager.SetComponentData(connection, new Spline
+			{
+				a = m_Manager.GetComponentData<Node>(startNode).Position,
+				//TODO compute correct spline here!
+				b = float3.zero,
+				c = float3.zero,
+				d = m_Manager.GetComponentData<Node>(endNode).Position,				
+			});
+			m_Manager.SetComponentData(connection, new EntitySlot
+			{
+				SlotCount = 2,
 			});
 			return connection;
 		}
@@ -37,7 +50,8 @@ namespace Tests
 		{
 			var agent = m_Manager.CreateEntity(typeof(Agent),
 				typeof(ConnectionLocation),
-				typeof(ConnectionDestination));
+				typeof(ConnectionDestination),
+				typeof(Timer));
 			m_Manager.SetComponentData(agent, new ConnectionLocation
 			{
 				Connection = connectionLocation,
@@ -48,11 +62,18 @@ namespace Tests
 				Connection = connectionTarget,
 				Slot = 0,
 			});
+			m_Manager.SetComponentData(agent, new Timer
+			{
+				Frames = 1, //act every frame!
+			});
 			return agent;
 		}
 
 		private void UpdateSystems()
 		{
+			World.GetOrCreateSystem<SplineSystem>().Update();
+			World.GetOrCreateSystem<EntitySlotSystem>().Update();
+			
 			World.GetOrCreateSystem<TimerSystem>().Update();
 			World.GetOrCreateSystem<TimerBufferSystem>().Update();
 			
@@ -82,6 +103,7 @@ namespace Tests
 			}
 
 			Assert.IsTrue(m_Manager.HasComponent<NetworkGroup>(road));
+			Assert.AreEqual(2, m_Manager.GetBuffer<EntitySlotBuffer>(road).Length);
 		}
 
 		[Test]
@@ -124,7 +146,27 @@ namespace Tests
 			var agent = AddAgent(roadAB, roadBC);
 
 			UpdateSystems();
-			Assert.IsTrue(m_Manager.GetComponentData<ConnectionLocation>(agent).Connection == roadBC);
+			var bufferAB = m_Manager.GetBuffer<EntitySlotBuffer>(roadAB);
+			var bufferBC = m_Manager.GetBuffer<EntitySlotBuffer>(roadBC);
+			Assert.AreEqual(2, bufferAB.Length, "road buffer");
+			Assert.AreEqual(2, bufferBC.Length, "road buffer");
+			Assert.AreEqual(agent, bufferAB[1].Agent, "agent location");
+
+//			var timer = m_Manager.GetComponentData<Timer>(agent).Frames;
+//			var timerState = m_Manager.GetComponentData<TimerState>(agent).CountDown;
+//
+//			var ab0 = bufferAB[0].Agent;
+//			var ab1 = bufferAB[1].Agent;
+//			var bc0 = bufferBC[0].Agent;
+//			var bc1 = bufferBC[1].Agent;
+
+//			var agentLocation = m_Manager.GetComponentData<ConnectionLocation>(agent);
+			
+			Assert.AreEqual(1, m_Manager.GetComponentData<TimerState>(agent).CountDown, "timer state");
+			Assert.AreEqual(1, m_Manager.GetComponentData<ConnectionLocation>(agent).Slot, "location slot");
+			
+			UpdateSystems();
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionLocation>(agent).Connection, "reach target");
 		}
 
 		const int size = 4;

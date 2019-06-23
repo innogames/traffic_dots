@@ -7,5 +7,7 @@ namespace Model.Systems
 
 		public const int MapConnectionSize = 100;		
 		public const int MapNodeSize = 100;
+		
+		public const int ConnectionSlotAverage = 4;
 	}
 }

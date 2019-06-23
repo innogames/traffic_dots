@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Model.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -121,6 +122,17 @@ namespace Config
 				EndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
 				Speed = 1.0f,
 				Level = Level,
+			};
+			gameObject.AddComponent<SplineProxy>().Value = new Spline
+			{
+				a = StartNode.NodePointer.transform.position,
+				b = Vector3.zero,
+				c = Vector3.zero,
+				d = EndNode.NodePointer.transform.position,
+			};
+			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
+			{
+				SlotCount = SlotCount,
 			};
 		}
 	}
