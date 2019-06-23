@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6d4fde2c74c5647f4b8912b33fd59505
+labels:
+- car
+- compact
+- coupe
+- hatchback
+- tuning
+- vehicle
+timeCreated: 1499301663
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 17afba65ff399453e8f285b4444c06ad
+labels:
+- bus
+- car
+- coach
+timeCreated: 1499301721
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
