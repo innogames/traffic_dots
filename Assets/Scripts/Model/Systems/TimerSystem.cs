@@ -14,6 +14,11 @@ namespace Model.Systems
 	public class TimerSystem : JobComponentSystem
 	{
 		private TimerBufferSystem _bufferSystem;
+		
+		/// <summary>
+		/// this can't be optimized using Entity batch ops
+		/// because the component data value is different from each other
+		/// </summary>
 		[ExcludeComponent(typeof(TimerState))]
 		private struct TimerCreationJob : IJobForEachWithEntity<Timer>
 		{
@@ -31,7 +36,15 @@ namespace Model.Systems
 		{
 			public void Execute([ReadOnly] ref Timer timer, ref TimerState state)
 			{
-				state.CountDown = state.CountDown > 0 ? state.CountDown - 1 : timer.Frames - 1;
+				switch (timer.TimerType)
+				{
+					case TimerType.Ticking:
+						state.CountDown = state.CountDown > 0 ? state.CountDown - 1 : timer.Frames - 1;					
+						break;
+					case TimerType.EveryFrame:
+						state.CountDown = 0;
+						break;
+				}
 			}
 		}
 

@@ -166,5 +166,21 @@ namespace Model.Systems
 		//road has multi-lane
 		//common buffer for all lanes
 		//visualization will be offset
+		
+		//variable length vehicles
+		//road maintain a queue
+		//and total length
+		//each car enter the road, will know where it ends, and add ups the length
+		//parallel per road, could write to road buffer!
+		
+		//when a car exit, it informs the road how much space it frees
+		//the road go through each vehicle and shift forward by that length
+		//also create space at the end by that length
+		//parallel per road, could write to road buffer!
+		
+		//merge-road with segments: improve path finding!
+		//the length add up, simulation only care about road length!
+		//visualization keep a list of segment's length per road
+		//per agent, a segment index is updated when it inches forward		
 	}
 }

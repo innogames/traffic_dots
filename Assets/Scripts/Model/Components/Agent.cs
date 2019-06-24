@@ -6,5 +6,6 @@ namespace Model.Components
 	[Serializable]
 	public struct Agent : IComponentData
 	{
+		public float Length;
 	}
 }

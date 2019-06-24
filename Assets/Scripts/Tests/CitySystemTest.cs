@@ -30,6 +30,7 @@ namespace Tests
 				StartNode = startNode,
 				EndNode = endNode,
 				Speed = 1f,
+				Length = 2f,
 			});
 			m_Manager.SetComponentData(connection, new Spline
 			{
@@ -68,16 +69,84 @@ namespace Tests
 			});
 			return agent;
 		}
+		
+		private Entity AddVarioAgent(Entity connectionCoord, float startCoord, Entity connectionTarget, float length)
+		{
+			var agent = m_Manager.CreateEntity(typeof(Agent),
+				typeof(ConnectionCoord),
+				typeof(ConnectionTarget),
+				typeof(Timer));
+			m_Manager.SetComponentData(agent, new Agent
+			{
+				Length = length,
+			});
+			m_Manager.SetComponentData(agent, new ConnectionCoord
+			{
+				Connection = connectionCoord,
+				Coord = startCoord,
+			});
+			m_Manager.SetComponentData(agent, new ConnectionTarget
+			{
+				Connection = connectionTarget,
+			});
+			m_Manager.SetComponentData(agent, new Timer
+			{
+				Frames = 1, //act every frame!
+			});
+			return agent;
+		}
+		
+		private Entity CreateAgentPrefab(float length)
+		{
+			var agentPrefab = m_Manager.CreateEntity(typeof(Agent),
+				typeof(ConnectionCoord),
+				typeof(ConnectionTarget),
+				typeof(Timer),
+				typeof(TimerState),
+				typeof(Disabled));
+			m_Manager.SetComponentData(agentPrefab, new Agent
+			{
+				Length = length,
+			});
+			return agentPrefab;
+		}
+		
+		private Entity AddAgentSpanwer(Entity agentPrefab, Entity spawnConnection, Entity targetConnection, int interval)
+		{
+			var spawner = m_Manager.CreateEntity(typeof(AgentSpawner),
+				typeof(ConnectionCoord),
+				typeof(ConnectionTarget),
+				typeof(Timer));
+			m_Manager.SetSharedComponentData(spawner, new AgentSpawner
+			{
+				Agent = agentPrefab,				
+			});
+			m_Manager.SetComponentData(spawner, new ConnectionCoord
+			{
+				Connection = spawnConnection,
+				Coord = 0, //this value is not used by AgentSpawningSystem
+			});
+			m_Manager.SetComponentData(spawner, new ConnectionTarget
+			{
+				Connection = targetConnection,
+			});
+			m_Manager.SetComponentData(spawner, new Timer()
+			{
+				Frames = interval,
+				TimerType = TimerType.Ticking,
+			});
+			m_Manager.RemoveComponent<Disabled>(spawner);
+			return spawner;
+		}
 
 		private void UpdateSystems()
 		{
 			World.GetOrCreateSystem<SplineSystem>().Update();
 			World.GetOrCreateSystem<EntitySlotSystem>().Update();
+			World.GetOrCreateSystem<AgentQueuePrepSystem>().Update();
 			
 			World.GetOrCreateSystem<TimerSystem>().Update();
 			World.GetOrCreateSystem<TimerBufferSystem>().Update();
-			
-			World.GetOrCreateSystem<AgentSpawningSystem>().Update();
 
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
 			
@@ -85,6 +154,10 @@ namespace Tests
 			World.GetOrCreateSystem<PathCacheCommandBufferSystem>().Update();
 			
 			World.GetOrCreateSystem<PathSystem>().Update();
+
+			World.GetOrCreateSystem<AgentSpawningSystem>().Update();
+			World.GetOrCreateSystem<AgentQueueSystem>().Update();
+			
 			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
 		}
 
@@ -135,7 +208,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void AgentWithPathIntent()
+		public void AgentInPathSystem()
 		{
 			var nodeA = AddNode(new float3(0, 0, 0));
 			var nodeB = AddNode(new float3(1, 0, 0));
@@ -169,6 +242,68 @@ namespace Tests
 			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionLocation>(agent).Connection, "reach target");
 		}
 
+		[Test]
+		public void AgentInAgentQueueSystem()
+		{
+			var nodeA = AddNode(new float3(0, 0, 0));
+			var nodeB = AddNode(new float3(1, 0, 0));
+			var nodeC = AddNode(new float3(1, 1, 0));
+			var roadAB = AddConnection(nodeA, nodeB);
+			var roadBC = AddConnection(nodeB, nodeC);
+
+			var agentA = AddVarioAgent(roadAB, 0f, roadBC, 1f);
+			var agentB = AddVarioAgent(roadAB, 1f, roadBC, 1f);
+
+			UpdateSystems();
+//			var timer = m_Manager.GetComponentData<Timer>(agent).Frames;
+//			var timerState = m_Manager.GetComponentData<TimerState>(agent).CountDown;
+//
+
+//			var agentLocation = m_Manager.GetComponentData<ConnectionLocation>(agent);
+			
+			Assert.AreEqual(2, m_Manager.GetComponentData<TimerState>(agentA).CountDown, "timer state");
+			Assert.AreEqual(0, m_Manager.GetComponentData<ConnectionCoord>(agentA).Coord, "agent A coord");
+			Assert.AreEqual(1, m_Manager.GetComponentData<ConnectionCoord>(agentB).Coord, "agent B coord");
+			
+			UpdateSystems();
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection, "reach target");
+		}
+		
+		[Test]
+		public void AgentSpawning()
+		{
+			var nodeA = AddNode(new float3(0, 0, 0));
+			var nodeB = AddNode(new float3(1, 0, 0));
+			var nodeC = AddNode(new float3(1, 1, 0));
+			var roadAB = AddConnection(nodeA, nodeB);
+			var roadBC = AddConnection(nodeB, nodeC);
+
+			var agentPrefab = CreateAgentPrefab(1f);
+			AddAgentSpanwer(agentPrefab, roadAB, roadBC, 1);
+			
+			UpdateSystems();
+
+			var buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
+			var agentA = buffer[0].Agent;
+			var agentCoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
+			Assert.AreEqual(roadAB, agentCoord.Connection, "agent A spawned correct connection!");
+			Assert.AreEqual(0, agentCoord.Coord, "agent A spawned correct position");
+
+			UpdateSystems();
+			buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
+			var agentB = buffer[1].Agent;
+			var agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
+			
+			Assert.AreEqual(roadAB, agentBCoord.Connection, "agent B spawned correct connection!");
+			Assert.AreEqual(1, agentBCoord.Coord, "agent B spawned correct position");
+			
+			UpdateSystems();
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection, "agent A reach target");
+
+			UpdateSystems();
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentB).Connection, "agent B reach target");
+		}
+		
 		const int size = 4;
 		private const int sizeSqr = size * size;
 
