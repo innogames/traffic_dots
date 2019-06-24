@@ -382,5 +382,59 @@ namespace Tests
 			var agent_end_con = m_Manager.GetComponentData<ConnectionLocation>(agent).Connection;
 			Assert.AreEqual(endCon, agent_end_con);
 		}
+		
+		[Test]
+		public void GridAgentQueue()
+		{
+			var nodes = new Entity[sizeSqr];
+			for (int x = 0; x < size; x++)
+			{
+				for (int y = 0; y < size; y++)
+				{
+					nodes[Coord(x, y)] = AddNode(new float3(x, y, 0f));
+				}
+			}
+
+			var horiCon = new Entity[sizeSqr];
+			var vertiCon = new Entity[sizeSqr];
+
+			for (int x = 0; x < size; x++)
+			{
+				for (int y = 0; y < size; y++)
+				{
+					var xy = Coord(x, y);
+					if (x + 1 < size)
+					{
+						var xy_right = Coord(x + 1, y);
+						horiCon[xy] = AddConnection(nodes[xy], nodes[xy_right]);
+					}
+
+					if (y + 1 < size)
+					{
+						var xy_down = Coord(x, y + 1);
+						vertiCon[xy] = AddConnection(nodes[xy], nodes[xy_down]);
+					}
+				}
+			}
+
+			var endCon = horiCon[Coord(size - 2, size - 2)];
+			var agentPrefab = CreateAgentPrefab(1f);
+			var startCon = horiCon[Coord(0, 0)];
+			AddAgentSpanwer(agentPrefab, startCon, endCon, 1);
+
+			UpdateSystems();
+			var agent = m_Manager.GetBuffer<AgentQueueBuffer>(startCon)[0].Agent;
+			using (var entities = m_Manager.GetAllEntities())
+			{
+				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));				
+			}
+
+			for (int i = 0; i < size * 2; i++)
+			{
+				UpdateSystems();
+			}
+			var agent_end_con = m_Manager.GetComponentData<ConnectionCoord>(agent).Connection;
+			Assert.AreEqual(endCon, agent_end_con);
+		}
 	}
 }
