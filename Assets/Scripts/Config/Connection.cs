@@ -123,17 +123,17 @@ namespace Config
 			gameObject.AddComponent<GameObjectEntity>();
 			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
-			gameObject.AddComponent<SplineProxy>().Value = new Spline
-			{
-				a = StartNode.NodePointer.transform.position,
-				b = Vector3.zero,
-				c = Vector3.zero,
-				d = EndNode.NodePointer.transform.position,
-			};
-			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
-			{
-				SlotCount = SlotCount,
-			};
+//			gameObject.AddComponent<SplineProxy>().Value = new Spline
+//			{
+//				a = StartNode.NodePointer.transform.position,
+//				b = Vector3.zero,
+//				c = Vector3.zero,
+//				d = EndNode.NodePointer.transform.position,
+//			};
+//			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
+//			{
+//				SlotCount = SlotCount,
+//			};
 		}
 
 		public override void PlayModeGenerate(CityConfig config)
@@ -146,7 +146,14 @@ namespace Config
 				EndNode = LinkedEndNode.Entity,
 				Speed = 1.0f,
 				Level = Level,
+				Length = ComputeLength(),
 			};
+		}
+
+		private float ComputeLength()//TODO use spline here
+		{
+			return (StartNode.NodePointer.transform.position -
+			        EndNode.NodePointer.transform.position).magnitude;
 		}
 		#endif
 	}

@@ -105,13 +105,10 @@ namespace Model.Systems
 						networkToBuffer.TryAdd(network, buffer);
 					}
 
-					var startPos = EntityManager.GetComponentData<Node>(connection.StartNode).Position;
-					var endPos = EntityManager.GetComponentData<Node>(connection.EndNode).Position;
-
 					buffer.Add(new NetAdjust
 					{
 						Connection = connectionEnt,
-						Cost = math.length(startPos - endPos) / connection.Speed,
+						Cost = connection.Length / connection.Speed,
 						StartNode = connection.StartNode,
 						EndNode = connection.EndNode
 					});

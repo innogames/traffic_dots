@@ -32,7 +32,8 @@ namespace Model.Systems
 				{
 					if (coord.Connection == target.Connection)
 					{
-						CommandBuffer.RemoveComponent<ConnectionTarget>(index, entity);
+//						CommandBuffer.RemoveComponent<ConnectionTarget>(index, entity);
+						CommandBuffer.DestroyEntity(index, entity);
 					}
 					else
 					{
