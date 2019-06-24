@@ -102,12 +102,21 @@ namespace Tests
 				typeof(ConnectionCoord),
 				typeof(ConnectionTarget),
 				typeof(Timer),
-				typeof(TimerState),
-				typeof(Disabled));
+				typeof(TimerState));
 			m_Manager.SetComponentData(agentPrefab, new Agent
 			{
 				Length = length,
 			});
+			m_Manager.SetComponentData(agentPrefab, new Timer
+			{
+				Frames = 10,
+				TimerType = TimerType.Freezing,
+			});
+			m_Manager.SetComponentData(agentPrefab, new TimerState
+			{
+				CountDown = 10,
+			});
+
 			return agentPrefab;
 		}
 		
@@ -285,9 +294,9 @@ namespace Tests
 
 			var buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
 			var agentA = buffer[0].Agent;
-			var agentCoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
-			Assert.AreEqual(roadAB, agentCoord.Connection, "agent A spawned correct connection!");
-			Assert.AreEqual(0, agentCoord.Coord, "agent A spawned correct position");
+			var agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
+			Assert.AreEqual(roadAB, agentACoord.Connection, "agent A spawned correct connection!");
+			Assert.AreEqual(0, agentACoord.Coord, "agent A spawned correct position");
 
 			UpdateSystems();
 			buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
@@ -296,11 +305,22 @@ namespace Tests
 			
 			Assert.AreEqual(roadAB, agentBCoord.Connection, "agent B spawned correct connection!");
 			Assert.AreEqual(1, agentBCoord.Coord, "agent B spawned correct position");
+
+			TimerState agentATimer;
+			TimerState agentBTimer;
 			
 			UpdateSystems();
+			agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
+			agentATimer = m_Manager.GetComponentData<TimerState>(agentA);
+			agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
+			agentBTimer = m_Manager.GetComponentData<TimerState>(agentB);
 			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection, "agent A reach target");
 
 			UpdateSystems();
+			agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
+			agentATimer = m_Manager.GetComponentData<TimerState>(agentA);
+			agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
+			agentBTimer = m_Manager.GetComponentData<TimerState>(agentB);
 			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentB).Connection, "agent B reach target");
 		}
 		
