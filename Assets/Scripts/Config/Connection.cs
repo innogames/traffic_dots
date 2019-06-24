@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Config
 {
-	public class Connection : MonoBehaviour
+	public class Connection : BaseGenerator
 	{
 		public Node StartNode;
 		public Node EndNode;
@@ -112,8 +112,10 @@ namespace Config
 			}
 		}
 
-		private void Awake()
+		#if UNITY_EDITOR
+		public virtual void Generate(CityConfig config)
 		{
+			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
 			var connection = gameObject.AddComponent<ConnectionProxy>();
 			connection.Value = new Model.Components.Connection
@@ -135,5 +137,6 @@ namespace Config
 				SlotCount = SlotCount,
 			};
 		}
+		#endif
 	}
 }

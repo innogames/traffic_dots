@@ -4,18 +4,20 @@ using UnityEngine;
 
 namespace Config
 {
-	public class Node : MonoBehaviour
+	public class Node : BaseGenerator
 	{
 		public Node NodePointer;
-		
+
+#if UNITY_EDITOR
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.blue;
 			Gizmos.DrawSphere(transform.position, 1.0f);
 		}
 
-		private void Awake()
+		public virtual void Generate(CityConfig config)
 		{
+			base.Generate(config);
 			if (this == NodePointer)
 			{
 				gameObject.AddComponent<GameObjectEntity>();
@@ -24,8 +26,9 @@ namespace Config
 				{
 					Position = new float3(transform.position),
 					Level = 0, //TODO
-				};				
+				};
 			}
 		}
+#endif
 	}
 }
