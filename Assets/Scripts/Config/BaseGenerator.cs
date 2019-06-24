@@ -9,17 +9,37 @@ namespace Config
 #if UNITY_EDITOR
 		public virtual void Generate(CityConfig config)
 		{
-			var proxys = GetComponents<ComponentDataProxyBase>();
-			foreach (var proxy in proxys)
-			{
-				DestroyImmediate(proxy);
-			}
+			CleanComponentProxys();
+			EditorUtility.SetDirty(this);
+		}
+
+		public virtual void PlayModeGenerate(CityConfig config)
+		{			
+		}
+
+		public virtual void Clean()
+		{
+			CleanComponentProxys();
+			CleanGOEntity();
+			EditorUtility.SetDirty(gameObject);
+		}
+
+		private void CleanGOEntity()
+		{
 			var goEntity = gameObject.GetComponent<GameObjectEntity>();
 			if (goEntity != null)
 			{
 				DestroyImmediate(goEntity);
 			}
-			EditorUtility.SetDirty(this);
+		}
+
+		private void CleanComponentProxys()
+		{
+			var proxys = GetComponents<ComponentDataProxyBase>();
+			foreach (var proxy in proxys)
+			{
+				DestroyImmediate(proxy);
+			}
 		}
 #endif
 	}

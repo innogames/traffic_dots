@@ -14,7 +14,13 @@ namespace Config
 			if (GUILayout.Button("Generate"))
 			{
 				cityGen.Generate(cityGen.Config);
-			}			
+			}
+
+			if (GUILayout.Button("Clean"))
+			{
+				cityGen.Clean();
+			}
+
 			EditorGUILayout.EndVertical();
 		}
 	}

@@ -113,18 +113,16 @@ namespace Config
 		}
 
 		#if UNITY_EDITOR
+
+		public GameObjectEntity LinkedStartNode;
+		public GameObjectEntity LinkedEndNode;
+		
 		public virtual void Generate(CityConfig config)
 		{
 			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
-			var connection = gameObject.AddComponent<ConnectionProxy>();
-			connection.Value = new Model.Components.Connection
-			{
-				StartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
-				EndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>().Entity,
-				Speed = 1.0f,
-				Level = Level,
-			};
+			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
+			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = new Spline
 			{
 				a = StartNode.NodePointer.transform.position,
@@ -135,6 +133,19 @@ namespace Config
 			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
 			{
 				SlotCount = SlotCount,
+			};
+		}
+
+		public override void PlayModeGenerate(CityConfig config)
+		{
+			base.PlayModeGenerate(config);
+			var connection = gameObject.AddComponent<ConnectionProxy>();
+			connection.Value = new Model.Components.Connection
+			{
+				StartNode = LinkedStartNode.Entity,
+				EndNode = LinkedEndNode.Entity,
+				Speed = 1.0f,
+				Level = Level,
 			};
 		}
 		#endif
