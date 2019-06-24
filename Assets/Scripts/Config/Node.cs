@@ -15,7 +15,7 @@ namespace Config
 			Gizmos.DrawSphere(transform.position, 1.0f);
 		}
 
-		public virtual void Generate(CityConfig config)
+		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
 			if (this == NodePointer)

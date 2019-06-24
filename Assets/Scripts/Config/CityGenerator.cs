@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Config
@@ -6,22 +8,19 @@ namespace Config
 	{
 		public CityConfig Config;
 #if UNITY_EDITOR
+		private static IEnumerable<BaseGenerator> GetGenerators()
+		{
+			return FindObjectsOfType<Node>().Cast<BaseGenerator>()
+				.Concat(FindObjectsOfType<Connection>())
+				.Concat(FindObjectsOfType<AgentSpawner>());
+		}
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
 
-			//nodes
-			var nodes = FindObjectsOfType<Node>();
-			foreach (var node in nodes)
+			foreach (var obj in GetGenerators())
 			{
-				node.Generate(config);
-			}
-
-			//connections
-			var connections = FindObjectsOfType<Connection>();
-			foreach (var connection in connections)
-			{
-				connection.Generate(config);
+				obj.Generate(config);
 			}
 		}
 
@@ -34,36 +33,18 @@ namespace Config
 		{
 			base.PlayModeGenerate(config);
 
-			//nodes
-			var nodes = FindObjectsOfType<Node>();
-			foreach (var node in nodes)
+			foreach (var obj in GetGenerators())
 			{
-				node.PlayModeGenerate(config);
-			}
-
-			//connections
-			var connections = FindObjectsOfType<Connection>();
-			foreach (var connection in connections)
-			{
-				connection.PlayModeGenerate(config);
+				obj.PlayModeGenerate(config);
 			}
 		}
 
 		public override void Clean()
 		{
-			//nodes
-			var nodes = FindObjectsOfType<Node>();
-			foreach (var node in nodes)
+			foreach (var obj in GetGenerators())
 			{
-				node.Clean();
+				obj.Clean();
 			}
-
-			//connections
-			var connections = FindObjectsOfType<Connection>();
-			foreach (var connection in connections)
-			{
-				connection.Clean();
-			}			
 		}
 #endif
 	}

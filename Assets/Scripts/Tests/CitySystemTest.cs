@@ -102,19 +102,11 @@ namespace Tests
 				typeof(ConnectionCoord),
 				typeof(ConnectionTarget),
 				typeof(Timer),
-				typeof(TimerState));
+				typeof(TimerState),
+				typeof(Prefab));
 			m_Manager.SetComponentData(agentPrefab, new Agent
 			{
 				Length = length,
-			});
-			m_Manager.SetComponentData(agentPrefab, new Timer
-			{
-				Frames = 10,
-				TimerType = TimerType.Freezing,
-			});
-			m_Manager.SetComponentData(agentPrefab, new TimerState
-			{
-				CountDown = 10,
 			});
 
 			return agentPrefab;
@@ -144,7 +136,6 @@ namespace Tests
 				Frames = interval,
 				TimerType = TimerType.Ticking,
 			});
-			m_Manager.RemoveComponent<Disabled>(spawner);
 			return spawner;
 		}
 

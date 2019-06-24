@@ -117,7 +117,7 @@ namespace Config
 		public GameObjectEntity LinkedStartNode;
 		public GameObjectEntity LinkedEndNode;
 		
-		public virtual void Generate(CityConfig config)
+		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
