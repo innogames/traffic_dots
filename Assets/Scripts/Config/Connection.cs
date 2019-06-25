@@ -11,10 +11,11 @@ namespace Config
 	{
 		public Node StartNode;
 		public Node EndNode;
+		public bool IsIntersection;
 		public int Level = 1;
 
 		private int SlotCount => Vehicles.Count;
-		
+
 		public int LaneCount = 1;
 		public float CurveIn = 1.0f;
 
@@ -38,33 +39,44 @@ namespace Config
 			DrawVehicle(false, Color.gray);
 		}
 
-		private void OnDrawGizmos()
-		{
-			DrawVehicle(true, Color.green);
-		}
+//		private void OnDrawGizmos()
+//		{
+//			DrawVehicle(true, Color.green);
+//		}
 
 		private void DrawVehicle(bool vehicleEnable, Color color)
 		{
 			if (StartNode != null && EndNode != null)
 			{
-				Gizmos.color = color;
-				GetMeshes();
-
-				using (var tangents = SlotSteps(BezierFunc(true)).GetEnumerator())
+				var s = PreviewBezier();
+				var length = (int) s.TotalLength();
+				for (int i = 0; i <= length - 1; i++)
 				{
-					int index = 0;
-					foreach (var pos in SlotSteps(BezierFunc()))
-					{
-						tangents.MoveNext();
-						if (Vehicles[index] == vehicleEnable)
-						{
-							var forward = tangents.Current;						
-							var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
-							Gizmos.DrawMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));							
-						}
-						index++;
-					}
+					var startPoint = s.Point((float) i / length);
+					var endPoint = s.Point((float) (i + 1) / length);
+					Gizmos.color = (i % 2) == 0 ? Color.blue : Color.red;
+					Gizmos.DrawLine(startPoint, endPoint);
 				}
+
+//				Gizmos.color = color;
+//				GetMeshes();
+//
+//				using (var tangents = SlotSteps(BezierFunc(true)).GetEnumerator())
+//				{
+//					int index = 0;
+//					foreach (var pos in SlotSteps(BezierFunc()))
+//					{
+//						tangents.MoveNext();
+//						if (Vehicles[index] == vehicleEnable)
+//						{
+//							var forward = tangents.Current;
+//							var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
+//							Gizmos.DrawMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));
+//						}
+//
+//						index++;
+//					}
+//				}
 			}
 		}
 
@@ -73,12 +85,24 @@ namespace Config
 			var s = ComputeBezierPoints();
 			if (isTangent)
 			{
-				return t => (Vector3) s.Tangent(t);				
+				return t => (Vector3) s.Tangent(t);
 			}
 			else
 			{
-				return t => (Vector3) s.Point(t);				
+				return t => (Vector3) s.Point(t);
 			}
+		}
+
+		private Spline PreviewBezier()
+		{
+			var start = StartNode.transform;
+			var end = EndNode.transform;
+			Spline ret;
+			ret.a = start.position; //use NodePointer here for precise transition
+			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
+			ret.d = end.position;
+			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
+			return ret;
 		}
 
 		private Spline ComputeBezierPoints()
@@ -87,9 +111,9 @@ namespace Config
 			var end = EndNode.transform;
 			Spline ret;
 			ret.a = StartNode.NodePointer.transform.position; //use NodePointer here for precise transition
-			ret.b = (Vector3)ret.a + (start.forward * CurveIn);
+			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
 			ret.d = EndNode.NodePointer.transform.position;
-			ret.c = (Vector3)ret.d - (end.forward * CurveIn);
+			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
 			return ret;
 		}
 
@@ -102,11 +126,11 @@ namespace Config
 			}
 		}
 
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 
 		public GameObjectEntity LinkedStartNode;
 		public GameObjectEntity LinkedEndNode;
-		
+
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
@@ -138,6 +162,6 @@ namespace Config
 		{
 			return ComputeBezierPoints().TotalLength();
 		}
-		#endif
+#endif
 	}
 }
