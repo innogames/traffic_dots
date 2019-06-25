@@ -645,6 +645,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1D
       objectReference: {fileID: 0}
+    - target: {fileID: 5433893267565389505, guid: b5c54f57db90f4134bb8a815c58cc505,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 234695918}
     - target: {fileID: 4000013014023758, guid: b5c54f57db90f4134bb8a815c58cc505, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.00001
@@ -709,11 +714,6 @@ PrefabInstance:
       propertyPath: ConnectedToIndex
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5433893267565389505, guid: b5c54f57db90f4134bb8a815c58cc505,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 234695918}
     - target: {fileID: 3857412688330807210, guid: b5c54f57db90f4134bb8a815c58cc505,
         type: 3}
       propertyPath: NodePointer
@@ -1853,6 +1853,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1A
       objectReference: {fileID: 0}
+    - target: {fileID: 1489695081523340009, guid: 8aac75e6aadf149a49501c11ad7779d6,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 791980921}
     - target: {fileID: 4000011784426990, guid: 8aac75e6aadf149a49501c11ad7779d6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.999991
@@ -1907,11 +1912,6 @@ PrefabInstance:
       propertyPath: ConnectedTo
       value: 
       objectReference: {fileID: 1987286908}
-    - target: {fileID: 1489695081523340009, guid: 8aac75e6aadf149a49501c11ad7779d6,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 791980921}
     - target: {fileID: 4274970405164182184, guid: 8aac75e6aadf149a49501c11ad7779d6,
         type: 3}
       propertyPath: NodePointer
@@ -2100,7 +2100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    TrafficType: 2
+    TrafficType: 1
 --- !u!114 &1348286887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2230,6 +2230,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1D
       objectReference: {fileID: 0}
+    - target: {fileID: 5433893267565389505, guid: b5c54f57db90f4134bb8a815c58cc505,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 1723581783}
     - target: {fileID: 4000013014023758, guid: b5c54f57db90f4134bb8a815c58cc505, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.000008583069
@@ -2284,11 +2289,6 @@ PrefabInstance:
       propertyPath: ConnectedTo
       value: 
       objectReference: {fileID: 582723424}
-    - target: {fileID: 5433893267565389505, guid: b5c54f57db90f4134bb8a815c58cc505,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 1723581783}
     - target: {fileID: 3857412688330807210, guid: b5c54f57db90f4134bb8a815c58cc505,
         type: 3}
       propertyPath: NodePointer
@@ -3142,6 +3142,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1I
       objectReference: {fileID: 0}
+    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 623963350}
+    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 1606598107}
     - target: {fileID: 5610056154304512072, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: ConnectedTo
@@ -3196,16 +3206,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 1606598107}
-    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 623963350}
     - target: {fileID: 8830518451324063544, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: LinkedStartNode
@@ -3328,6 +3328,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1I
       objectReference: {fileID: 0}
+    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 1697903177}
+    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 1774517648}
     - target: {fileID: 5610056154304512072, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: ConnectedTo
@@ -3382,16 +3392,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 1774517648}
-    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 1697903177}
     - target: {fileID: 8830518451324063544, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: LinkedStartNode
@@ -3514,6 +3514,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1I
       objectReference: {fileID: 0}
+    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 693027277}
+    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
+        type: 3}
+      propertyPath: NodePointer
+      value: 
+      objectReference: {fileID: 1951686911}
     - target: {fileID: 5610056154304512072, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: ConnectedTo
@@ -3563,16 +3573,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5887462637509716071, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 1951686911}
-    - target: {fileID: 6693900433529722428, guid: 38ebf13694a284871b74b6fa244004d3,
-        type: 3}
-      propertyPath: NodePointer
-      value: 
-      objectReference: {fileID: 693027277}
     - target: {fileID: 8830518451324063544, guid: 38ebf13694a284871b74b6fa244004d3,
         type: 3}
       propertyPath: LinkedStartNode

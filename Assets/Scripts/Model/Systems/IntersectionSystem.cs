@@ -8,7 +8,7 @@ namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(NetworkCreationSystem))]
-	[UpdateBefore(typeof(PathCacheCommandBufferSystem))]
+	[UpdateBefore(typeof(AgentQueueSystem))]
 	public class IntersectionSystem : JobComponentSystem
 	{
 		[BurstCompile]

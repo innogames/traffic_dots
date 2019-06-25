@@ -684,6 +684,9 @@ MonoBehaviour:
   - ConnectionA: {fileID: 2706030077362335197}
     ConnectionB: {fileID: 0}
     Frames: 60
+  - ConnectionA: {fileID: 5495868104686172456}
+    ConnectionB: {fileID: 0}
+    Frames: 60
 --- !u!1 &135217677645954342
 GameObject:
   m_ObjectHideFlags: 0
