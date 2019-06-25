@@ -123,13 +123,13 @@ namespace Config
 			gameObject.AddComponent<GameObjectEntity>();
 			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
-//			gameObject.AddComponent<SplineProxy>().Value = new Spline
-//			{
-//				a = StartNode.NodePointer.transform.position,
-//				b = Vector3.zero,
-//				c = Vector3.zero,
-//				d = EndNode.NodePointer.transform.position,
-//			};
+			gameObject.AddComponent<SplineProxy>().Value = new Spline
+			{
+				a = StartNode.NodePointer.transform.position,
+				b = Vector3.zero,
+				c = Vector3.zero,
+				d = EndNode.NodePointer.transform.position,
+			};
 //			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
 //			{
 //				SlotCount = SlotCount,
@@ -144,7 +144,7 @@ namespace Config
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
-				Speed = 1.0f,
+				Speed = 3.0f / 60f,
 				Level = Level,
 				Length = ComputeLength(),
 			};

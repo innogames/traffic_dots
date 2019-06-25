@@ -1,4 +1,5 @@
 using Model.Components;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -32,6 +33,7 @@ namespace Model.Systems
 			}
 		}
 
+		[BurstCompile]
 		private struct TimerCountDownJob : IJobForEach<Timer, TimerState>
 		{
 			public void Execute([ReadOnly] ref Timer timer, ref TimerState state)
