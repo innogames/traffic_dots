@@ -43,7 +43,7 @@ namespace Model.Components
 			int roughLen = (int)math.ceil(RoughLength());
 			float totalLen = 0;
 			var lastPos = Point(0f);
-			for (int i = 1; i < roughLen; i++)
+			for (int i = 1; i <= roughLen; i++)
 			{
 				var curPos = Point((float) i / roughLen);
 				totalLen += math.length(curPos - lastPos);
