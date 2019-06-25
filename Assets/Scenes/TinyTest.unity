@@ -999,7 +999,7 @@ MonoBehaviour:
   Agent: {fileID: 1000013281362706, guid: 9017d95f607e942a7aa0dbd619ded6cc, type: 3}
   SpawnConnection: {fileID: 1259532424}
   TargetConnection: {fileID: 1721592581}
-  Interval: 180
+  Interval: 60
   LinkedSpawnConnection: {fileID: 1259532437}
   LinkedTargetConnection: {fileID: 1721592582}
 --- !u!114 &915313296
@@ -1015,7 +1015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 180
+    Frames: 60
     TimerType: 0
 --- !u!114 &915313297
 MonoBehaviour:

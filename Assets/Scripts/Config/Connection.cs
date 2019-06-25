@@ -144,7 +144,7 @@ namespace Config
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
-				Speed = 3.0f / 60f,
+				Speed = 6.0f / 60f,
 				Level = Level,
 				Length = ComputeLength(),
 			};

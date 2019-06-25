@@ -8,11 +8,11 @@ namespace Model.Systems
 	{
 		public float EnterLength;
 		public float ExitLength;
-		
+
 		public bool CouldAgentEnter(ref Agent agent, ref Connection connection)
 		{
 			return (EnterLength >= agent.Length //car fit 
-			        || EnterLength >= connection.Length);  //car is larger than the road & the road is empty
+			        || EnterLength >= connection.Length); //car is larger than the road & the road is empty
 		}
 
 		public float NewAgentCoord(ref Connection connection)
@@ -28,6 +28,16 @@ namespace Model.Systems
 		public int FramesToEnter(ref Connection connection)
 		{
 			return (int) math.ceil(EnterLength / connection.Speed);
-		}		
+		}
+
+		public void AgentLeaveThePack(ref Agent agent, ref Connection connection)
+		{
+			ExitLength = math.min(ExitLength + agent.Length, connection.Length);
+		}
+
+		public void ClearConnection(ref Connection connection)
+		{
+			EnterLength = connection.Length;
+		}
 	}
 }

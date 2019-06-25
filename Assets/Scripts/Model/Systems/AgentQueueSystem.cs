@@ -28,22 +28,29 @@ namespace Model.Systems
 				[ReadOnly] ref ConnectionTarget target,
 				ref Timer timer, ref TimerState timerState)
 			{
-				if (timerState.CountDown == 0)
+				if (timerState.CountDown == 0 && timer.TimerType != TimerType.Freezing)
 				{
-					if (coord.Connection == target.Connection)
+					var curConnectionEnt = coord.Connection;
+					var targetConnectionEnt = target.Connection;
+
+					if (curConnectionEnt == targetConnectionEnt)
 					{
-//						CommandBuffer.RemoveComponent<ConnectionTarget>(index, entity);
-						CommandBuffer.DestroyEntity(index, entity);
+						//remove entity
+//						CommandBuffer.DestroyEntity(index, entity);
+//						var curConnection = Connections[curConnectionEnt];
+//						var curState = ConnectionStates[curConnectionEnt];
+//						curState.AgentLeave(ref agent, ref curConnection);
+
+						timer.TimerType = TimerType.Freezing;
 					}
 					else
 					{
 						if (coord.Coord <= 0f) //reach end of connection
 						{
-							var curConnectionEnt = coord.Connection;
 							var startNode = Connections[curConnectionEnt].EndNode;
-							var endNode = Connections[target.Connection].StartNode;
+							var endNode = Connections[targetConnectionEnt].StartNode;
 							var nextConnectionEnt = startNode == endNode
-								? target.Connection
+								? targetConnectionEnt
 								: Next[startNode][Indexes[endNode].Index].Connection;
 							var nextConnection = Connections[nextConnectionEnt];
 							var nextState = ConnectionStates[nextConnectionEnt];
@@ -53,15 +60,24 @@ namespace Model.Systems
 								coord.Coord = nextState.NewAgentCoord(ref nextConnection);
 
 								timer.Frames = nextState.FramesToEnter(ref nextConnection);
+								timer.TimerType = TimerType.Ticking;
 								timerState.CountDown = timer.Frames;
 
-								if (AgentQueue[curConnectionEnt].Length > 0)
+								var curQueue = AgentQueue[curConnectionEnt];
+								if (curQueue.Length > 0) //some other car behind
 								{
 									var curConnection = Connections[curConnectionEnt];
 									var curState = ConnectionStates[curConnectionEnt];
-									curState.ExitLength =
-										math.min(curState.ExitLength + agent.Length, curConnection.Length);
+									curState.AgentLeaveThePack(ref agent, ref curConnection);
 									ConnectionStates[curConnectionEnt] = curState;									
+								}
+								else
+								{
+									var curConnection = Connections[curConnectionEnt];
+									var curState = ConnectionStates[curConnectionEnt];
+									curState.ClearConnection(ref curConnection);
+									ConnectionStates[curConnectionEnt] = curState;
+									curQueue.Clear();//it's the only vehicle here, no race condition!
 								}
 
 								nextState.AcceptAgent(ref agent);
@@ -72,8 +88,12 @@ namespace Model.Systems
 							}
 							else
 							{
-								//TODO freeze timer here
+								timer.TimerType = TimerType.EveryFrame;
 							}
+						}
+						else
+						{
+							timer.TimerType = TimerType.Freezing;
 						}
 					}
 				}
@@ -110,6 +130,7 @@ namespace Model.Systems
 						Timers[agent.Agent] = new Timer
 						{
 							Frames = timer.Frames + extraTime,
+							TimerType = TimerType.Ticking,
 						};
 						var timerState = TimerStates[agent.Agent];
 						TimerStates[agent.Agent] = new TimerState
