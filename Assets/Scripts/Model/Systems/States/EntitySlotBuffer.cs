@@ -1,9 +1,9 @@
 using Unity.Entities;
 
-namespace Model.Systems
+namespace Model.Systems.States
 {
 	[InternalBufferCapacity(SystemConstants.ConnectionSlotAverage)]
-	public struct AgentQueueBuffer : IBufferElementData
+	public struct EntitySlotBuffer : IBufferElementData
 	{
 		public Entity Agent;
 	}

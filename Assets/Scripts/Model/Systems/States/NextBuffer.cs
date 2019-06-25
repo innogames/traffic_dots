@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace Model.Systems
+namespace Model.Systems.States
 {
 	[InternalBufferCapacity(SystemConstants.NetworkNodeSize)]
 	public struct NextBuffer : IBufferElementData

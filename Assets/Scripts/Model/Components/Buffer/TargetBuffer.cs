@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-namespace Model.Components
+namespace Model.Components.Buffer
 {
 	[Serializable]
 	[InternalBufferCapacity(ComponentConstants.TargetNumber)]

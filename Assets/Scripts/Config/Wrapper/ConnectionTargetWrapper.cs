@@ -2,15 +2,15 @@ using Model.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Config
+namespace Config.Wrapper
 {
 	[RequiresEntityConversion]
-	public class TimerStateWrapper : MonoBehaviour, IConvertGameObjectToEntity
+	public class ConnectionTargetWrapper : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		//TODO add fields
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, new TimerState());
+			dstManager.AddComponentData(entity, new ConnectionTarget());
 		}
 	}
 }

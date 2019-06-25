@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Model.Components;
 using Model.Systems;
+using Model.Systems.States;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;

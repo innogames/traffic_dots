@@ -1,4 +1,5 @@
 using Model.Components;
+using Model.Components.Buffer;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;

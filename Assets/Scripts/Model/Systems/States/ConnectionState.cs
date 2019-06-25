@@ -2,7 +2,7 @@ using Model.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Model.Systems
+namespace Model.Systems.States
 {
 	public struct ConnectionState : ISystemStateComponentData
 	{

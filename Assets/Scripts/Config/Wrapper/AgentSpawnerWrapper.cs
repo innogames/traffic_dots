@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Config
+namespace Config.Wrapper
 {
 	[RequiresEntityConversion]
 	public class AgentSpawnerWrapper : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity

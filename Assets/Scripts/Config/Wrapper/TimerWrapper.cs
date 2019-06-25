@@ -2,7 +2,7 @@ using Model.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Config
+namespace Config.Wrapper
 {
 	[RequiresEntityConversion]
 	public class TimerWrapper : MonoBehaviour, IConvertGameObjectToEntity
