@@ -36,12 +36,22 @@ namespace Model.Systems
 					if (curConnectionEnt == targetConnectionEnt)
 					{
 						//remove entity
-//						CommandBuffer.DestroyEntity(index, entity);
-//						var curConnection = Connections[curConnectionEnt];
-//						var curState = ConnectionStates[curConnectionEnt];
-//						curState.AgentLeave(ref agent, ref curConnection);
+						CommandBuffer.DestroyEntity(index, entity);
+						var curConnection = Connections[curConnectionEnt];
+						var curState = ConnectionStates[curConnectionEnt];
+						var curQueue = AgentQueue[curConnectionEnt];
+						if (curQueue.Length > 0)
+						{
+							curState.AgentLeaveThePack(ref agent, ref curConnection);							
+						}
+						else
+						{
+							curState.ClearConnection(ref curConnection);
+							curQueue.Clear();//the only car here => no race condition
+						}
+						ConnectionStates[curConnectionEnt] = curState;
 
-						timer.TimerType = TimerType.Freezing;
+//						timer.TimerType = TimerType.Freezing;
 					}
 					else
 					{
@@ -64,17 +74,15 @@ namespace Model.Systems
 								timerState.CountDown = timer.Frames;
 
 								var curQueue = AgentQueue[curConnectionEnt];
+								var curConnection = Connections[curConnectionEnt];
+								var curState = ConnectionStates[curConnectionEnt];
 								if (curQueue.Length > 0) //some other car behind
 								{
-									var curConnection = Connections[curConnectionEnt];
-									var curState = ConnectionStates[curConnectionEnt];
 									curState.AgentLeaveThePack(ref agent, ref curConnection);
 									ConnectionStates[curConnectionEnt] = curState;									
 								}
 								else
 								{
-									var curConnection = Connections[curConnectionEnt];
-									var curState = ConnectionStates[curConnectionEnt];
 									curState.ClearConnection(ref curConnection);
 									ConnectionStates[curConnectionEnt] = curState;
 									curQueue.Clear();//it's the only vehicle here, no race condition!
