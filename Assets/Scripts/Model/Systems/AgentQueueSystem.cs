@@ -111,7 +111,7 @@ namespace Model.Systems
 						}
 						else
 						{
-							timer.TimerType = TimerType.Freezing;
+							timer.TimerType = TimerType.Freezing; //waiting to be pull by AgentMoveForward
 						}
 					}
 				}

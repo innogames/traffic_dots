@@ -11,7 +11,7 @@ namespace Model.Systems
 	[UpdateBefore(typeof(AgentQueueSystem))]
 	public class IntersectionSystem : JobComponentSystem
 	{
-		[BurstCompile]
+//		[BurstCompile]
 		private struct OperateJob : IJobForEachWithEntity<Intersection, Timer, TimerState>
 		{
 			[ReadOnly] public BufferFromEntity<IntersectionPhaseBuffer> PhaseBuffer;
@@ -31,36 +31,49 @@ namespace Model.Systems
 				{
 					var phases = PhaseBuffer[entity];
 					var phase = phases[intersection.Phase];
-					var connectionEnt = phase.Connection;
+					var connectionAEnt = phase.ConnectionA;
+					var connectionBEnt = phase.ConnectionB;
 					switch (intersection.PhaseType)
 					{
 						case IntersectionPhaseType.Enable:
 							intersection.PhaseType = IntersectionPhaseType.ClearingTraffic;
-							ConnectionTraffics[connectionEnt] = new ConnectionTraffic
-							{
-								TrafficType = ConnectionTrafficType.NoEntrance,
-							};
+							ChangeConnectionTraffic(ref connectionAEnt, ConnectionTrafficType.NoEntrance);
+							ChangeConnectionTraffic(ref connectionBEnt, ConnectionTrafficType.NoEntrance);
 							timer.ChangeToEveryFrame(ref timerState);
 							break;
 						case IntersectionPhaseType.ClearingTraffic:
-							var conState = ConStates[connectionEnt];
-							var conLen = ConLengths[connectionEnt];
-							if (conState.IsEmpty(ref conLen))
-							{	
+							if (CheckConnectionEmpty(ref connectionAEnt)
+							&& CheckConnectionEmpty(ref connectionBEnt))
+							{
 								//move to next phase
 								intersection.PhaseType = IntersectionPhaseType.Enable;
 								intersection.Phase = (intersection.Phase + 1) % phases.Length;
-								phase = phases[intersection.Phase];
-								timerState.CountDown = timer.Frames = phase.Frames;
+								var nextPhase = phases[intersection.Phase];
+								timerState.CountDown = timer.Frames = nextPhase.Frames;
 								timer.TimerType = TimerType.Ticking;
-								ConnectionTraffics[phase.Connection] = new ConnectionTraffic
-								{
-									TrafficType = ConnectionTrafficType.PassThrough,
-								};
+								ChangeConnectionTraffic(ref nextPhase.ConnectionA, ConnectionTrafficType.PassThrough);
+								ChangeConnectionTraffic(ref nextPhase.ConnectionB, ConnectionTrafficType.PassThrough);
 							}
 							break;
-					}
+					}					
+				}
+			}
 
+			private bool CheckConnectionEmpty(ref Entity connectionAEnt)
+			{
+				var conState = ConStates[connectionAEnt];
+				var conLen = ConLengths[connectionAEnt];
+				return conState.IsEmpty(ref conLen);
+			}
+
+			private void ChangeConnectionTraffic(ref Entity connectionAEnt, ConnectionTrafficType trafficType)
+			{
+				if (connectionAEnt != Entity.Null)
+				{
+					ConnectionTraffics[connectionAEnt] = new ConnectionTraffic
+					{
+						TrafficType = trafficType,
+					};
 				}
 			}
 		}

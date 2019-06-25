@@ -37,15 +37,19 @@ namespace Config
 			}
 		}
 
+		private Entity GetConnectionEntity(Connection connection)
+		{
+			return connection == null ? Entity.Null : connection.GetComponent<GameObjectEntity>().Entity;
+		}
+
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
 			var list = Phases.Select(phase => new IntersectionPhaseBuffer
 			{
-				Connection = phase.ConnectionA == null
-					? Entity.Null
-					: phase.ConnectionA.GetComponent<GameObjectEntity>().Entity,
-				Frames = phase.Frames
+				ConnectionA = GetConnectionEntity(phase.ConnectionA),
+				ConnectionB = GetConnectionEntity(phase.ConnectionB),
+				Frames = phase.Frames,
 			}).ToList();
 			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(list);
 		}
@@ -60,7 +64,7 @@ namespace Config
 			if (IsIntersection())
 			{
 				bool isEnable = Phases[0].ConnectionA == connection ||
-				       Phases[0].ConnectionB == connection;
+				                Phases[0].ConnectionB == connection;
 				return isEnable ? ConnectionTrafficType.PassThrough : ConnectionTrafficType.NoEntrance;
 			}
 			else

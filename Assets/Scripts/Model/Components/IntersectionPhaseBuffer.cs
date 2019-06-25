@@ -7,7 +7,8 @@ namespace Model.Components
 	[InternalBufferCapacity(ComponentConstants.IntersectionPhase)]
 	public struct IntersectionPhaseBuffer : IBufferElementData
 	{
-		public Entity Connection;
+		public Entity ConnectionA;
+		public Entity ConnectionB;
 		public int Frames;
 	}
 }

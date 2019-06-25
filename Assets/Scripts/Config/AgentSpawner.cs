@@ -32,9 +32,13 @@ namespace Config
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
+			GameObjectEntity goEnt;
+			var agentEntity = (goEnt = Agent.GetComponent<GameObjectEntity>()) != null
+				? goEnt.Entity
+				: GameObjectConversionUtility.ConvertGameObjectHierarchy(Agent, World.Active);
 			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
 			{
-				Agent = GameObjectConversionUtility.ConvertGameObjectHierarchy(Agent, World.Active),
+				Agent = agentEntity,
 			};
 			var spawnLocation = gameObject.AddComponent<ConnectionCoordProxy>();
 			spawnLocation.Value = new ConnectionCoord()
