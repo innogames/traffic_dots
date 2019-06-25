@@ -10,9 +10,11 @@ namespace Config
 #if UNITY_EDITOR
 		private static IEnumerable<BaseGenerator> GetGenerators()
 		{
+			//the order here is important!
 			return FindObjectsOfType<Node>().Cast<BaseGenerator>()
 				.Concat(FindObjectsOfType<Connection>())
 				.Concat(FindObjectsOfType<RoadSegment>())
+				.Concat(FindObjectsOfType<ConnectionSpawner>())
 				.Concat(FindObjectsOfType<AgentSpawner>());
 		}
 		public override void Generate(CityConfig config)

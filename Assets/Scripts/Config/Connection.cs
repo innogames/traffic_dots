@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Model.Components;
 using Unity.Entities;
 using UnityEngine;
@@ -11,46 +8,34 @@ namespace Config
 	{
 		public Node StartNode;
 		public Node EndNode;
-		public bool IsIntersection;
 		public int Level = 1;
-
-		private int SlotCount => Vehicles.Count;
-
-		public int LaneCount = 1;
+		
 		public float CurveIn = 1.0f;
 
-		public List<bool> Vehicles = new List<bool>();
-
-		private IReadOnlyList<Mesh> _meshes;
-
-		private void GetMeshes()
+		public Vector3 GetMidPoint()
 		{
-			if (_meshes == null)
+			if (StartNode == null || EndNode == null)
 			{
-				var config = GetComponentInParent<RoadSegment>().Config;
-				if (config == null || config.Vehicles == null) return;
-				_meshes = config.Vehicles
-					.Select(vehicle => vehicle.GetComponent<MeshFilter>().sharedMesh).ToArray();
+				return Vector3.zero;
+			}
+			else
+			{
+				return (StartNode.transform.position + EndNode.transform.position) * 0.5f;
 			}
 		}
-
+		
 		private void OnDrawGizmosSelected()
 		{
-			DrawVehicle();
+			DrawSpline();
 		}
 
-//		private void OnDrawGizmos()
-//		{
-//			DrawVehicle(true, Color.green);
-//		}
-
-		private void DrawVehicle()
+		private void DrawSpline()
 		{
 			if (StartNode != null && EndNode != null)
 			{
 				var offset = Vector3.up * 0.1f; //to avoid z fighting
 				var s = PreviewBezier();
-				var length = (int) s.TotalLength();
+				int length = (int) s.TotalLength();
 				for (int i = 0; i <= length - 1; i++)
 				{
 					var startPoint = s.Point((float) i / length);
@@ -58,39 +43,6 @@ namespace Config
 					Gizmos.color = (i % 2) == 0 ? Color.blue : Color.red;
 					Gizmos.DrawLine((Vector3)startPoint + offset, (Vector3)endPoint + offset);
 				}
-
-//				Gizmos.color = color;
-//				GetMeshes();
-//
-//				using (var tangents = SlotSteps(BezierFunc(true)).GetEnumerator())
-//				{
-//					int index = 0;
-//					foreach (var pos in SlotSteps(BezierFunc()))
-//					{
-//						tangents.MoveNext();
-//						if (Vehicles[index] == vehicleEnable)
-//						{
-//							var forward = tangents.Current;
-//							var mesh = _meshes[Math.Abs(pos.GetHashCode()) % _meshes.Count];
-//							Gizmos.DrawMesh(mesh, pos, Quaternion.LookRotation(forward, Vector3.up));
-//						}
-//
-//						index++;
-//					}
-//				}
-			}
-		}
-
-		public Func<float, Vector3> BezierFunc(bool isTangent = false)
-		{
-			var s = ComputeBezierPoints();
-			if (isTangent)
-			{
-				return t => (Vector3) s.Tangent(t);
-			}
-			else
-			{
-				return t => (Vector3) s.Point(t);
 			}
 		}
 
@@ -99,7 +51,7 @@ namespace Config
 			var start = StartNode.transform;
 			var end = EndNode.transform;
 			Spline ret;
-			ret.a = start.position; //use NodePointer here for precise transition
+			ret.a = start.position;
 			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
 			ret.d = end.position;
 			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
@@ -111,20 +63,11 @@ namespace Config
 			var start = StartNode.transform;
 			var end = EndNode.transform;
 			Spline ret;
-			ret.a = StartNode.NodePointer.transform.position; //use NodePointer here for precise transition
+			ret.a = StartNode.GenTimePointer.transform.position; //use NodePointer here for precise transition
 			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
-			ret.d = EndNode.NodePointer.transform.position;
+			ret.d = EndNode.GenTimePointer.transform.position;
 			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
 			return ret;
-		}
-
-		public IEnumerable<Vector3> SlotSteps(Func<float, Vector3> func)
-		{
-			for (int i = 0; i < SlotCount; i++)
-			{
-				float t = (i + 0.5f) / SlotCount;
-				yield return func(t);
-			}
 		}
 
 #if UNITY_EDITOR
@@ -136,8 +79,8 @@ namespace Config
 		{
 			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
-			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
-			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
+			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
+			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
 			gameObject.AddComponent<ConnectionLengthProxy>().Value = new ConnectionLength
 			{
@@ -148,10 +91,6 @@ namespace Config
 			{
 				TrafficType = trafficType,
 			};
-//			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
-//			{
-//				SlotCount = SlotCount,
-//			};
 		}
 
 		public override void PlayModeGenerate(CityConfig config)

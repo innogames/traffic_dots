@@ -11,6 +11,7 @@ namespace Config
 		Pavement = 1 << 5,
 		RoadProps = 1 << 6,
 		Building = 1 << 7,
+		BigBuilding = 1 << 8,
 	}
 
 	public static class ConnectorTypeUtility

@@ -30,6 +30,8 @@ MonoBehaviour:
   - {fileID: 3171476420155611947, guid: 9022964f16d44406ab9a26ce911b511b, type: 3}
   - {fileID: 4227665995504874018, guid: ae79fc296f66b4f18bb02bac835048dc, type: 3}
   - {fileID: 8103623084998886092, guid: 32cbe74d78d214b20b512a6564f10d71, type: 3}
+  - {fileID: 8039655616525855155, guid: 56840a2df5e9a4d0ba4fa26820afe2c1, type: 3}
+  - {fileID: 5546366746254902377, guid: d3d20f00d97834c33a60cf96258f05ff, type: 3}
   Vehicles:
   - {fileID: 6560582018296956040, guid: 73fead72e0aaf46a3a96b621e7ef02bb, type: 3}
   - {fileID: 693177805191083035, guid: 9c89b8165b9d54e90a47b1663eefb92f, type: 3}

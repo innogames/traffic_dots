@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Config
@@ -8,7 +9,8 @@ namespace Config
 		public Connector ConnectedTo;
 		public int ConnectedToIndex = 0;
 		[EnumFlags] public ConnectorType ConnectorType = ConnectorType.TwoLane;
-		public Node[] SharedNodes;
+
+		public IEnumerable<Node> SharedNodes => GetComponentsInChildren<Node>();
 
 		private void OnDrawGizmos()
 		{
@@ -23,7 +25,7 @@ namespace Config
 		{
 			foreach (var myNode in SharedNodes)
 			{
-				if (myNode.NodePointer != null) continue;
+//				if (myNode.NodePointer != null) continue; //this cause bugs if starts from old segment
 				foreach (var other in ConnectedTo.SharedNodes)
 				{
 					if (ConfigConstants.Connected(myNode.transform, other.transform))

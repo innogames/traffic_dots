@@ -507,6 +507,7 @@ Transform:
   - {fileID: 4000014286990894}
   - {fileID: 4000014009569124}
   - {fileID: 7636715369524569819}
+  - {fileID: 7899340726670235133}
   - {fileID: 7112208361416334703}
   - {fileID: 1757063787375143199}
   - {fileID: 3665666950815006278}
@@ -594,6 +595,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   Connectors:
+  - {fileID: 6450711894782188998}
+  - {fileID: 7292923566983595920}
+  - {fileID: 738392624638003175}
   - {fileID: 2344353104494618192}
   - {fileID: 8263539473725346851}
   Phases: []
@@ -702,6 +706,53 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.89999986, y: 0.9015455, z: 0.06712049}
   m_Center: {x: 0, y: 2.4532948, z: 0.099609375}
+--- !u!1 &907383996290630103
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7899340726670235133}
+  - component: {fileID: 7292923566983595920}
+  m_Layer: 0
+  m_Name: EndBuildingRightOut
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &7899340726670235133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907383996290630103}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -12, y: 0, z: -6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4000011847114926}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &7292923566983595920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907383996290630103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ConnectedTo: {fileID: 0}
+  ConnectedToIndex: 0
+  ConnectorType: 128
+  SharedNodes: []
 --- !u!1 &1304985992794481953
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,7 +782,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1071586371681808375
 MonoBehaviour:
@@ -747,11 +798,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 5836772406521379835}
   EndNode: {fileID: 7037793477521714612}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 8.02
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &1555706603504517824
@@ -915,7 +963,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5475468262908204463
 MonoBehaviour:
@@ -931,11 +979,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 779010822778205754}
   EndNode: {fileID: 8082082009311614403}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 3.41
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &2796783928111937200
@@ -967,7 +1012,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3575794046921962120
 MonoBehaviour:
@@ -983,11 +1028,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 7044100566558586154}
   EndNode: {fileID: 1040748456127556432}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 4.29
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &3364194005721805640
@@ -1021,7 +1063,7 @@ Transform:
   - {fileID: 4543821666831800047}
   - {fileID: 8213281211561699278}
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2344353104494618192
 MonoBehaviour:
@@ -1038,7 +1080,9 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes: []
+  SharedNodes:
+  - {fileID: 7044100566558586154}
+  - {fileID: 7037793477521714612}
 --- !u!1 &4389783741843054040
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,7 +1112,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &3624648999577924931
 MonoBehaviour:
@@ -1112,7 +1156,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &738392624638003175
 MonoBehaviour:
@@ -1128,7 +1172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
-  ConnectorType: 128
+  ConnectorType: 256
   SharedNodes: []
 --- !u!1 &5594751898350655201
 GameObject:
@@ -1159,7 +1203,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6538493591124932079
 MonoBehaviour:
@@ -1175,11 +1219,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 3624648999577924931}
   EndNode: {fileID: 8082082009311614403}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 5.25
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &5716533798736496535
@@ -1213,7 +1254,7 @@ Transform:
   - {fileID: 1975239306805885179}
   - {fileID: 451227504561794006}
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &8263539473725346851
 MonoBehaviour:
@@ -1230,7 +1271,9 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes: []
+  SharedNodes:
+  - {fileID: 5836772406521379835}
+  - {fileID: 8082082009311614403}
 --- !u!1 &6083750339289208819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,7 +1285,7 @@ GameObject:
   - component: {fileID: 7636715369524569819}
   - component: {fileID: 6450711894782188998}
   m_Layer: 0
-  m_Name: EndBuildingRight
+  m_Name: EndBuildingRightIn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1256,7 +1299,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6083750339289208819}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -12, y: 0, z: 0}
+  m_LocalPosition: {x: -12, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
@@ -1307,7 +1350,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &779010822778205754
 MonoBehaviour:
@@ -1395,7 +1438,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2738971406558347949
 MonoBehaviour:
@@ -1411,11 +1454,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 7044100566558586154}
   EndNode: {fileID: 779010822778205754}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 4.31
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &8945302234529425068
@@ -1447,7 +1487,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000011847114926}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &1040748456127556432
 MonoBehaviour:

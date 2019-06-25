@@ -8,6 +8,8 @@ namespace Config
 	{
 		public Node NodePointer;
 
+		public Node GenTimePointer => IsSharedNode() ? NodePointer : this;
+
 #if UNITY_EDITOR
 		private void OnDrawGizmosSelected()
 		{
@@ -15,10 +17,15 @@ namespace Config
 			Gizmos.DrawSphere(transform.position, 1.0f);
 		}
 
+		private bool IsSharedNode()
+		{
+			return transform.parent.GetComponent<Connector>() != null;
+		}
+
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
-			if (this == NodePointer)
+			if (this == NodePointer || !IsSharedNode())
 			{
 				gameObject.AddComponent<GameObjectEntity>();
 				var node = gameObject.AddComponent<NodeProxy>();

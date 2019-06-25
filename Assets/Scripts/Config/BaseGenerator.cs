@@ -33,12 +33,17 @@ namespace Config
 			}
 		}
 
+		protected virtual bool ShouldCleanComponent() => true;
+
 		private void CleanComponentProxys()
 		{
-			var proxys = GetComponents<ComponentDataProxyBase>();
-			foreach (var proxy in proxys)
+			if (ShouldCleanComponent())
 			{
-				DestroyImmediate(proxy);
+				var proxys = GetComponents<ComponentDataProxyBase>();
+				foreach (var proxy in proxys)
+				{
+					DestroyImmediate(proxy);
+				}				
 			}
 		}
 #endif
