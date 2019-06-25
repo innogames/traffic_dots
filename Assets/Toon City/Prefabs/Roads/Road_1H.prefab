@@ -769,7 +769,9 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes: []
+  SharedNodes:
+  - {fileID: 6237707914768270389}
+  - {fileID: 976322131573867403}
 --- !u!1 &1186258338602210137
 GameObject:
   m_ObjectHideFlags: 0
@@ -966,7 +968,9 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes: []
+  SharedNodes:
+  - {fileID: 1033944182274673309}
+  - {fileID: 1084872820020497428}
 --- !u!1 &3815351393673298797
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,4 +1403,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes: []
+  SharedNodes:
+  - {fileID: 8627143367199035645}
+  - {fileID: 3257488920069657679}
