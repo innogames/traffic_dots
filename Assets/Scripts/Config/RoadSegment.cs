@@ -48,13 +48,24 @@ namespace Config
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
-			var list = Phases.Select(phase => new IntersectionPhaseBuffer
+			var phaseList = new List<IntersectionPhaseBuffer>();
+			int index = 0;
+			foreach (var phase in Phases)
 			{
-				ConnectionA = GetConnectionEntity(phase.ConnectionA),
-				ConnectionB = GetConnectionEntity(phase.ConnectionB),
-				Frames = phase.Frames,
+				phaseList.Add(new IntersectionPhaseBuffer
+				{
+					StartIndex = index,
+					EndIndex = index + phase.Connections.Length - 1,
+					Frames = phase.Frames,
+				});
+				index += phase.Connections.Length;
+			}
+			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(phaseList);
+			var conList = Phases.SelectMany(phase => phase.Connections).Select(con => new IntersectionConBuffer()
+			{
+				Connection = con.GetComponent<GameObjectEntity>().Entity,
 			}).ToList();
-			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(list);
+			gameObject.AddComponent<IntersectionConBufferProxy>().SetValue(conList);
 		}
 
 		public bool IsIntersection()
@@ -64,10 +75,9 @@ namespace Config
 
 		public ConnectionTrafficType GetConnectionTrafficType(Connection connection)
 		{
-			if (IsIntersection())
+			if (Phases.SelectMany(phase => phase.Connections).Contains(connection))
 			{
-				bool isEnable = Phases[0].ConnectionA == connection ||
-				                Phases[0].ConnectionB == connection;
+				bool isEnable = Phases[0].Connections.Contains(connection);
 				return isEnable ? ConnectionTrafficType.PassThrough : ConnectionTrafficType.NoEntrance;
 			}
 			else

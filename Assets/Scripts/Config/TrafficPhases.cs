@@ -5,8 +5,7 @@ namespace Config
 	[Serializable]
 	public class TrafficPhases
 	{
-		public Connection ConnectionA;
-		public Connection ConnectionB;
+		public Connection[] Connections;
 		public int Frames;
 	}
 }

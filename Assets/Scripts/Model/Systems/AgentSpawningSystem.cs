@@ -23,8 +23,10 @@ namespace Model.Systems
 					var conSpeed = EntityManager.GetComponentData<Connection>(targetConnectionEnt);
 					var conLength = EntityManager.GetComponentData<ConnectionLength>(targetConnectionEnt);
 					var connectionState = EntityManager.GetComponentData<ConnectionState>(targetConnectionEnt);
+					var connectionTraffic = EntityManager.GetComponentData<ConnectionTraffic>(targetConnectionEnt);
 
-					if (connectionState.CouldAgentEnter(ref agent, ref conLength))
+					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
+					    && connectionState.CouldAgentEnter(ref agent, ref conLength))
 					{
 						var agentEnt = PostUpdateCommands.Instantiate(spawner.Agent);
 						PostUpdateCommands.SetComponent(agentEnt, new ConnectionCoord
@@ -39,19 +41,20 @@ namespace Model.Systems
 							Frames = interval,
 							TimerType = TimerType.Ticking,
 						});
-						PostUpdateCommands.SetComponent(agentEnt, new TimerState //need this so that it can move immediately!
-						{
-							CountDown = interval,
-						});
-						
-						connectionState.AcceptAgent(ref agent);						
+						PostUpdateCommands.SetComponent(agentEnt,
+							new TimerState //need this so that it can move immediately!
+							{
+								CountDown = interval,
+							});
+
+						connectionState.AcceptAgent(ref agent);
 						EntityManager.SetComponentData(targetConnectionEnt, connectionState);
-						
+
 						var oldQueue = EntityManager.GetBuffer<AgentQueueBuffer>(targetConnectionEnt);
 						var agentQueue = PostUpdateCommands.SetBuffer<AgentQueueBuffer>(targetConnectionEnt);
 						agentQueue.CopyFrom(oldQueue);
-						agentQueue.Add(new AgentQueueBuffer{Agent = agentEnt});
-						
+						agentQueue.Add(new AgentQueueBuffer {Agent = agentEnt});
+
 						timer.TimerType = TimerType.Ticking;
 					}
 					else

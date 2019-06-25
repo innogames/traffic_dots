@@ -673,20 +673,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
-  Connectors:
-  - {fileID: 2665096199179914671}
-  - {fileID: 715044454013585599}
-  - {fileID: 1854227492230571586}
   Phases:
-  - ConnectionA: {fileID: 5464785571242873652}
-    ConnectionB: {fileID: 2706030077362335197}
-    Frames: 60
-  - ConnectionA: {fileID: 5488750675449436015}
-    ConnectionB: {fileID: 7690839810349335963}
-    Frames: 60
-  - ConnectionA: {fileID: 5495868104686172456}
-    ConnectionB: {fileID: 8789069003609933000}
-    Frames: 60
+  - Connections:
+    - {fileID: 5464785571242873652}
+    - {fileID: 2706030077362335197}
+    - {fileID: 5488750675449436015}
+    Frames: 90
+  - Connections:
+    - {fileID: 2706030077362335197}
+    - {fileID: 5495868104686172456}
+    - {fileID: 8789069003609933000}
+    Frames: 90
+  - Connections:
+    - {fileID: 5488750675449436015}
+    - {fileID: 8789069003609933000}
+    - {fileID: 7690839810349335963}
+    Frames: 90
 --- !u!1 &135217677645954342
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,9 +781,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 6237707914768270389}
-  - {fileID: 976322131573867403}
 --- !u!1 &1186258338602210137
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,11 +826,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 6237707914768270389}
   EndNode: {fileID: 1084872820020497428}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 3.45
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &1620647824558160510
@@ -923,11 +919,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 1033944182274673309}
   EndNode: {fileID: 976322131573867403}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 5.23
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &3012190792227885241
@@ -978,9 +971,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 1033944182274673309}
-  - {fileID: 1084872820020497428}
 --- !u!1 &3815351393673298797
 GameObject:
   m_ObjectHideFlags: 0
@@ -1026,11 +1016,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 1033944182274673309}
   EndNode: {fileID: 3257488920069657679}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 3.45
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &4527574683769087461
@@ -1078,11 +1065,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 8627143367199035645}
   EndNode: {fileID: 976322131573867403}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 5
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &4626822427241020757
@@ -1306,11 +1290,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 6237707914768270389}
   EndNode: {fileID: 3257488920069657679}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 5
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &7287365832844066924
@@ -1358,11 +1339,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 8627143367199035645}
   EndNode: {fileID: 1084872820020497428}
-  IsIntersection: 1
   Level: 1
-  LaneCount: 1
   CurveIn: 5.23
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &8849911175112813100
@@ -1413,6 +1391,3 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 8627143367199035645}
-  - {fileID: 3257488920069657679}

@@ -594,13 +594,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
-  Connectors:
-  - {fileID: 6450711894782188998}
-  - {fileID: 7292923566983595920}
-  - {fileID: 738392624638003175}
-  - {fileID: 2344353104494618192}
-  - {fileID: 8263539473725346851}
-  Phases: []
+  Phases:
+  - Connections:
+    - {fileID: 5475468262908204463}
+    Frames: 2
+  - Connections:
+    - {fileID: 6538493591124932079}
+    Frames: 2
 --- !u!1 &1000014252518294
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +752,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 128
-  SharedNodes: []
 --- !u!1 &1304985992794481953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1080,9 +1079,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 7044100566558586154}
-  - {fileID: 7037793477521714612}
 --- !u!1 &4389783741843054040
 GameObject:
   m_ObjectHideFlags: 0
@@ -1173,7 +1169,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 256
-  SharedNodes: []
 --- !u!1 &5594751898350655201
 GameObject:
   m_ObjectHideFlags: 0
@@ -1271,9 +1266,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 5836772406521379835}
-  - {fileID: 8082082009311614403}
 --- !u!1 &6083750339289208819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1320,7 +1312,6 @@ MonoBehaviour:
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 128
-  SharedNodes: []
 --- !u!1 &6632875027632430746
 GameObject:
   m_ObjectHideFlags: 0
