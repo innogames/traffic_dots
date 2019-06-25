@@ -114,6 +114,7 @@ MonoBehaviour:
   Connectors:
   - {fileID: 3362561936983781842}
   - {fileID: 3190032474455055639}
+  Phases: []
 --- !u!1 &1000014222825886
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,10 +360,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 6139416225305153919}
   EndNode: {fileID: 5433893267565389505}
+  IsIntersection: 0
   Level: 1
   LaneCount: 1
   CurveIn: 3.09
   Vehicles: 00
+  LinkedStartNode: {fileID: 0}
+  LinkedEndNode: {fileID: 0}
 --- !u!1 &3874994038690917124
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,10 +456,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartNode: {fileID: 3857412688330807210}
   EndNode: {fileID: 973133260596041706}
+  IsIntersection: 0
   Level: 1
   LaneCount: 1
   CurveIn: 5.07
   Vehicles: 0000
+  LinkedStartNode: {fileID: 0}
+  LinkedEndNode: {fileID: 0}
 --- !u!1 &8057935603011103829
 GameObject:
   m_ObjectHideFlags: 0

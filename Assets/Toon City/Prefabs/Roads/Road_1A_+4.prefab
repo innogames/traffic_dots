@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4000011453703872
 Transform:
@@ -113,6 +113,7 @@ MonoBehaviour:
   Connectors:
   - {fileID: 5105686737849630658}
   - {fileID: 2121265540379202656}
+  Phases: []
 --- !u!1 &342074245292002613
 GameObject:
   m_ObjectHideFlags: 0

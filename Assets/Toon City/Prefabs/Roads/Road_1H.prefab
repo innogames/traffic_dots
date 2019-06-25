@@ -679,13 +679,13 @@ MonoBehaviour:
   - {fileID: 1854227492230571586}
   Phases:
   - ConnectionA: {fileID: 5464785571242873652}
-    ConnectionB: {fileID: 0}
+    ConnectionB: {fileID: 2706030077362335197}
     Frames: 60
-  - ConnectionA: {fileID: 2706030077362335197}
-    ConnectionB: {fileID: 0}
+  - ConnectionA: {fileID: 5488750675449436015}
+    ConnectionB: {fileID: 7690839810349335963}
     Frames: 60
   - ConnectionA: {fileID: 5495868104686172456}
-    ConnectionB: {fileID: 0}
+    ConnectionB: {fileID: 8789069003609933000}
     Frames: 60
 --- !u!1 &135217677645954342
 GameObject:

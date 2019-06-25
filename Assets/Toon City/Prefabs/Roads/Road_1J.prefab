@@ -586,6 +586,7 @@ MonoBehaviour:
   Connectors:
   - {fileID: 2344353104494618192}
   - {fileID: 8263539473725346851}
+  Phases: []
 --- !u!1 &1000014252518294
 GameObject:
   m_ObjectHideFlags: 0
