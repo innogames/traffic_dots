@@ -30,20 +30,20 @@ namespace Config
 				}
 			}
 
-			foreach (var connection in segment.GetComponentsInChildren<Connection>())
-			{
-				int index = 0;
-				foreach (var pos in connection.SlotSteps(connection.BezierFunc()))
-				{
-					if (Handles.Button(pos, Quaternion.LookRotation(Vector3.up), 
-						1, 1, Handles.CylinderHandleCap))
-					{
-						connection.Vehicles[index] = !connection.Vehicles[index];
-						EditorUtility.SetDirty(connection);
-					};
-					index++;
-				}
-			}
+//			foreach (var connection in segment.GetComponentsInChildren<Connection>())
+//			{
+//				int index = 0;
+//				foreach (var pos in connection.SlotSteps(connection.BezierFunc()))
+//				{
+//					if (Handles.Button(pos, Quaternion.LookRotation(Vector3.up), 
+//						1, 1, Handles.CylinderHandleCap))
+//					{
+//						connection.Vehicles[index] = !connection.Vehicles[index];
+//						EditorUtility.SetDirty(connection);
+//					};
+//					index++;
+//				}
+//			}
 		}
 
 		private void OnEnable()
