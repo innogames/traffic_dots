@@ -36,7 +36,7 @@ namespace Config
 
 		private void OnDrawGizmosSelected()
 		{
-			DrawVehicle(false, Color.gray);
+			DrawVehicle();
 		}
 
 //		private void OnDrawGizmos()
@@ -44,10 +44,11 @@ namespace Config
 //			DrawVehicle(true, Color.green);
 //		}
 
-		private void DrawVehicle(bool vehicleEnable, Color color)
+		private void DrawVehicle()
 		{
 			if (StartNode != null && EndNode != null)
 			{
+				var offset = Vector3.up * 0.1f; //to avoid z fighting
 				var s = PreviewBezier();
 				var length = (int) s.TotalLength();
 				for (int i = 0; i <= length - 1; i++)
@@ -55,7 +56,7 @@ namespace Config
 					var startPoint = s.Point((float) i / length);
 					var endPoint = s.Point((float) (i + 1) / length);
 					Gizmos.color = (i % 2) == 0 ? Color.blue : Color.red;
-					Gizmos.DrawLine(startPoint, endPoint);
+					Gizmos.DrawLine((Vector3)startPoint + offset, (Vector3)endPoint + offset);
 				}
 
 //				Gizmos.color = color;
