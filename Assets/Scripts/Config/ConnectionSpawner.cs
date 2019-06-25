@@ -39,6 +39,7 @@ namespace Config
 			Gizmos.color = Color.cyan;
 			foreach (var target in Targets)
 			{
+				if (target == null) continue;
 				var conTarget = target.GetComponent<Connection>();
 				Gizmos.DrawLine(connection.GetMidPoint(), conTarget.GetMidPoint());
 			}
