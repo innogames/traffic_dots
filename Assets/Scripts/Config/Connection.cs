@@ -70,37 +70,27 @@ namespace Config
 
 		public Func<float, Vector3> BezierFunc(bool isTangent = false)
 		{
-			var start = StartNode.transform;
-			var end = EndNode.transform;
-			var p0 = start.position;
-			var p1 = p0 + start.forward * CurveIn;
-			var p3 = end.position;
-			var p2 = p3 - end.forward * CurveIn;
+			var s = ComputeBezierPoints();
 			if (isTangent)
 			{
-				return t =>
-				{
-					float t1 = 1 - t;
-					float t12 = t1 * t1;
-					return -3 * t12 * p0
-					       + (3 * t12 - 6 * t1 * t) * p1
-					       + (-3 * t * t + 6 * t * t1) * p2
-					       + 3 * t * t * p3;
-				};				
+				return t => (Vector3) s.Tangent(t);				
 			}
 			else
 			{
-				return t =>
-				{
-					float t1 = 1 - t;
-					float t12 = t1 * t1;
-					float t13 = t1 * t1 * t1;
-					return t13 * p0
-					       + 3 * t12 * t * p1
-					       + 3 * t1 * t * t * p2
-					       + t * t * t * p3;
-				};				
+				return t => (Vector3) s.Point(t);				
 			}
+		}
+
+		private Spline ComputeBezierPoints()
+		{
+			var start = StartNode.transform;
+			var end = EndNode.transform;
+			Spline ret;
+			ret.a = StartNode.NodePointer.transform.position; //use NodePointer here for precise transition
+			ret.b = (Vector3)ret.a + (start.forward * CurveIn);
+			ret.d = EndNode.NodePointer.transform.position;
+			ret.c = (Vector3)ret.d - (end.forward * CurveIn);
+			return ret;
 		}
 
 		public IEnumerable<Vector3> SlotSteps(Func<float, Vector3> func)
@@ -123,13 +113,7 @@ namespace Config
 			gameObject.AddComponent<GameObjectEntity>();
 			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
-			gameObject.AddComponent<SplineProxy>().Value = new Spline
-			{
-				a = StartNode.NodePointer.transform.position,
-				b = Vector3.zero,
-				c = Vector3.zero,
-				d = EndNode.NodePointer.transform.position,
-			};
+			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
 //			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
 //			{
 //				SlotCount = SlotCount,
@@ -150,10 +134,9 @@ namespace Config
 			};
 		}
 
-		private float ComputeLength()//TODO use spline here
+		private float ComputeLength()
 		{
-			return (StartNode.NodePointer.transform.position -
-			        EndNode.NodePointer.transform.position).magnitude;
+			return ComputeBezierPoints().TotalLength();
 		}
 		#endif
 	}

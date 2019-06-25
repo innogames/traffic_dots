@@ -1,4 +1,5 @@
 using Model.Components;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -10,6 +11,7 @@ namespace Model.Systems
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
 	public class AgentQueueSystem : JobComponentSystem
 	{
+		[BurstCompile]
 		private struct AgentEnterConnection : IJobForEachWithEntity<Agent, ConnectionCoord, 
 				ConnectionTarget, Timer, TimerState>
 		{
@@ -108,6 +110,7 @@ namespace Model.Systems
 			}
 		}
 		
+		[BurstCompile]
 		private struct AgentMoveForward : IJobForEachWithEntity<Connection, ConnectionState>
 		{
 			//agent stuffs, no other connection could share an agent ==> no race condition
