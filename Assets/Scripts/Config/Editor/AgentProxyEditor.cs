@@ -1,4 +1,5 @@
 using System.Linq;
+using Config.Proxy;
 using UnityEditor;
 
 namespace Config

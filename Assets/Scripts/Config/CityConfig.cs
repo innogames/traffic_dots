@@ -1,3 +1,4 @@
+using Config.Proxy;
 using UnityEngine;
 
 namespace Config

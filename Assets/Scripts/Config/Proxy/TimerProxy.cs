@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace Config
+namespace Config.Proxy
 {
 	public class TimerProxy : ComponentDataProxy<Model.Components.Timer>
 	{		

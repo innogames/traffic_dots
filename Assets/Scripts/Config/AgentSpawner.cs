@@ -1,3 +1,4 @@
+using Config.Proxy;
 using Model.Components;
 using Unity.Entities;
 using UnityEngine;
