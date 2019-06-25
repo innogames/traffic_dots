@@ -90,7 +90,8 @@ namespace Model.Systems
 				var networkToBuffer =
 					new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(SystemConstants.MapNodeSize, Allocator.Temp);
 
-				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection) =>
+				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection,
+					ref ConnectionLength conLength) =>
 				{
 					int color = finalColor[connection.StartNode];
 					var network = colorToNetwork[color];
@@ -108,7 +109,7 @@ namespace Model.Systems
 					buffer.Add(new NetAdjust
 					{
 						Connection = connectionEnt,
-						Cost = connection.Length / connection.Speed,
+						Cost = conLength.Length / connection.Speed,
 						StartNode = connection.StartNode,
 						EndNode = connection.EndNode
 					});

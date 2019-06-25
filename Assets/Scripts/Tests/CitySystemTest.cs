@@ -24,12 +24,16 @@ namespace Tests
 		private Entity AddConnection(Entity startNode, Entity endNode)
 		{
 			var connection = m_Manager.CreateEntity(typeof(Connection),
+				typeof(ConnectionLength),
 				typeof(Spline), typeof(EntitySlot));
 			m_Manager.SetComponentData(connection, new Connection
 			{
 				StartNode = startNode,
 				EndNode = endNode,
 				Speed = 1f,
+			});
+			m_Manager.SetComponentData(connection, new ConnectionLength
+			{
 				Length = 2f,
 			});
 			m_Manager.SetComponentData(connection, new Spline

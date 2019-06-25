@@ -9,15 +9,15 @@ namespace Model.Systems
 		public float EnterLength;
 		public float ExitLength;
 
-		public bool CouldAgentEnter(ref Agent agent, ref Connection connection)
+		public bool CouldAgentEnter(ref Agent agent, ref ConnectionLength conLength)
 		{
 			return (EnterLength >= agent.Length //car fit 
-			        || EnterLength >= connection.Length); //car is larger than the road & the road is empty
+			        || EnterLength >= conLength.Length); //car is larger than the road & the road is empty
 		}
 
-		public float NewAgentCoord(ref Connection connection)
+		public float NewAgentCoord(ref ConnectionLength conLength)
 		{
-			return connection.Length - EnterLength;
+			return conLength.Length - EnterLength;
 		}
 
 		public void AcceptAgent(ref Agent agent)
@@ -30,14 +30,19 @@ namespace Model.Systems
 			return (int) math.ceil(EnterLength / connection.Speed);
 		}
 
-		public void AgentLeaveThePack(ref Agent agent, ref Connection connection)
+		public void AgentLeaveThePack(ref Agent agent, ref ConnectionLength conLength)
 		{
-			ExitLength = math.min(ExitLength + agent.Length, connection.Length);
+			ExitLength = math.min(ExitLength + agent.Length, conLength.Length);
 		}
 
-		public void ClearConnection(ref Connection connection)
+		public void ClearConnection(ref ConnectionLength conLength)
 		{
-			EnterLength = connection.Length;
+			EnterLength = conLength.Length;
+		}
+
+		public bool IsEmpty(ref ConnectionLength conLength)
+		{
+			return EnterLength >= conLength.Length;
 		}
 	}
 }

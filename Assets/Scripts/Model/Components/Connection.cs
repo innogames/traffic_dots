@@ -8,9 +8,8 @@ namespace Model.Components
 	{
 		public Entity StartNode;
 		public Entity EndNode;
-		public float Speed;
-		public float Length;
-		public int Level;
+		public float Speed;//TODO move speed out to separate component
+		public int Level;//TODO move Level to NetworkLevel component
 
 		public bool Equals(Connection other)
 		{

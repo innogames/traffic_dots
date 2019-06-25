@@ -138,6 +138,10 @@ namespace Config
 			LinkedStartNode = StartNode.NodePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.NodePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
+			gameObject.AddComponent<ConnectionLengthProxy>().Value = new ConnectionLength
+			{
+				Length = ComputeLength(),
+			};
 //			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
 //			{
 //				SlotCount = SlotCount,
@@ -154,7 +158,6 @@ namespace Config
 				EndNode = LinkedEndNode.Entity,
 				Speed = 6.0f / 60f,
 				Level = Level,
-				Length = ComputeLength(),
 			};
 		}
 

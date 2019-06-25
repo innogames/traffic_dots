@@ -19,14 +19,15 @@ namespace Model.Systems
 		}
 
 		[ExcludeComponent(typeof(ConnectionState))]
-		private struct CreationJob : IJobForEachWithEntity<Connection>
+		private struct CreationJob : IJobForEachWithEntity<Connection, ConnectionLength>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
-			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection)
+			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection, 
+				[ReadOnly] ref ConnectionLength conLength)
 			{
 				CommandBuffer.AddComponent(index, entity, new ConnectionState
 				{
-					EnterLength = connection.Length,
+					EnterLength = conLength.Length,
 					ExitLength = 0f,
 				});
 				CommandBuffer.AddBuffer<AgentQueueBuffer>(index, entity);

@@ -14,14 +14,14 @@ namespace View.Systems
 		[RequireComponentTag(typeof(Agent))]
 		private struct MoveJob : IJobForEachWithEntity<ConnectionCoord, Translation, Rotation, Timer, TimerState>
 		{
-			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
 			[ReadOnly] public ComponentDataFromEntity<Spline> Splines;
 
 			public void Execute(Entity entity, int index, [ReadOnly] ref ConnectionCoord coord,
 				ref Translation translation, ref Rotation rotation, [ReadOnly] ref Timer timer, [ReadOnly] ref TimerState timerState)
 			{
 				var spline = Splines[coord.Connection];
-				float length = Connections[coord.Connection].Length;
+				float length = ConLengths[coord.Connection].Length;
 				
 				//TODO cache this value every time Coord change!
 //				var targetPos = math.lerp(spline.d, spline.a, coord.Coord / length);
@@ -40,7 +40,7 @@ namespace View.Systems
 			return new MoveJob
 			{
 				Splines = GetComponentDataFromEntity<Spline>(),
-				Connections = GetComponentDataFromEntity<Connection>(),
+				ConLengths = GetComponentDataFromEntity<ConnectionLength>(),
 			}.Schedule(this, inputDeps);
 		}
 	}

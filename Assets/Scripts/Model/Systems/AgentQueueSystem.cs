@@ -21,6 +21,7 @@ namespace Model.Systems
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
 			[ReadOnly] public BufferFromEntity<AgentQueueBuffer> AgentQueue;
 
@@ -39,16 +40,16 @@ namespace Model.Systems
 					{
 						//remove entity
 						CommandBuffer.DestroyEntity(index, entity);
-						var curConnection = Connections[curConnectionEnt];
+						var curLength = ConLengths[curConnectionEnt];
 						var curState = ConnectionStates[curConnectionEnt];
 						var curQueue = AgentQueue[curConnectionEnt];
 						if (curQueue.Length > 0)
 						{
-							curState.AgentLeaveThePack(ref agent, ref curConnection);							
+							curState.AgentLeaveThePack(ref agent, ref curLength);							
 						}
 						else
 						{
-							curState.ClearConnection(ref curConnection);
+							curState.ClearConnection(ref curLength);
 							curQueue.Clear();//the only car here => no race condition
 						}
 						ConnectionStates[curConnectionEnt] = curState;
@@ -65,27 +66,27 @@ namespace Model.Systems
 								? targetConnectionEnt
 								: Next[startNode][Indexes[endNode].Index].Connection;
 							var nextConnection = Connections[nextConnectionEnt];
+							var nextLength = ConLengths[nextConnectionEnt];
 							var nextState = ConnectionStates[nextConnectionEnt];
-							if (nextState.CouldAgentEnter(ref agent, ref nextConnection))
+							if (nextState.CouldAgentEnter(ref agent, ref nextLength))
 							{
 								coord.Connection = nextConnectionEnt;
-								coord.Coord = nextState.NewAgentCoord(ref nextConnection);
+								coord.Coord = nextState.NewAgentCoord(ref nextLength);
 
 								timer.Frames = nextState.FramesToEnter(ref nextConnection);
 								timer.TimerType = TimerType.Ticking;
-								timerState.CountDown = timer.Frames;
 
 								var curQueue = AgentQueue[curConnectionEnt];
-								var curConnection = Connections[curConnectionEnt];
+								var curLength = ConLengths[curConnectionEnt];
 								var curState = ConnectionStates[curConnectionEnt];
 								if (curQueue.Length > 0) //some other car behind
 								{
-									curState.AgentLeaveThePack(ref agent, ref curConnection);
+									curState.AgentLeaveThePack(ref agent, ref curLength);
 									ConnectionStates[curConnectionEnt] = curState;									
 								}
 								else
 								{
-									curState.ClearConnection(ref curConnection);
+									curState.ClearConnection(ref curLength);
 									ConnectionStates[curConnectionEnt] = curState;
 									curQueue.Clear();//it's the only vehicle here, no race condition!
 								}
@@ -98,7 +99,7 @@ namespace Model.Systems
 							}
 							else
 							{
-								timer.TimerType = TimerType.EveryFrame;
+								timer.ChangeToEveryFrame(ref timerState);
 							}
 						}
 						else
@@ -168,6 +169,7 @@ namespace Model.Systems
 		{
 			var commandBuffer = _bufferSystem.CreateCommandBuffer().ToConcurrent();
 			var connections = GetComponentDataFromEntity<Connection>();
+			var conLengths = GetComponentDataFromEntity<ConnectionLength>();
 			var connectionStates = GetComponentDataFromEntity<ConnectionState>();
 			var indexes = GetComponentDataFromEntity<IndexInNetwork>();
 			var coords = GetComponentDataFromEntity<ConnectionCoord>();
@@ -181,6 +183,7 @@ namespace Model.Systems
 			{
 				CommandBuffer = commandBuffer,
 				Connections = connections,
+				ConLengths = conLengths,
 				ConnectionStates = connectionStates,
 				Indexes = indexes,
 				AgentQueue = agentQueue,

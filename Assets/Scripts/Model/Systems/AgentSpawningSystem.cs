@@ -7,7 +7,7 @@ namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
-	public class AgentSpawningSystem : ComponentSystem
+	public class AgentSpawningSystem : ComponentSystem //TODO consider turning to job!
 	{
 		protected override void OnUpdate()
 		{
@@ -19,19 +19,20 @@ namespace Model.Systems
 				{
 					var agent = EntityManager.GetComponentData<Agent>(spawner.Agent);
 					var targetConnectionEnt = spawnTarget.Connection;
-					var connection = EntityManager.GetComponentData<Connection>(targetConnectionEnt);
+					var conSpeed = EntityManager.GetComponentData<Connection>(targetConnectionEnt);
+					var conLength = EntityManager.GetComponentData<ConnectionLength>(targetConnectionEnt);
 					var connectionState = EntityManager.GetComponentData<ConnectionState>(targetConnectionEnt);
 
-					if (connectionState.CouldAgentEnter(ref agent, ref connection))
+					if (connectionState.CouldAgentEnter(ref agent, ref conLength))
 					{
 						var agentEnt = PostUpdateCommands.Instantiate(spawner.Agent);
 						PostUpdateCommands.SetComponent(agentEnt, new ConnectionCoord
 						{
 							Connection = targetConnectionEnt,
-							Coord = connectionState.NewAgentCoord(ref connection),
+							Coord = connectionState.NewAgentCoord(ref conLength),
 						});
 						PostUpdateCommands.SetComponent(agentEnt, agentTarget);
-						var interval = connectionState.FramesToEnter(ref connection);
+						int interval = connectionState.FramesToEnter(ref conSpeed);
 						PostUpdateCommands.SetComponent(agentEnt, new Timer
 						{
 							Frames = interval,
@@ -54,7 +55,7 @@ namespace Model.Systems
 					}
 					else
 					{
-						timer.TimerType = TimerType.EveryFrame;
+						timer.ChangeToEveryFrame(ref timerState);
 					}
 				}
 			});
