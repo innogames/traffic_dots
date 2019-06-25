@@ -19,7 +19,8 @@ namespace Config
 
 		private bool IsSharedNode()
 		{
-			return transform.parent.GetComponent<Connector>() != null;
+			var connector = transform.parent.GetComponent<Connector>();
+			return connector != null && !connector.IsDeadEnd();
 		}
 
 		public override void Generate(CityConfig config)

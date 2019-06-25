@@ -87,7 +87,7 @@ namespace Config
 
 				if (GUILayout.Button("Populate"))
 				{
-					segment.Connectors = segment.gameObject.GetComponentsInChildren<Connector>();
+//					segment.Connectors = segment.gameObject.GetComponentsInChildren<Connector>();
 					if (segment.Config == null)
 					{
 						segment.Config = Resources.FindObjectsOfTypeAll<CityConfig>().First();

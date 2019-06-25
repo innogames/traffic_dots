@@ -9,7 +9,8 @@ namespace Config
 	public class RoadSegment : BaseGenerator
 	{
 		public CityConfig Config;
-		public Connector[] Connectors;
+
+		public Connector[] Connectors => GetComponentsInChildren<Connector>();
 
 		public TrafficPhases[] Phases;
 

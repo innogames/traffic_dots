@@ -36,5 +36,11 @@ namespace Config
 				}
 			}
 		}
+
+		public bool IsDeadEnd()
+		{
+			return ConnectedTo == null ||
+			       ConnectedTo.ConnectorType.Compatible(ConnectorType.Building | ConnectorType.BigBuilding);
+		}
 	}
 }

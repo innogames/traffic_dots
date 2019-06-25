@@ -19,7 +19,6 @@ namespace Model.Systems
 
 		protected override void OnUpdate()
 		{
-			var finalColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			var nodeToColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			var colorToColor = new NativeHashMap<int, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			int newColor = 0;
@@ -62,6 +61,7 @@ namespace Model.Systems
 
 			if (nodeToColor.Length > 0)
 			{
+				var finalColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);				
 				var colorToNetwork = new NativeHashMap<int, Entity>(SystemConstants.MapNodeSize, Allocator.Temp);
 				var keys = nodeToColor.GetKeyArray(Allocator.Temp);
 				var values = nodeToColor.GetValueArray(Allocator.Temp);
@@ -117,9 +117,9 @@ namespace Model.Systems
 				colorToNetwork.Dispose();
 
 				networkToBuffer.Dispose();
+				finalColor.Dispose();
 			}
 
-			finalColor.Dispose();
 			nodeToColor.Dispose();
 			colorToColor.Dispose();
 		}
