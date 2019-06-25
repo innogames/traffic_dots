@@ -36,17 +36,17 @@ namespace Model.Systems
 					{
 						case IntersectionPhaseType.Enable:
 							intersection.PhaseType = IntersectionPhaseType.ClearingTraffic;
+							ConnectionTraffics[connectionEnt] = new ConnectionTraffic
+							{
+								TrafficType = ConnectionTrafficType.NoEntrance,
+							};
 							timer.ChangeToEveryFrame(ref timerState);
 							break;
 						case IntersectionPhaseType.ClearingTraffic:
 							var conState = ConStates[connectionEnt];
 							var conLen = ConLengths[connectionEnt];
 							if (conState.IsEmpty(ref conLen))
-							{
-								ConnectionTraffics[connectionEnt] = new ConnectionTraffic
-								{
-									TrafficType = ConnectionTrafficType.NoEntrance,
-								};
+							{	
 								//move to next phase
 								intersection.PhaseType = IntersectionPhaseType.Enable;
 								intersection.Phase = (intersection.Phase + 1) % phases.Length;

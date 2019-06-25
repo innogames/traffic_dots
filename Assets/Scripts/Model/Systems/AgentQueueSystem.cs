@@ -12,15 +12,15 @@ namespace Model.Systems
 	public class AgentQueueSystem : JobComponentSystem
 	{
 		[BurstCompile]
-		private struct AgentEnterConnection : IJobForEachWithEntity<Agent, ConnectionCoord, 
-				ConnectionTarget, Timer, TimerState>
+		private struct AgentEnterConnection : IJobForEachWithEntity<Agent, ConnectionCoord,
+			ConnectionTarget, Timer, TimerState>
 		{
-			[NativeDisableParallelForRestriction]
-			public ComponentDataFromEntity<ConnectionState> ConnectionStates;
-			
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionState> ConnectionStates;
+
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
 			[ReadOnly] public BufferFromEntity<AgentQueueBuffer> AgentQueue;
@@ -36,6 +36,7 @@ namespace Model.Systems
 					var curConnectionEnt = coord.Connection;
 					var targetConnectionEnt = target.Connection;
 
+					//reach final destination
 					if (curConnectionEnt == targetConnectionEnt)
 					{
 						//remove entity
@@ -45,13 +46,14 @@ namespace Model.Systems
 						var curQueue = AgentQueue[curConnectionEnt];
 						if (curQueue.Length > 0)
 						{
-							curState.AgentLeaveThePack(ref agent, ref curLength);							
+							curState.AgentLeaveThePack(ref agent, ref curLength);
 						}
 						else
 						{
 							curState.ClearConnection(ref curLength);
-							curQueue.Clear();//the only car here => no race condition
+							curQueue.Clear(); //the only car here => no race condition
 						}
+
 						ConnectionStates[curConnectionEnt] = curState;
 
 //						timer.TimerType = TimerType.Freezing;
@@ -67,9 +69,13 @@ namespace Model.Systems
 								: Next[startNode][Indexes[endNode].Index].Connection;
 							var nextConnection = Connections[nextConnectionEnt];
 							var nextLength = ConLengths[nextConnectionEnt];
-							var nextState = ConnectionStates[nextConnectionEnt];
-							if (nextState.CouldAgentEnter(ref agent, ref nextLength))
+							var nextConTraffic = ConTraffics[nextConnectionEnt];
+							ConnectionState nextState;
+
+							if (nextConTraffic.TrafficType != ConnectionTrafficType.NoEntrance 
+							    && (nextState = ConnectionStates[nextConnectionEnt]).CouldAgentEnter(ref agent, ref nextLength))
 							{
+								//can enter next connection
 								coord.Connection = nextConnectionEnt;
 								coord.Coord = nextState.NewAgentCoord(ref nextLength);
 
@@ -82,23 +88,24 @@ namespace Model.Systems
 								if (curQueue.Length > 0) //some other car behind
 								{
 									curState.AgentLeaveThePack(ref agent, ref curLength);
-									ConnectionStates[curConnectionEnt] = curState;									
+									ConnectionStates[curConnectionEnt] = curState;
 								}
 								else
 								{
 									curState.ClearConnection(ref curLength);
 									ConnectionStates[curConnectionEnt] = curState;
-									curQueue.Clear();//it's the only vehicle here, no race condition!
+									curQueue.Clear(); //it's the only vehicle here, no race condition!
 								}
 
 								nextState.AcceptAgent(ref agent);
 								ConnectionStates[nextConnectionEnt] = nextState;
-								
+
 								//a connection never accept two agents going in at the same time => no race condition!
-								AgentQueue[nextConnectionEnt].Add(new AgentQueueBuffer{Agent = entity});
+								AgentQueue[nextConnectionEnt].Add(new AgentQueueBuffer {Agent = entity});
 							}
 							else
 							{
+								//can't enter, try again next frame
 								timer.ChangeToEveryFrame(ref timerState);
 							}
 						}
@@ -110,20 +117,19 @@ namespace Model.Systems
 				}
 			}
 		}
-		
+
 		[BurstCompile]
 		private struct AgentMoveForward : IJobForEachWithEntity<Connection, ConnectionState>
 		{
 			//agent stuffs, no other connection could share an agent ==> no race condition
-			[NativeDisableParallelForRestriction]
-			public ComponentDataFromEntity<ConnectionCoord> Coords;
-			[NativeDisableParallelForRestriction]
-			public ComponentDataFromEntity<Timer> Timers;
-			[NativeDisableParallelForRestriction]
-			public ComponentDataFromEntity<TimerState> TimerStates;			
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionCoord> Coords;
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<Timer> Timers;
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<TimerState> TimerStates;
 
 			[ReadOnly] public BufferFromEntity<AgentQueueBuffer> AgentQueue;
-			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection, ref ConnectionState state)
+
+			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection,
+				ref ConnectionState state)
 			{
 				if (state.ExitLength > 0) //have gap to fill!
 				{
@@ -136,7 +142,8 @@ namespace Model.Systems
 						{
 							Connection = entity,
 							Coord = agentCoord.Coord - state.ExitLength,
-						};;
+						};
+						;
 						int extraTime = (int) math.ceil(state.ExitLength / connection.Speed);
 						var timer = Timers[agent.Agent];
 						Timers[agent.Agent] = new Timer
@@ -150,6 +157,7 @@ namespace Model.Systems
 							CountDown = timerState.CountDown + extraTime,
 						};
 					}
+
 					queue.RemoveAt(queue.Length - 1);
 					state.EnterLength += state.ExitLength;
 					state.ExitLength = 0f;
@@ -171,6 +179,7 @@ namespace Model.Systems
 			var connections = GetComponentDataFromEntity<Connection>();
 			var conLengths = GetComponentDataFromEntity<ConnectionLength>();
 			var connectionStates = GetComponentDataFromEntity<ConnectionState>();
+			var conTraffics = GetComponentDataFromEntity<ConnectionTraffic>();
 			var indexes = GetComponentDataFromEntity<IndexInNetwork>();
 			var coords = GetComponentDataFromEntity<ConnectionCoord>();
 			var timers = GetComponentDataFromEntity<Timer>();
@@ -185,6 +194,7 @@ namespace Model.Systems
 				Connections = connections,
 				ConLengths = conLengths,
 				ConnectionStates = connectionStates,
+				ConTraffics = conTraffics,
 				Indexes = indexes,
 				AgentQueue = agentQueue,
 				Next = next,

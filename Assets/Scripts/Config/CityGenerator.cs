@@ -12,6 +12,7 @@ namespace Config
 		{
 			return FindObjectsOfType<Node>().Cast<BaseGenerator>()
 				.Concat(FindObjectsOfType<Connection>())
+				.Concat(FindObjectsOfType<RoadSegment>())
 				.Concat(FindObjectsOfType<AgentSpawner>());
 		}
 		public override void Generate(CityConfig config)

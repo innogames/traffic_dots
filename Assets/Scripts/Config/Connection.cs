@@ -142,6 +142,11 @@ namespace Config
 			{
 				Length = ComputeLength(),
 			};
+			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);
+			gameObject.AddComponent<ConnectionTrafficProxy>().Value = new ConnectionTraffic
+			{
+				TrafficType = trafficType,
+			};
 //			gameObject.AddComponent<EntitySlotProxy>().Value = new EntitySlot
 //			{
 //				SlotCount = SlotCount,
