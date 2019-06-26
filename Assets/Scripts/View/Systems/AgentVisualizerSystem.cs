@@ -23,21 +23,15 @@ namespace View.Systems
 			{
 				float length = ConLengths[coord.Connection].Length;
 
-				var	headPos = ComputePos(ref coord.Connection, ref coord.Coord, ref timer, ref timerState, ref length);
-				var	tailPos = ComputePos(ref tailCoord.Connection, ref tailCoord.Coord, ref timer, ref timerState, ref length);
-
-				var tangent = headPos - tailPos;
-				translation.Value = (headPos + tailPos) * 0.5f;
-				rotation.Value = quaternion.LookRotation(tangent, new float3(0, 1, 0));
-			}
-
-			private float3 ComputePos([ReadOnly] ref Entity con, ref float coord, [ReadOnly] ref Timer timer,
-				[ReadOnly] ref TimerState timerState, [ReadOnly] ref float length)
-			{
-				var spline = Splines[con];
-				float targetT = 1f - coord / length;
+				var spline = Splines[coord.Connection];
+				float targetT = 1f - coord.Coord / length;
 				float actualT = targetT * (1f - (float) timerState.CountDown / timer.Frames);
-				return spline.Point(actualT);
+				var	headPos = spline.Point(actualT);
+
+				var tangent = spline.Tangent(actualT);
+//				translation.Value = (headPos + tailPos) * 0.5f;
+				translation.Value = headPos;
+				rotation.Value = quaternion.LookRotation(tangent, new float3(0, 1, 0));
 			}
 		}
 
