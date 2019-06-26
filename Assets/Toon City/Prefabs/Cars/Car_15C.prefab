@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7131165760868191763}
   - component: {fileID: 7979287703206207462}
   - component: {fileID: 249867823981509021}
+  - component: {fileID: 2155600315844912254}
   m_Layer: 0
   m_Name: Car_15C
   m_TagString: Untagged
@@ -179,6 +180,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5fae66aa7ba48cbb62ac73254cbbb41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2155600315844912254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000011772067806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0219ade6ff42a09f65f54a3c9d6102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Frames: 0
+  TimerType: 0
 --- !u!1 &1000011924721218
 GameObject:
   m_ObjectHideFlags: 0

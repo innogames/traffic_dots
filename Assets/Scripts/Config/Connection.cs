@@ -83,15 +83,26 @@ namespace Config
 			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
+			float conLength = ComputeLength();
 			gameObject.AddComponent<ConnectionLengthProxy>().Value = new ConnectionLength
 			{
-				Length = ComputeLength(),
+				Length = conLength,
 			};
 			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);
 			gameObject.AddComponent<ConnectionTrafficProxy>().Value = new ConnectionTraffic
 			{
 				TrafficType = trafficType,
 			};
+			gameObject.AddComponent<ConnectionStateProxy>().Value = new ConnectionState
+			{
+				EnterLength = conLength,
+			};
+			gameObject.AddComponent<ConnectionStateAdjustProxy>().Value = new ConnectionStateAdjust
+			{
+				MoveForward = 0f,
+				WillRemoveAgent = false,
+			};
+			gameObject.AddComponent<AgentQueueBufferProxy>();
 		}
 
 		public override void PlayModeGenerate(CityConfig config)
@@ -102,7 +113,7 @@ namespace Config
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
-				Speed = 6.0f / 60f,
+				Speed = 12.0f / 60f,
 				Level = Level,
 			};
 		}
