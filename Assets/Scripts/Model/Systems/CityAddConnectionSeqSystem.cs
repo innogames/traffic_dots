@@ -10,73 +10,94 @@ namespace Model.Systems
 	public class CityAddConnectionSeqSystem : ComponentSystem
 	{
 		private EntityArchetype _networkArchetype;
+		private EntityQuery _query;
 
 		protected override void OnCreate()
 		{
 			base.OnCreate();
 			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(Network)),
 				new ComponentType(typeof(NetAdjust)));
+			_query = EntityManager.CreateEntityQuery(new EntityQueryDesc
+			{
+				All = new[] {new ComponentType(typeof(Connection))},
+				None = new[] {new ComponentType(typeof(NetworkGroup)),}
+			});
 		}
 
 		protected override void OnUpdate()
 		{
-			var nodeToColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
+			var conToColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			var colorToColor = new NativeHashMap<int, int>(SystemConstants.MapNodeSize, Allocator.Temp);
 			int newColor = 0;
-			Entities.WithNone<NetworkGroup>().ForEach((ref Connection connection) =>
+
+			var connections = _query.ToComponentDataArray<Connection>(Allocator.TempJob);
+			var conEnts = _query.ToEntityArray(Allocator.TempJob);
+
+			for (int i = 0; i < connections.Length; i++)
 			{
-				if (!nodeToColor.TryGetValue(connection.StartNode, out int startColor)) startColor = int.MaxValue;
-				;
-				if (!nodeToColor.TryGetValue(connection.EndNode, out int endColor)) endColor = int.MaxValue;
-
-				if (startColor == endColor)
+				var conA = connections[i];
+				var entA = conEnts[i];
+				for (int j = 0; j < connections.Length; j++)
 				{
-					if (startColor == int.MaxValue)
+					var conB = connections[j];
+					var entB = conEnts[j];
+					
+					if (!conToColor.TryGetValue(entA, out int startColor)) startColor = int.MaxValue;
+					;
+					if (!conToColor.TryGetValue(entB, out int endColor)) endColor = int.MaxValue;
+
+					if (startColor == endColor)
 					{
-						nodeToColor.TryAdd(connection.StartNode, newColor);
-						nodeToColor.TryAdd(connection.EndNode, newColor);
-						newColor++;
+						if (startColor == int.MaxValue)
+						{
+							conToColor.TryAdd(entA, newColor);
+							conToColor.TryAdd(entB, newColor);
+							newColor++;
+						}
+					}
+					else
+					{
+						int minColor = math.min(startColor, endColor);
+						int maxColor = math.max(startColor, endColor);
+						var changedCon = startColor > endColor ? entA : entB;
+						int trueColor = minColor;
+						while (colorToColor.TryGetValue(trueColor, out int nextColor))
+						{
+							trueColor = nextColor;
+						}
+
+						if (maxColor < int.MaxValue) conToColor.Remove(changedCon);
+						conToColor.TryAdd(changedCon, trueColor);
+
+						if (maxColor < int.MaxValue)
+						{
+							if (colorToColor.TryGetValue(maxColor, out int temp)) colorToColor.Remove(maxColor);
+							colorToColor.TryAdd(maxColor, trueColor);						
+						}
 					}
 				}
-				else
-				{
-					int minColor = math.min(startColor, endColor);
-					int maxColor = math.max(startColor, endColor);
-					var changedNode = startColor > endColor ? connection.StartNode : connection.EndNode;
-					int trueColor = minColor;
-					while (colorToColor.TryGetValue(trueColor, out int nextColor))
-					{
-						trueColor = nextColor;
-					}
+			}
+			
+			connections.Dispose();
+			conEnts.Dispose();
 
-					if (maxColor < int.MaxValue) nodeToColor.Remove(changedNode);
-					nodeToColor.TryAdd(changedNode, trueColor);
-
-					if (maxColor < int.MaxValue)
-					{
-						if (colorToColor.TryGetValue(maxColor, out int temp)) colorToColor.Remove(maxColor);
-						colorToColor.TryAdd(maxColor, trueColor);						
-					}
-				}
-			});
-
-			if (nodeToColor.Length > 0)
+			if (conToColor.Length > 0)
 			{
 				var finalColor = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp);				
 				var colorToNetwork = new NativeHashMap<int, Entity>(SystemConstants.MapNodeSize, Allocator.Temp);
-				var keys = nodeToColor.GetKeyArray(Allocator.Temp);
-				var values = nodeToColor.GetValueArray(Allocator.Temp);
+				var keys = conToColor.GetKeyArray(Allocator.Temp);
+				var values = conToColor.GetValueArray(Allocator.Temp);
 
 				for (int i = 0; i < keys.Length; i++)
 				{
-					var node = keys[i];
+					var con = keys[i];
 					int trueColor = values[i];
 					while (colorToColor.TryGetValue(trueColor, out int nextColor))
 					{
 						trueColor = nextColor;
 					}
 
-					finalColor.TryAdd(node, trueColor);
+					finalColor.TryAdd(con, trueColor);
 
 					if (!colorToNetwork.TryGetValue(trueColor, out var network))
 					{
@@ -94,7 +115,7 @@ namespace Model.Systems
 				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection,
 					ref ConnectionLength conLength) =>
 				{
-					int color = finalColor[connection.StartNode];
+					int color = finalColor[connectionEnt];
 					var network = colorToNetwork[color];
 					PostUpdateCommands.AddSharedComponent(connectionEnt, new NetworkGroup
 					{
@@ -121,7 +142,7 @@ namespace Model.Systems
 				finalColor.Dispose();
 			}
 
-			nodeToColor.Dispose();
+			conToColor.Dispose();
 			colorToColor.Dispose();
 		}
 	}
