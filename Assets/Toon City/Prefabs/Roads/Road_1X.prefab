@@ -234,7 +234,7 @@ MonoBehaviour:
   StartNode: {fileID: 4192805014107803344}
   EndNode: {fileID: 5543388921901332495}
   Level: 1
-  CurveIn: 7.78
+  CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &258164224733166525
@@ -827,7 +827,7 @@ MonoBehaviour:
   StartNode: {fileID: 6237762922820219850}
   EndNode: {fileID: 7145990045425217018}
   Level: 1
-  CurveIn: 7.78
+  CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &2377771162693996922
@@ -1122,7 +1122,7 @@ MonoBehaviour:
   StartNode: {fileID: 8497774769555271506}
   EndNode: {fileID: 3870104795271142198}
   Level: 1
-  CurveIn: 7.78
+  CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &3559989175892499311
@@ -1171,7 +1171,7 @@ MonoBehaviour:
   StartNode: {fileID: 3042949092756248245}
   EndNode: {fileID: 7815987704288413472}
   Level: 1
-  CurveIn: 7.78
+  CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
 --- !u!1 &3599174681294701481

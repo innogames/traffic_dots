@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a9c69e886f449187f6b3f379c1fd9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Agent: {fileID: 1000013281362706, guid: 9017d95f607e942a7aa0dbd619ded6cc, type: 3}
+  Agents:
+  - {fileID: 1000013281362706, guid: 9017d95f607e942a7aa0dbd619ded6cc, type: 3}
+  - {fileID: 1000010801063532, guid: d7712ae12a9a443d5924224621fb72e5, type: 3}
+  - {fileID: 1000010603113068, guid: 9c89b8165b9d54e90a47b1663eefb92f, type: 3}
+  - {fileID: 1000010975236142, guid: 23dee292e3a9e4d8ea247628b1c0a248, type: 3}
+  - {fileID: 1000011772067806, guid: 7f34d41b84df54fcdbf864e4f6369501, type: 3}
   TargetMask: 1
   Interval: 60
   Targets: []

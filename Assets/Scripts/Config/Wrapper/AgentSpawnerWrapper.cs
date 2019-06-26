@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Model.Components.Buffer;
 using Unity.Entities;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ namespace Config.Wrapper
 	[RequiresEntityConversion]
 	public class AgentSpawnerWrapper : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 	{
-		public GameObject Agent;
+		public GameObject[] Agents;
     
 		// Lets you convert the editor data representation to the entity optimal runtime representation
 
@@ -15,18 +17,18 @@ namespace Config.Wrapper
 		{
 			var spawnerData = new Model.Components.AgentSpawner
 			{
-				
-				// The referenced prefab will be converted due to DeclareReferencedPrefabs.
-				// So here we simply map the game object to an entity reference to that prefab.
-				Agent = conversionSystem.GetPrimaryEntity(Agent),
+				CurrentIndex = 0,
 			};
-			dstManager.AddSharedComponentData(entity, spawnerData);
+			dstManager.AddComponentData(entity, spawnerData);
+			var buffer = dstManager.AddBuffer<SpawnerBuffer>(entity);
+			buffer.CopyFrom(
+				Agents.Select(agent =>new SpawnerBuffer{Agent = conversionSystem.GetPrimaryEntity(agent)}).ToArray());
 		}
 
 		// Referenced prefabs have to be declared so that the conversion system knows about them ahead of time
 		public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
 		{
-			referencedPrefabs.Add(Agent);
+			referencedPrefabs.AddRange(Agents);
 		}
 	}
 }

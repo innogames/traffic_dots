@@ -39,7 +39,7 @@ namespace Config
 				: GameObjectConversionUtility.ConvertGameObjectHierarchy(Agent, World.Active);
 			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
 			{
-				Agent = agentEntity,
+//				Agent = agentEntity, //TODO this no longer work!
 			};
 			var spawnLocation = gameObject.AddComponent<ConnectionCoordProxy>();
 			spawnLocation.Value = new ConnectionCoord()

@@ -1,4 +1,5 @@
 using Model.Components;
+using Model.Components.Buffer;
 using Model.Systems.States;
 using Unity.Collections;
 using Unity.Entities;
@@ -12,13 +13,16 @@ namespace Model.Systems
 	{
 		protected override void OnUpdate()
 		{
-			Entities.ForEach((AgentSpawner spawner, ref Timer timer, ref TimerState timerState,
+			Entities.ForEach((Entity entity, ref AgentSpawner spawner, ref Timer timer, ref TimerState timerState,
 				ref ConnectionCoord spawnTarget,
 				ref ConnectionTarget agentTarget) =>
 			{
 				if (timerState.CountDown == 0)
 				{
-					var agent = EntityManager.GetComponentData<Agent>(spawner.Agent);
+					var buffer = EntityManager.GetBuffer<SpawnerBuffer>(entity);
+					var agentPrefab = buffer[spawner.CurrentIndex].Agent;
+					spawner.CurrentIndex = (spawner.CurrentIndex + 1) % buffer.Length;
+					var agent = EntityManager.GetComponentData<Agent>(agentPrefab);
 					var targetConnectionEnt = spawnTarget.Connection;
 					var conSpeed = EntityManager.GetComponentData<Connection>(targetConnectionEnt);
 					var conLength = EntityManager.GetComponentData<ConnectionLength>(targetConnectionEnt);
@@ -28,7 +32,7 @@ namespace Model.Systems
 					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
 					    && connectionState.CouldAgentEnter(ref agent, ref conLength))
 					{
-						var agentEnt = PostUpdateCommands.Instantiate(spawner.Agent);
+						var agentEnt = PostUpdateCommands.Instantiate(agentPrefab);
 						PostUpdateCommands.SetComponent(agentEnt, new ConnectionCoord
 						{
 							Connection = targetConnectionEnt,

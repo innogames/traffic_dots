@@ -5,5 +5,6 @@ namespace Model.Components
 		public const int IntersectionPhase = 4;
 		public const int IntersectionConnection = 12;
 		public const int TargetNumber = 5;
+		public const int SpanwerBufferAverage = 6;
 	}
 }

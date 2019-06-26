@@ -4,8 +4,8 @@ using Unity.Entities;
 namespace Model.Components
 {
 	[Serializable]
-	public struct AgentSpawner : ISharedComponentData
+	public struct AgentSpawner : IComponentData
 	{
-		public Entity Agent;
+		public int CurrentIndex;
 	}
 }

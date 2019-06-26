@@ -10,7 +10,7 @@ namespace Config
 	[RequireComponent(typeof(Connection))]
 	public class ConnectionSpawner : BaseGenerator
 	{
-		public GameObject Agent;
+		public GameObject[] Agents;
 		[EnumFlags] public TargetType TargetMask;
 		public int Interval = 60;
 
@@ -50,15 +50,17 @@ namespace Config
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
-			GameObjectEntity goEnt;
-			var agentEntity = (goEnt = Agent.GetComponent<GameObjectEntity>()) != null
-				? goEnt.Entity
-				: GameObjectConversionUtility.ConvertGameObjectHierarchy(Agent, World.Active);
 
 			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
 			{
-				Agent = agentEntity,
+				CurrentIndex = Random.Range(0, Agents.Length),
 			};
+			gameObject.AddComponent<SpawnerBufferProxy>().SetValue(
+				Agents.Select(agent => new SpawnerBuffer
+				{
+					Agent = GameObjectConversionUtility.ConvertGameObjectHierarchy(agent, World.Active)
+				}).ToArray());
+			
 			var spawnLocation = gameObject.AddComponent<ConnectionCoordProxy>();
 			spawnLocation.Value = new ConnectionCoord()
 			{

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Model.Components;
+using Model.Components.Buffer;
 using Model.Systems;
 using Model.Systems.States;
 using NUnit.Framework;
@@ -43,7 +44,7 @@ namespace Tests
 				//TODO compute correct spline here!
 				b = float3.zero,
 				c = float3.zero,
-				d = m_Manager.GetComponentData<Node>(endNode).Position,				
+				d = m_Manager.GetComponentData<Node>(endNode).Position,
 			});
 			m_Manager.SetComponentData(connection, new EntitySlot
 			{
@@ -74,7 +75,7 @@ namespace Tests
 			});
 			return agent;
 		}
-		
+
 		private Entity AddVarioAgent(Entity connectionCoord, float startCoord, Entity connectionTarget, float length)
 		{
 			var agent = m_Manager.CreateEntity(typeof(Agent),
@@ -100,7 +101,7 @@ namespace Tests
 			});
 			return agent;
 		}
-		
+
 		private Entity CreateAgentPrefab(float length)
 		{
 			var agentPrefab = m_Manager.CreateEntity(typeof(Agent),
@@ -116,17 +117,20 @@ namespace Tests
 
 			return agentPrefab;
 		}
-		
-		private Entity AddAgentSpanwer(Entity agentPrefab, Entity spawnConnection, Entity targetConnection, int interval)
+
+		private Entity AddAgentSpanwer(Entity agentPrefab, Entity spawnConnection, Entity targetConnection,
+			int interval)
 		{
 			var spawner = m_Manager.CreateEntity(typeof(AgentSpawner),
 				typeof(ConnectionCoord),
 				typeof(ConnectionTarget),
 				typeof(Timer));
-			m_Manager.SetSharedComponentData(spawner, new AgentSpawner
+			m_Manager.SetComponentData(spawner, new AgentSpawner
 			{
-				Agent = agentPrefab,				
+				CurrentIndex = 0,
 			});
+			var buffer = m_Manager.AddBuffer<SpawnerBuffer>(spawner);
+			buffer.Add(new SpawnerBuffer {Agent = agentPrefab});
 			m_Manager.SetComponentData(spawner, new ConnectionCoord
 			{
 				Connection = spawnConnection,
@@ -149,20 +153,20 @@ namespace Tests
 			World.GetOrCreateSystem<SplineSystem>().Update();
 			World.GetOrCreateSystem<EntitySlotSystem>().Update();
 			World.GetOrCreateSystem<AgentQueuePrepSystem>().Update();
-			
+
 			World.GetOrCreateSystem<TimerSystem>().Update();
 			World.GetOrCreateSystem<TimerBufferSystem>().Update();
 
 			World.GetOrCreateSystem<CityAddConnectionSeqSystem>().Update();
-			
+
 			World.GetOrCreateSystem<NetworkCreationSystem>().Update();
 			World.GetOrCreateSystem<PathCacheCommandBufferSystem>().Update();
-			
+
 			World.GetOrCreateSystem<PathSystem>().Update();
 
 			World.GetOrCreateSystem<AgentSpawningSystem>().Update();
 			World.GetOrCreateSystem<AgentQueueSystem>().Update();
-			
+
 			World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().Update();
 		}
 
@@ -239,10 +243,10 @@ namespace Tests
 //			var bc1 = bufferBC[1].Agent;
 
 //			var agentLocation = m_Manager.GetComponentData<ConnectionLocation>(agent);
-			
+
 			Assert.AreEqual(1, m_Manager.GetComponentData<TimerState>(agent).CountDown, "timer state");
 			Assert.AreEqual(1, m_Manager.GetComponentData<ConnectionLocation>(agent).Slot, "location slot");
-			
+
 			UpdateSystems();
 			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionLocation>(agent).Connection, "reach target");
 		}
@@ -265,15 +269,15 @@ namespace Tests
 //
 
 //			var agentLocation = m_Manager.GetComponentData<ConnectionLocation>(agent);
-			
+
 			Assert.AreEqual(2, m_Manager.GetComponentData<TimerState>(agentA).CountDown, "timer state");
 			Assert.AreEqual(0, m_Manager.GetComponentData<ConnectionCoord>(agentA).Coord, "agent A coord");
 			Assert.AreEqual(1, m_Manager.GetComponentData<ConnectionCoord>(agentB).Coord, "agent B coord");
-			
+
 			UpdateSystems();
 			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection, "reach target");
 		}
-		
+
 		[Test]
 		public void AgentSpawning()
 		{
@@ -285,7 +289,7 @@ namespace Tests
 
 			var agentPrefab = CreateAgentPrefab(1f);
 			AddAgentSpanwer(agentPrefab, roadAB, roadBC, 1);
-			
+
 			UpdateSystems();
 
 			var buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
@@ -298,28 +302,30 @@ namespace Tests
 			buffer = m_Manager.GetBuffer<AgentQueueBuffer>(roadAB);
 			var agentB = buffer[1].Agent;
 			var agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
-			
+
 			Assert.AreEqual(roadAB, agentBCoord.Connection, "agent B spawned correct connection!");
 			Assert.AreEqual(1, agentBCoord.Coord, "agent B spawned correct position");
 
 			TimerState agentATimer;
 			TimerState agentBTimer;
-			
-			UpdateSystems();
-			agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
-			agentATimer = m_Manager.GetComponentData<TimerState>(agentA);
-			agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
-			agentBTimer = m_Manager.GetComponentData<TimerState>(agentB);
-			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection, "agent A reach target");
 
 			UpdateSystems();
 			agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
 			agentATimer = m_Manager.GetComponentData<TimerState>(agentA);
 			agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
 			agentBTimer = m_Manager.GetComponentData<TimerState>(agentB);
-			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentB).Connection, "agent B reach target");
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentA).Connection,
+				"agent A reach target");
+
+			UpdateSystems();
+			agentACoord = m_Manager.GetComponentData<ConnectionCoord>(agentA);
+			agentATimer = m_Manager.GetComponentData<TimerState>(agentA);
+			agentBCoord = m_Manager.GetComponentData<ConnectionCoord>(agentB);
+			agentBTimer = m_Manager.GetComponentData<TimerState>(agentB);
+			Assert.AreEqual(roadBC, m_Manager.GetComponentData<ConnectionCoord>(agentB).Connection,
+				"agent B reach target");
 		}
-		
+
 		const int size = 4;
 		private const int sizeSqr = size * size;
 
@@ -368,17 +374,18 @@ namespace Tests
 			UpdateSystems();
 			using (var entities = m_Manager.GetAllEntities())
 			{
-				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));				
+				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));
 			}
 
 			for (int i = 0; i < size * 2; i++)
 			{
 				UpdateSystems();
 			}
+
 			var agent_end_con = m_Manager.GetComponentData<ConnectionLocation>(agent).Connection;
 			Assert.AreEqual(endCon, agent_end_con);
 		}
-		
+
 		[Test]
 		public void GridAgentQueue()
 		{
@@ -422,13 +429,14 @@ namespace Tests
 			var agent = m_Manager.GetBuffer<AgentQueueBuffer>(startCon)[0].Agent;
 			using (var entities = m_Manager.GetAllEntities())
 			{
-				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));				
+				Assert.AreEqual(1, entities.Count(m_Manager.HasComponent<Network>));
 			}
 
 			for (int i = 0; i < size * 2; i++)
 			{
 				UpdateSystems();
 			}
+
 			var agent_end_con = m_Manager.GetComponentData<ConnectionCoord>(agent).Connection;
 			Assert.AreEqual(endCon, agent_end_con);
 		}
