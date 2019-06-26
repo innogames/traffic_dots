@@ -122,11 +122,11 @@ MonoBehaviour:
     - {fileID: 4217565695770831263}
     - {fileID: 4988578966890385484}
     - {fileID: 421827396719646655}
-    Frames: 120
+    Frames: 360
   - Connections:
     - {fileID: 2584249507722091772}
     - {fileID: 3105054476657205686}
-    Frames: 60
+    Frames: 180
   - Connections:
     - {fileID: 4101354665935417641}
     - {fileID: 5234219385049938104}
@@ -134,11 +134,11 @@ MonoBehaviour:
     - {fileID: 1378123542641824636}
     - {fileID: 1075719437732303686}
     - {fileID: 4391041653907302582}
-    Frames: 120
+    Frames: 360
   - Connections:
     - {fileID: 4237160039668074657}
     - {fileID: 7449189431620744395}
-    Frames: 60
+    Frames: 180
 --- !u!1 &66417440155954275
 GameObject:
   m_ObjectHideFlags: 0
