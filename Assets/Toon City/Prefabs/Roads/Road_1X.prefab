@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 0}
-  SpeedMultiplier: 1.5
+  SpeedMultiplier: 2
   Phases:
   - Connections:
     - {fileID: 8278259407390663467}
@@ -123,11 +123,11 @@ MonoBehaviour:
     - {fileID: 4217565695770831263}
     - {fileID: 4988578966890385484}
     - {fileID: 421827396719646655}
-    Frames: 360
+    Frames: 120
   - Connections:
     - {fileID: 2584249507722091772}
     - {fileID: 3105054476657205686}
-    Frames: 180
+    Frames: 60
   - Connections:
     - {fileID: 4101354665935417641}
     - {fileID: 5234219385049938104}
@@ -135,11 +135,11 @@ MonoBehaviour:
     - {fileID: 1378123542641824636}
     - {fileID: 1075719437732303686}
     - {fileID: 4391041653907302582}
-    Frames: 360
+    Frames: 120
   - Connections:
     - {fileID: 4237160039668074657}
     - {fileID: 7449189431620744395}
-    Frames: 180
+    Frames: 60
 --- !u!1 &66417440155954275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,7 +1001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CachedConfig: {fileID: 0}
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -1442,7 +1442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CachedConfig: {fileID: 0}
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -1493,7 +1493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CachedConfig: {fileID: 0}
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -2222,7 +2222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CachedConfig: {fileID: 0}
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
