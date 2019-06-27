@@ -10,5 +10,6 @@ namespace Model.Components
 		Police = 1 << 2,
 		Hospital = 1 << 3,
 		Fire = 1 << 4,
+		Bus = 1 << 5,
 	}
 }

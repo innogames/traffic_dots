@@ -15,19 +15,6 @@ namespace Config
 		public int Interval = 60;
 
 		public TargetMarker[] Targets;
-
-		private void OnDrawGizmosSelected()
-		{
-			if (Targets == null || Targets.Length == 0) return;
-			var connection = GetComponent<Connection>();
-			Gizmos.color = Color.cyan;
-			foreach (var target in Targets)
-			{
-				if (target == null) continue;
-				var conTarget = target.GetComponent<Connection>();
-				Gizmos.DrawLine(connection.GetMidPoint(), conTarget.GetMidPoint());
-			}
-		}
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
@@ -84,6 +71,31 @@ namespace Config
 			};
 			Targets = FindObjectsOfType<TargetMarker>()
 				.Where(marker => (marker.TargetMask & TargetMask) != 0).ToArray();
+		}
+		
+		
+		private void OnDrawGizmosSelected()
+		{
+			if (Targets == null || Targets.Length == 0) return;
+			var connection = GetComponent<Connection>();
+			Gizmos.color = Color.cyan;
+			foreach (var target in Targets)
+			{
+				if (target == null) continue;
+				var conTarget = target.GetComponent<Connection>();
+				Gizmos.DrawLine(connection.GetMidPoint(), conTarget.GetMidPoint());
+			}
+		}
+
+		private void OnDrawGizmos()
+		{
+			if (Agents == null || Agents.Length == 0) return;
+			var mesh = Agents[0].GetComponent<MeshFilter>();
+			if (mesh != null)
+			{
+				Gizmos.color = Color.blue;
+				Gizmos.DrawMesh(mesh.sharedMesh, transform.position, transform.rotation);				
+			}			
 		}
 #endif
 	}
