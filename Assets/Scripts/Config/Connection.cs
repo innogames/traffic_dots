@@ -122,7 +122,7 @@ namespace Config
 			};
 			gameObject.AddComponent<AgentQueueBufferProxy>(); //empty!
 
-			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
+			CachedSpeed = 12f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 		}
 
 		private Spline ComputeBezierPoints()
