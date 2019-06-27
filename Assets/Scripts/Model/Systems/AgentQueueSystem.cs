@@ -143,7 +143,8 @@ namespace Model.Systems
 						Coords[agent.Agent] = new ConnectionCoord
 						{
 							Connection = entity,
-							Coord = agentCoord.Coord - state.ExitLength,
+							//precision is important here, because only agent reaching 0 can use path finding in AgentEnterConnectionJob!
+							Coord = (i == 0) ? 0f : agentCoord.Coord - state.ExitLength,
 						};
 						;
 						int extraTime = (int) math.ceil(state.ExitLength / connection.Speed);
