@@ -66,23 +66,34 @@ namespace Config
 			{
 				if (PrefabStageUtility.GetCurrentPrefabStage() != null)
 				{
-					var s = PreviewBezier();
-					int length = (int) (s.TotalLength() / SegmentLen);
-					for (int i = 0; i <= length - 1; i++)
-					{
-						var startPoint = (Vector3)s.Point((float)i / length);
-						var endPoint = (Vector3)s.Point((float)(i + 1) / length);
-						Gizmos.color = (i % 2) == 0 ? Color.green : Color.red;
-						Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ, 
-							endPoint + ConfigConstants.OffsetZ);
-					}
-					Gizmos.color = Selection.activeObject == gameObject ? Color.green : Color.white;
-					var center = s.Point(0.5f);
-					var forward = s.Tangent(0.5f);
-					Gizmos.DrawMesh(GetConfig.ConeMesh, center, Quaternion.LookRotation(forward), 
-						new Vector3(1f, 1f, 2f));
+					DrawConnection(false);
 				}
 			}
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			DrawConnection(true);
+		}
+
+		private void DrawConnection(bool selected)
+		{
+			var s = PreviewBezier();
+			int length = (int) (s.TotalLength() / SegmentLen);
+			for (int i = 0; i <= length - 1; i++)
+			{
+				var startPoint = (Vector3) s.Point((float) i / length);
+				var endPoint = (Vector3) s.Point((float) (i + 1) / length);
+				Gizmos.color = selected ? Color.cyan : ((i % 2) == 0 ? Color.green : Color.red);
+				Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ,
+					endPoint + ConfigConstants.OffsetZ);
+			}
+
+			Gizmos.color = selected ? Color.cyan : Color.white;
+			var center = s.Point(0.5f);
+			var forward = s.Tangent(0.5f);
+			Gizmos.DrawMesh(GetConfig.ConeMesh, center, Quaternion.LookRotation(forward),
+				new Vector3(1f, 1f, 2f));
 		}
 
 		public override void Generate(CityConfig config)
