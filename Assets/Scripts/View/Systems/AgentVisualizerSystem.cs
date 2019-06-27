@@ -1,4 +1,5 @@
 using Model.Components;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -11,13 +12,14 @@ namespace View.Systems
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public class AgentVisualizerSystem : JobComponentSystem
 	{
+		[BurstCompile]
 		[RequireComponentTag(typeof(Agent))]
-		private struct MoveJob : IJobForEachWithEntity<ConnectionCoord, Translation, Rotation, Timer, TimerState>
+		private struct MoveJob : IJobForEach<ConnectionCoord, Translation, Rotation, Timer, TimerState>
 		{
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
 			[ReadOnly] public ComponentDataFromEntity<Spline> Splines;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref ConnectionCoord coord,
+			public void Execute([ReadOnly] ref ConnectionCoord coord,
 				ref Translation translation, ref Rotation rotation, [ReadOnly] ref Timer timer, [ReadOnly] ref TimerState timerState)
 			{
 				var spline = Splines[coord.Connection];
