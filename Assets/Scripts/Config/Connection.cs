@@ -82,9 +82,10 @@ namespace Config
 			int length = (int) (s.TotalLength() / SegmentLen);
 			for (int i = 0; i <= length - 1; i++)
 			{
+				bool isEven = i % 2 == 0;
 				var startPoint = (Vector3) s.Point((float) i / length);
 				var endPoint = (Vector3) s.Point((float) (i + 1) / length);
-				Gizmos.color = selected ? Color.cyan : ((i % 2) == 0 ? Color.green : Color.red);
+				Gizmos.color = selected ? (isEven ? Color.red : Color.green) : Color.white;
 				Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ,
 					endPoint + ConfigConstants.OffsetZ);
 			}
