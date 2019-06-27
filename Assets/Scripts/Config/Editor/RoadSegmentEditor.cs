@@ -65,6 +65,17 @@ namespace Config.CityEditor
 						}
 					}
 				}
+
+				if (GUILayout.Button("Disconnect all"))
+				{
+					var connectors = targets.OfType<RoadSegment>()
+						.SelectMany(segment => segment.Connectors).ToArray();
+					foreach (var con in connectors)
+					{
+						con.ConnectedTo = null;
+						EditorUtility.SetDirty(con);
+					}
+				}
 			}
 			else
 			{
