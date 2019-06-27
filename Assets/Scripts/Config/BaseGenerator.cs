@@ -1,5 +1,7 @@
-using Unity.Entities;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+using Unity.Entities;
 using UnityEngine;
 
 namespace Config
@@ -11,10 +13,6 @@ namespace Config
 		{
 			CleanComponentProxys();
 			EditorUtility.SetDirty(this);
-		}
-
-		public virtual void PlayModeGenerate(CityConfig config)
-		{			
 		}
 
 		public virtual void Clean()
@@ -47,5 +45,8 @@ namespace Config
 			}
 		}
 #endif
+		public virtual void PlayModeGenerate(CityConfig config)
+		{			
+		}
 	}
 }

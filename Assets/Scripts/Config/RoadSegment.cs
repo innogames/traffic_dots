@@ -4,7 +4,6 @@ using Config.Proxy;
 using Model.Components;
 using Model.Components.Buffer;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Config
 {
@@ -16,6 +15,31 @@ namespace Config
 
 		public TrafficPhases[] Phases;
 
+		public override void PlayModeGenerate(CityConfig config)
+		{
+			base.PlayModeGenerate(config);
+			var phaseList = new List<IntersectionPhaseBuffer>();
+			int index = 0;
+			foreach (var phase in Phases)
+			{
+				phaseList.Add(new IntersectionPhaseBuffer
+				{
+					StartIndex = index,
+					EndIndex = index + phase.Connections.Length - 1,
+					Frames = phase.Frames,
+				});
+				index += phase.Connections.Length;
+			}
+
+			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(phaseList);
+			var conList = Phases.SelectMany(phase => phase.Connections).Select(con => new IntersectionConBuffer()
+			{
+				Connection = con.GetComponent<GameObjectEntity>().Entity,
+			}).ToList();
+			gameObject.AddComponent<IntersectionConBufferProxy>().SetValue(conList);
+		}
+
+#if UNITY_EDITOR
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
@@ -40,34 +64,6 @@ namespace Config
 			}
 		}
 
-		private Entity GetConnectionEntity(Connection connection)
-		{
-			return connection == null ? Entity.Null : connection.GetComponent<GameObjectEntity>().Entity;
-		}
-
-		public override void PlayModeGenerate(CityConfig config)
-		{
-			base.PlayModeGenerate(config);
-			var phaseList = new List<IntersectionPhaseBuffer>();
-			int index = 0;
-			foreach (var phase in Phases)
-			{
-				phaseList.Add(new IntersectionPhaseBuffer
-				{
-					StartIndex = index,
-					EndIndex = index + phase.Connections.Length - 1,
-					Frames = phase.Frames,
-				});
-				index += phase.Connections.Length;
-			}
-			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(phaseList);
-			var conList = Phases.SelectMany(phase => phase.Connections).Select(con => new IntersectionConBuffer()
-			{
-				Connection = con.GetComponent<GameObjectEntity>().Entity,
-			}).ToList();
-			gameObject.AddComponent<IntersectionConBufferProxy>().SetValue(conList);
-		}
-
 		public bool IsIntersection()
 		{
 			return Phases.Length > 0;
@@ -85,5 +81,6 @@ namespace Config
 				return ConnectionTrafficType.Normal;
 			}
 		}
+#endif
 	}
 }

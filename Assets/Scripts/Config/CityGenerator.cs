@@ -8,15 +8,6 @@ namespace Config
 	{
 		public CityConfig Config;
 #if UNITY_EDITOR
-		private static IEnumerable<BaseGenerator> GetGenerators()
-		{
-			//the order here is important!
-			return FindObjectsOfType<Node>().Cast<BaseGenerator>()
-				.Concat(FindObjectsOfType<Connection>())
-				.Concat(FindObjectsOfType<RoadSegment>())
-				.Concat(FindObjectsOfType<ConnectionSpawner>())
-				.Concat(FindObjectsOfType<AgentSpawner>());
-		}
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
@@ -25,6 +16,24 @@ namespace Config
 			{
 				obj.Generate(config);
 			}
+		}
+
+		public override void Clean()
+		{
+			foreach (var obj in GetGenerators())
+			{
+				obj.Clean();
+			}
+		}
+#endif
+		private static IEnumerable<BaseGenerator> GetGenerators()
+		{
+			//the order here is important!
+			return FindObjectsOfType<Node>().Cast<BaseGenerator>()
+				.Concat(FindObjectsOfType<Connection>())
+				.Concat(FindObjectsOfType<RoadSegment>())
+				.Concat(FindObjectsOfType<ConnectionSpawner>())
+				.Concat(FindObjectsOfType<AgentSpawner>());
 		}
 
 		private void Awake()
@@ -41,14 +50,5 @@ namespace Config
 				obj.PlayModeGenerate(config);
 			}
 		}
-
-		public override void Clean()
-		{
-			foreach (var obj in GetGenerators())
-			{
-				obj.Clean();
-			}
-		}
-#endif
 	}
 }

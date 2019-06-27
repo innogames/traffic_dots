@@ -10,8 +10,11 @@ namespace Config
 		public Node StartNode;
 		public Node EndNode;
 		public int Level = 1;
-		
+
 		public float CurveIn = 1.0f;
+
+		public GameObjectEntity LinkedStartNode;
+		public GameObjectEntity LinkedEndNode;
 
 		public Vector3 GetMidPoint()
 		{
@@ -24,7 +27,7 @@ namespace Config
 				return (StartNode.transform.position + EndNode.transform.position) * 0.5f;
 			}
 		}
-		
+
 		private void OnDrawGizmosSelected()
 		{
 			DrawSpline();
@@ -42,7 +45,7 @@ namespace Config
 					var startPoint = s.Point((float) i / length);
 					var endPoint = s.Point((float) (i + 1) / length);
 					Gizmos.color = (i % 2) == 0 ? Color.blue : Color.red;
-					Gizmos.DrawLine((Vector3)startPoint + offset, (Vector3)endPoint + offset);
+					Gizmos.DrawLine((Vector3) startPoint + offset, (Vector3) endPoint + offset);
 				}
 			}
 		}
@@ -59,22 +62,20 @@ namespace Config
 			return ret;
 		}
 
-		private Spline ComputeBezierPoints()
+		public override void PlayModeGenerate(CityConfig config)
 		{
-			var start = StartNode.transform;
-			var end = EndNode.transform;
-			Spline ret;
-			ret.a = StartNode.GenTimePointer.transform.position; //use NodePointer here for precise transition
-			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
-			ret.d = EndNode.GenTimePointer.transform.position;
-			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
-			return ret;
+			base.PlayModeGenerate(config);
+			var connection = gameObject.AddComponent<ConnectionProxy>();
+			connection.Value = new Model.Components.Connection
+			{
+				StartNode = LinkedStartNode.Entity,
+				EndNode = LinkedEndNode.Entity,
+				Speed = 18.0f / 60f,
+				Level = Level,
+			};
 		}
 
 #if UNITY_EDITOR
-
-		public GameObjectEntity LinkedStartNode;
-		public GameObjectEntity LinkedEndNode;
 
 		public override void Generate(CityConfig config)
 		{
@@ -94,17 +95,16 @@ namespace Config
 			};
 		}
 
-		public override void PlayModeGenerate(CityConfig config)
+		private Spline ComputeBezierPoints()
 		{
-			base.PlayModeGenerate(config);
-			var connection = gameObject.AddComponent<ConnectionProxy>();
-			connection.Value = new Model.Components.Connection
-			{
-				StartNode = LinkedStartNode.Entity,
-				EndNode = LinkedEndNode.Entity,
-				Speed = 18.0f / 60f,
-				Level = Level,
-			};
+			var start = StartNode.transform;
+			var end = EndNode.transform;
+			Spline ret;
+			ret.a = StartNode.GenTimePointer.transform.position; //use NodePointer here for precise transition
+			ret.b = (Vector3) ret.a + (start.forward * CurveIn);
+			ret.d = EndNode.GenTimePointer.transform.position;
+			ret.c = (Vector3) ret.d - (end.forward * CurveIn);
+			return ret;
 		}
 
 		private float ComputeLength()

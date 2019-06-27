@@ -9,9 +9,9 @@ namespace Config
 	{
 		public Node NodePointer;
 
+#if UNITY_EDITOR
 		public Node GenTimePointer => IsSharedNode() ? NodePointer : this;
 
-#if UNITY_EDITOR
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.blue;
