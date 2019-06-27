@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Config
 {
-	public class Connector : MonoBehaviour
+	public class Connector : BaseGenerator
 	{
 		public Connector ConnectedTo;
 		public int ConnectedToIndex = 0;
@@ -12,12 +12,15 @@ namespace Config
 
 		public IEnumerable<Node> SharedNodes => GetComponentsInChildren<Node>();
 
+		private readonly Vector3 size = new Vector3(2f, 2f, 4f);
+		
 		private void OnDrawGizmos()
 		{
 			if (ConnectedTo == null)
 			{
-				Gizmos.color = Color.red;
-				Gizmos.DrawSphere(transform.position, 1f);
+				Gizmos.color = Color.yellow;
+				Gizmos.DrawMesh(GetConfig.ConeMesh, transform.position, transform.rotation,
+					size);
 			}
 		}
 

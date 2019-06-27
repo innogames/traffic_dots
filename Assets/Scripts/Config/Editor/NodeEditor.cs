@@ -5,15 +5,12 @@ namespace Config.CityEditor
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(Node))]
-	public class NodeEditor : Editor
+	public class NodeEditor : SnapEditor<Node>
 	{
 		private static Node _connectFrom;
 
-		public override void OnInspectorGUI()
+		protected override void OnCustomInspector(Node thisNode)
 		{
-			base.OnInspectorGUI();
-			EditorGUILayout.BeginVertical();
-			var thisNode = (Node) target;
 			if (_connectFrom != null && _connectFrom != thisNode)
 			{
 				var startNode = _connectFrom;
@@ -32,22 +29,6 @@ namespace Config.CityEditor
 			{
 				_connectFrom = thisNode;
 			}
-
-			if (GUILayout.Button("Snap"))
-			{
-				var pos = thisNode.transform.position;
-				thisNode.transform.position = new Vector3(Mathf.RoundToInt(pos.x),
-					Mathf.RoundToInt(pos.y),
-					Mathf.RoundToInt(pos.z));
-			}
-
-
-//			var node = (Node) target;
-//			if (GUILayout.Button("Delete"))
-//			{
-//			}
-
-			EditorGUILayout.EndVertical();
 		}
 	}
 }
