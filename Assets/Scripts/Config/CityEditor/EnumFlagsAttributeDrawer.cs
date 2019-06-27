@@ -1,7 +1,8 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
 	public class EnumFlagsAttributeDrawer : PropertyDrawer
@@ -17,3 +18,4 @@ namespace Config
 		}
 	}
 }
+#endif

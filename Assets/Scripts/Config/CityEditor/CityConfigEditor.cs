@@ -3,7 +3,7 @@ using Config.Proxy;
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CustomEditor(typeof(CityConfig))]
 	public class CityConfigEditor : Editor

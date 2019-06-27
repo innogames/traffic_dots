@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(RoadSegment))]

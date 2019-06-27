@@ -2,7 +2,7 @@ using System.Linq;
 using Config.Proxy;
 using UnityEditor;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(AgentProxy))]
