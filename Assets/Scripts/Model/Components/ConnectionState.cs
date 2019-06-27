@@ -1,9 +1,10 @@
-using Model.Components;
+using System;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Model.Systems.States
+namespace Model.Components
 {
+	[Serializable]
 	public struct ConnectionState : ISystemStateComponentData
 	{
 		public float EnterLength;

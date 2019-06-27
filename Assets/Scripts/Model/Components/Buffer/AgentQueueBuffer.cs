@@ -1,10 +1,11 @@
-using Model.Components;
+using System;
 using Unity.Entities;
 
-namespace Model.Systems.States
+namespace Model.Components.Buffer
 {
+	[Serializable]
 	[InternalBufferCapacity(ComponentConstants.ConnectionSlotAverage)]
-	public struct EntitySlotBuffer : IBufferElementData
+	public struct AgentQueueBuffer : IBufferElementData
 	{
 		public Entity Agent;
 	}

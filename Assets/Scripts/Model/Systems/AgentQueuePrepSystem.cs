@@ -1,4 +1,5 @@
 using Model.Components;
+using Model.Components.Buffer;
 using Model.Systems.States;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,6 +7,7 @@ using Unity.Jobs;
 
 namespace Model.Systems
 {
+	[DisableAutoCreation]
 	//TODO turn this into batch ComponentSystem!
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateBefore(typeof(PathCacheCommandBufferSystem))]

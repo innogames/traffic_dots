@@ -105,15 +105,22 @@ namespace Config
 			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
+			var conLen = ComputeLength();
 			gameObject.AddComponent<ConnectionLengthProxy>().Value = new ConnectionLength
 			{
-				Length = ComputeLength(),
+				Length = conLen,
 			};
 			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);
 			gameObject.AddComponent<ConnectionTrafficProxy>().Value = new ConnectionTraffic
 			{
 				TrafficType = trafficType,
 			};
+			gameObject.AddComponent<ConnectionStateProxy>().Value = new ConnectionState
+			{
+				EnterLength = conLen,
+				ExitLength = 0f,
+			};
+			gameObject.AddComponent<AgentQueueBufferProxy>(); //empty!
 
 			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 		}
