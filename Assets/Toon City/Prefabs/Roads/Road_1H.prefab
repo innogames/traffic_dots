@@ -672,6 +672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e0b24477ed2434b9fd60250f5ea491e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   Phases:
   - Connections:
@@ -732,6 +733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &249139673638132500
 GameObject:
@@ -824,6 +826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 6237707914768270389}
   EndNode: {fileID: 1084872820020497428}
   Level: 1
@@ -873,6 +876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &2544714233111491910
 GameObject:
@@ -917,6 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 1033944182274673309}
   EndNode: {fileID: 976322131573867403}
   Level: 1
@@ -1014,6 +1019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 1033944182274673309}
   EndNode: {fileID: 3257488920069657679}
   Level: 1
@@ -1063,6 +1069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 8627143367199035645}
   EndNode: {fileID: 976322131573867403}
   Level: 1
@@ -1112,6 +1119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &5406161712644032936
 GameObject:
@@ -1156,6 +1164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &5673126844727379296
 GameObject:
@@ -1200,6 +1209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &6723690322314935347
 GameObject:
@@ -1244,6 +1254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   NodePointer: {fileID: 0}
 --- !u!1 &7049780670942503290
 GameObject:
@@ -1288,6 +1299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 6237707914768270389}
   EndNode: {fileID: 3257488920069657679}
   Level: 1
@@ -1337,6 +1349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 8627143367199035645}
   EndNode: {fileID: 1084872820020497428}
   Level: 1
