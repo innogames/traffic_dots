@@ -1,6 +1,9 @@
 using Config.Proxy;
 using Unity.Entities;
 using Unity.Mathematics;
+#if UNITY_EDITOR
+using UnityEditor.Experimental.SceneManagement;
+#endif
 using UnityEngine;
 
 namespace Config
@@ -12,10 +15,16 @@ namespace Config
 #if UNITY_EDITOR
 		public Node GenTimePointer => IsSharedNode() ? NodePointer : this;
 
-		private void OnDrawGizmosSelected()
+		private readonly Vector3 size = new Vector3(1f, 1f, 2f);
+
+		private void OnDrawGizmos()
 		{
-			Gizmos.color = Color.blue;
-			Gizmos.DrawSphere(transform.position, 1.0f);
+			if (PrefabStageUtility.GetCurrentPrefabStage() != null)
+			{
+				Gizmos.color = Color.blue;
+				Gizmos.DrawMesh(GetConfig.ConeMesh, transform.position, transform.rotation,
+					size);
+			}
 		}
 
 		private bool IsSharedNode()

@@ -1,3 +1,5 @@
+
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -8,9 +10,28 @@ namespace Config
 {
 	public abstract class BaseGenerator : MonoBehaviour
 	{
+		public CityConfig CachedConfig;
 #if UNITY_EDITOR
+		protected CityConfig GetConfig
+		{
+			get
+			{
+				if (CachedConfig != null)
+				{
+					return CachedConfig;
+				}
+				else
+				{
+					CachedConfig = Resources.FindObjectsOfTypeAll<CityConfig>().First();
+					EditorUtility.SetDirty(this);
+					return CachedConfig;
+				}
+			}
+		}
+
 		public virtual void Generate(CityConfig config)
 		{
+			CachedConfig = config;
 			CleanComponentProxys();
 			EditorUtility.SetDirty(this);
 		}

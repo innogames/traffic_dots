@@ -8,5 +8,6 @@ namespace Config
 	{
 		public RoadSegment[] Segments;
 		public AgentProxy[] Vehicles;
+		public Mesh ConeMesh;
 	}
 }

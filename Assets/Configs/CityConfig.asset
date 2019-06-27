@@ -38,3 +38,5 @@ MonoBehaviour:
   - {fileID: 2164717428098789578, guid: b6934bd0f52b84f478a327f737169a5d, type: 3}
   - {fileID: 8811525978268266911, guid: b2d7738156a6b4044bb80820588e7d28, type: 3}
   Vehicles: []
+  ConeMesh: {fileID: -4432124805086160128, guid: 5bf77ab8b0be442e9841a40a806a24bb,
+    type: 3}
