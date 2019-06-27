@@ -9,11 +9,11 @@ namespace Config
 {
 	public class RoadSegment : BaseGenerator
 	{
-		public CityConfig Config;
+		public float SpeedMultiplier = 1f;
+		public TrafficPhases[] Phases;
 
 		public Connector[] Connectors => GetComponentsInChildren<Connector>();
 
-		public TrafficPhases[] Phases;
 
 		public override void PlayModeGenerate(CityConfig config)
 		{

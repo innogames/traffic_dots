@@ -12,7 +12,7 @@ namespace Config
 	{
 		public CityConfig CachedConfig;
 #if UNITY_EDITOR
-		protected CityConfig GetConfig
+		public CityConfig GetConfig
 		{
 			get
 			{

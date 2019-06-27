@@ -19,6 +19,7 @@ namespace Config
 
 		public GameObjectEntity LinkedStartNode;
 		public GameObjectEntity LinkedEndNode;
+		public float CachedSpeed = 1f;
 
 		public Vector3 GetMidPoint()
 		{
@@ -54,7 +55,7 @@ namespace Config
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
-				Speed = 18.0f / 60f,
+				Speed = CachedSpeed,
 				Level = Level,
 			};
 		}
@@ -113,6 +114,8 @@ namespace Config
 			{
 				TrafficType = trafficType,
 			};
+
+			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 		}
 
 		private Spline ComputeBezierPoints()

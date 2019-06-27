@@ -70,21 +70,10 @@ namespace Config.CityEditor
 			{
 				RoadSegment segment = (RoadSegment) target;
 
-				if (GUILayout.Button("Populate"))
-				{
-//					segment.Connectors = segment.gameObject.GetComponentsInChildren<Connector>();
-					if (segment.Config == null)
-					{
-						segment.Config = Resources.FindObjectsOfTypeAll<CityConfig>().First();
-					}
-
-					EditorUtility.SetDirty(segment);
-				}
-
 				int perRow = Screen.width / IconSize;
 				if (_selectedConnector != null)
 				{
-					var validSegments = segment.Config.Segments.Where(seg =>
+					var validSegments = segment.GetConfig.Segments.Where(seg =>
 						seg.Connectors.Any(con => con.ConnectorType.Compatible(_selectedConnector.ConnectorType)));
 					int buttonId = 0;
 					bool inHoriBlock = false;
