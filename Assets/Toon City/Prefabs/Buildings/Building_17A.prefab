@@ -304,7 +304,7 @@ MonoBehaviour:
   Agents:
   - {fileID: 1000010801063532, guid: d7712ae12a9a443d5924224621fb72e5, type: 3}
   TargetMask: 4
-  Interval: 120
+  Interval: 300
   Targets: []
 --- !u!1 &6044888750141670443
 GameObject:
