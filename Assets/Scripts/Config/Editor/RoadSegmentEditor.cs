@@ -87,9 +87,14 @@ namespace Config.CityEditor
 					var validSegments = segment.Config.Segments.Where(seg =>
 						seg.Connectors.Any(con => con.ConnectorType.Compatible(_selectedConnector.ConnectorType)));
 					int buttonId = 0;
+					bool inHoriBlock = false;
 					foreach (var other in validSegments)
 					{
-						if (buttonId % perRow == 0) EditorGUILayout.BeginHorizontal();
+						if (buttonId % perRow == 0)
+						{
+							EditorGUILayout.BeginHorizontal();
+							inHoriBlock = true;
+						}
 						if (GUILayout.Button(AssetPreview.GetAssetPreview(other.gameObject), GUILayout.Width(IconSize), GUILayout.Height(IconSize)))
 						{
 							int index = 0;
@@ -117,11 +122,15 @@ namespace Config.CityEditor
 							PlaceSegment(segment.transform, _selectedConnector, other, index);
 						}
 
-						if (buttonId % perRow == perRow - 1) EditorGUILayout.EndHorizontal();
+						if (buttonId % perRow == perRow - 1)
+						{
+							EditorGUILayout.EndHorizontal();
+							inHoriBlock = false;
+						}
 						buttonId++;
 					}
 
-					if (buttonId != perRow) EditorGUILayout.EndHorizontal();
+					if (inHoriBlock) EditorGUILayout.EndHorizontal();
 					Repaint();
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,
