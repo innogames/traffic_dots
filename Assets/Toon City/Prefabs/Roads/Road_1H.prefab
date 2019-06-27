@@ -673,7 +673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 0}
-  Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
+  SpeedMultiplier: 1
   Phases:
   - Connections:
     - {fileID: 5464785571242873652}
@@ -780,6 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
@@ -833,6 +834,7 @@ MonoBehaviour:
   CurveIn: 3.45
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &1620647824558160510
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,6 +930,7 @@ MonoBehaviour:
   CurveIn: 5.23
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &3012190792227885241
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,6 +976,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
@@ -1026,6 +1030,7 @@ MonoBehaviour:
   CurveIn: 3.45
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4527574683769087461
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,6 +1081,7 @@ MonoBehaviour:
   CurveIn: 5
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4626822427241020757
 GameObject:
   m_ObjectHideFlags: 0
@@ -1306,6 +1312,7 @@ MonoBehaviour:
   CurveIn: 5
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7287365832844066924
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,6 +1363,7 @@ MonoBehaviour:
   CurveIn: 5.23
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &8849911175112813100
 GameObject:
   m_ObjectHideFlags: 0
@@ -1401,6 +1409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1

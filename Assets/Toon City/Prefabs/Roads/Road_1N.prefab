@@ -115,7 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e0b24477ed2434b9fd60250f5ea491e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
+  CachedConfig: {fileID: 0}
+  SpeedMultiplier: 1
   Phases:
   - Connections:
     - {fileID: 2492076941711238201}
@@ -166,12 +167,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 6988693659538992770}
   EndNode: {fileID: 7127988082346573336}
   Level: 1
   CurveIn: 4.56
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &528959484798747819
 GameObject:
   m_ObjectHideFlags: 0
@@ -215,6 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &1107305560341195652
 GameObject:
@@ -259,12 +263,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 3749274917443779698}
   EndNode: {fileID: 7268200583717535723}
   Level: 1
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &1265374192383778823
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,6 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &1565122797777116626
 GameObject:
@@ -352,12 +359,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 7268200583717535723}
   EndNode: {fileID: 9161404663070148263}
   Level: 1
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &2145648773648391983
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,6 +412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
@@ -449,12 +459,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 8705796014958876020}
   EndNode: {fileID: 6988693659538992770}
   Level: 1
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4506826595812964359
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,12 +510,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 6988693659538992770}
   EndNode: {fileID: 4133562697824924780}
   Level: 1
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4974285162865412737
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,6 +561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &5078399861110712191
 GameObject:
@@ -591,6 +606,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &6101019932467122671
 GameObject:
@@ -635,6 +651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &6559757626342917770
 GameObject:
@@ -679,6 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &7226596959448273460
 GameObject:
@@ -727,6 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -773,6 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &8427463928006514924
 GameObject:
@@ -817,6 +837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &8446295908735400244
 GameObject:
@@ -861,9 +882,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 9098365429884742779}
   EndNode: {fileID: 7268200583717535723}
   Level: 1
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1

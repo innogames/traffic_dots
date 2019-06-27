@@ -323,7 +323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 0}
-  Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
+  SpeedMultiplier: 1
   Phases: []
 --- !u!1 &1000014021447370
 GameObject:
@@ -570,6 +570,7 @@ MonoBehaviour:
   CurveIn: 11.97
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4857115604629505611
 GameObject:
   m_ObjectHideFlags: 0
@@ -615,6 +616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
@@ -668,6 +670,7 @@ MonoBehaviour:
   CurveIn: 9.44
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7474257703382982604
 GameObject:
   m_ObjectHideFlags: 0
@@ -713,6 +716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1

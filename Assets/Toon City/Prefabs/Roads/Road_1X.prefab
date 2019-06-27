@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 0}
-  Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
+  SpeedMultiplier: 1.5
   Phases:
   - Connections:
     - {fileID: 8278259407390663467}
@@ -190,6 +190,7 @@ MonoBehaviour:
   CurveIn: 2.95
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &160916929261057993
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,6 +241,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &258164224733166525
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,6 +427,7 @@ MonoBehaviour:
   CurveIn: 2.75
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &771062670041692002
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,6 +613,7 @@ MonoBehaviour:
   CurveIn: 4.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &1105801094132268116
 GameObject:
   m_ObjectHideFlags: 0
@@ -705,6 +709,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &1463748303290345834
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,6 +800,7 @@ MonoBehaviour:
   CurveIn: 2.95
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &2222058378145166803
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,6 +851,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &2377771162693996922
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,6 +902,7 @@ MonoBehaviour:
   CurveIn: 6.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &2617527928583082987
 GameObject:
   m_ObjectHideFlags: 0
@@ -945,6 +953,7 @@ MonoBehaviour:
   CurveIn: 4.25
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &2703676334788734069
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,6 +1001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -1045,6 +1055,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &3199275690369747157
 GameObject:
   m_ObjectHideFlags: 0
@@ -1095,6 +1106,7 @@ MonoBehaviour:
   CurveIn: 6.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &3252272765554867574
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,6 +1157,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &3559989175892499311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,6 +1208,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &3599174681294701481
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,6 +1349,7 @@ MonoBehaviour:
   CurveIn: 2.75
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4104978458852385682
 GameObject:
   m_ObjectHideFlags: 0
@@ -1427,6 +1442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -1477,6 +1493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -1710,6 +1727,7 @@ MonoBehaviour:
   CurveIn: 6.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &4716172373366979700
 GameObject:
   m_ObjectHideFlags: 0
@@ -1760,6 +1778,7 @@ MonoBehaviour:
   CurveIn: 3.04
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5096023799299483397
 GameObject:
   m_ObjectHideFlags: 0
@@ -1855,6 +1874,7 @@ MonoBehaviour:
   CurveIn: 6.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5498312316274570278
 GameObject:
   m_ObjectHideFlags: 0
@@ -1905,6 +1925,7 @@ MonoBehaviour:
   CurveIn: 3.04
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5525365635084186218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1955,6 +1976,7 @@ MonoBehaviour:
   CurveIn: 4.25
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5704016998509513898
 GameObject:
   m_ObjectHideFlags: 0
@@ -2005,6 +2027,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5729159496021854415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2055,6 +2078,7 @@ MonoBehaviour:
   CurveIn: 2.95
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &5930868146675294661
 GameObject:
   m_ObjectHideFlags: 0
@@ -2150,6 +2174,7 @@ MonoBehaviour:
   CurveIn: 4.25
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &6317673392158324885
 GameObject:
   m_ObjectHideFlags: 0
@@ -2197,6 +2222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 2
@@ -2380,6 +2406,7 @@ MonoBehaviour:
   CurveIn: 4.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &6813924888106532123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2430,6 +2457,7 @@ MonoBehaviour:
   CurveIn: 4.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7020639816179690171
 GameObject:
   m_ObjectHideFlags: 0
@@ -2570,6 +2598,7 @@ MonoBehaviour:
   CurveIn: 4.13
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7443287625684986673
 GameObject:
   m_ObjectHideFlags: 0
@@ -2620,6 +2649,7 @@ MonoBehaviour:
   CurveIn: 2.75
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7577717832325081847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2670,6 +2700,7 @@ MonoBehaviour:
   CurveIn: 3.04
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7590474360443446366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2720,6 +2751,7 @@ MonoBehaviour:
   CurveIn: 4.25
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7647510559061467450
 GameObject:
   m_ObjectHideFlags: 0
@@ -2815,6 +2847,7 @@ MonoBehaviour:
   CurveIn: 4
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &7962635949038032210
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,6 +2898,7 @@ MonoBehaviour:
   CurveIn: 3.04
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &8046424184104309245
 GameObject:
   m_ObjectHideFlags: 0
@@ -2955,6 +2989,7 @@ MonoBehaviour:
   CurveIn: 2.95
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &8296512044714348339
 GameObject:
   m_ObjectHideFlags: 0
@@ -3050,6 +3085,7 @@ MonoBehaviour:
   CurveIn: 2.75
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1
 --- !u!1 &8865746779946333464
 GameObject:
   m_ObjectHideFlags: 0
