@@ -74,8 +74,9 @@ namespace Model.Systems
 							var nextConTraffic = ConTraffics[nextConnectionEnt];
 							ConnectionState nextState;
 
-							if (nextConTraffic.TrafficType != ConnectionTrafficType.NoEntrance 
-							    && (nextState = ConnectionStates[nextConnectionEnt]).CouldAgentEnter(ref agent, ref nextLength))
+							if (nextConTraffic.TrafficType != ConnectionTrafficType.NoEntrance
+							    && (nextState = ConnectionStates[nextConnectionEnt]).CouldAgentEnter(ref agent,
+								    ref nextLength))
 							{
 								//can enter next connection
 								coord.Connection = nextConnectionEnt;
@@ -121,7 +122,7 @@ namespace Model.Systems
 		}
 
 		[BurstCompile]
-		private struct AgentMoveForward : IJobForEachWithEntity<Connection, ConnectionState>
+		private struct AgentMoveForward : IJobForEachWithEntity<Connection, ConnectionLength, ConnectionState>
 		{
 			//agent stuffs, no other connection could share an agent ==> no race condition
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionCoord> Coords;
@@ -130,7 +131,9 @@ namespace Model.Systems
 
 			[ReadOnly] public BufferFromEntity<AgentQueueBuffer> AgentQueue;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection,
+			public void Execute(Entity entity, int index,
+				[ReadOnly] ref Connection connection,
+				[ReadOnly] ref ConnectionLength conLength,
 				ref ConnectionState state)
 			{
 				if (state.ExitLength > 0) //have gap to fill!
@@ -162,7 +165,15 @@ namespace Model.Systems
 					}
 
 					queue.RemoveAt(queue.Length - 1);
-					state.EnterLength += state.ExitLength;
+					if (queue.Length == 0)
+					{
+						state.EnterLength = conLength.Length; //to avoid precision error
+					}
+					else
+					{
+						state.EnterLength += state.ExitLength;
+					}
+
 					state.ExitLength = 0f;
 				}
 			}
