@@ -13,7 +13,7 @@ namespace View.Systems
 	public class AgentVisualizerSystem : JobComponentSystem
 	{
 		[BurstCompile]
-		[RequireComponentTag(typeof(Agent))]
+		[RequireComponentTag(typeof(AgentInt))]
 		private struct MoveJob : IJobForEach<AgentCordInt, AgentStateInt, Translation, Rotation>
 		{
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLengths;

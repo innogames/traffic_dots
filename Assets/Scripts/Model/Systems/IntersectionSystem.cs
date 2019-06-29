@@ -13,13 +13,13 @@ namespace Model.Systems
 	[UpdateBefore(typeof(AgentQueueSystem))]
 	public class IntersectionSystem : JobComponentSystem
 	{
-//		[BurstCompile]
+		[BurstCompile]
 		private struct OperateJob : IJobForEachWithEntity<Intersection, Timer, TimerState>
 		{
 			[ReadOnly] public BufferFromEntity<IntersectionPhaseBuffer> PhaseBuffer;
 			[ReadOnly] public BufferFromEntity<IntersectionConBuffer> ConBuffer;
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
-			[ReadOnly] public ComponentDataFromEntity<ConnectionState> ConStates;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLengths;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionStateInt> ConStates;
 
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionTraffic> ConnectionTraffics;
 
@@ -85,7 +85,7 @@ namespace Model.Systems
 			{
 				var conState = ConStates[connectionAEnt];
 				var conLen = ConLengths[connectionAEnt];
-				return conState.IsEmpty(ref conLen);
+				return conState.EnterLength >= conLen.Length;
 			}
 
 			private void ChangeConnectionTraffic(ref Entity connectionAEnt, ConnectionTrafficType trafficType)
@@ -107,8 +107,8 @@ namespace Model.Systems
 				PhaseBuffer = GetBufferFromEntity<IntersectionPhaseBuffer>(),
 				ConBuffer = GetBufferFromEntity<IntersectionConBuffer>(),
 				ConnectionTraffics = GetComponentDataFromEntity<ConnectionTraffic>(),
-				ConLengths = GetComponentDataFromEntity<ConnectionLength>(),
-				ConStates = GetComponentDataFromEntity<ConnectionState>(),
+				ConLengths = GetComponentDataFromEntity<ConnectionLengthInt>(),
+				ConStates = GetComponentDataFromEntity<ConnectionStateInt>(),
 			}.Schedule(this, inputDeps);
 		}
 	}

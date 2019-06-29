@@ -234,21 +234,23 @@ namespace Model.Systems
 				[ReadOnly] ref AgentInt agent,
 				[ReadOnly] ref AgentStateInt agentState)
 			{
-				var tailConEnt = agentState.TailCon;
-				var tailConState = States[tailConEnt];
-				if (agentState.TailCord == tailConState.EnterLength) //last agent
+				if (agentState.MoveDist > 0)
 				{
-					int moveDist = math.min(ConLens[tailConEnt].Length - agentState.TailCord, agentState.MoveDist);
-					tailConState.EnterLength += moveDist;
-					States[tailConEnt] = tailConState;
+					var tailConEnt = agentState.TailCon;
+					var tailConState = States[tailConEnt];
+					if (agentState.TailCord == tailConState.EnterLength) //last agent
+					{
+						int moveDist = math.min(ConLens[tailConEnt].Length - agentState.TailCord, agentState.MoveDist);
+						tailConState.EnterLength += moveDist;
+						States[tailConEnt] = tailConState;
 
-					var tailPull = Pulls[tailConEnt];
-					tailPull.PullCord += moveDist;
-					tailPull.PullDist -= moveDist;
-					Pulls[tailConEnt] = tailPull;
+						var tailPull = Pulls[tailConEnt];
+						tailPull.PullCord += moveDist;
+						tailPull.PullDist -= moveDist;
+						Pulls[tailConEnt] = tailPull;
+					}
 				}
 			}
-		}
 
 		[BurstCompile]
 		private struct MoveForward : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
