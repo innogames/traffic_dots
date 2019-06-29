@@ -7,6 +7,5 @@ namespace Model.Components
 	public struct AgentInt : IComponentData
 	{
 		public int Length;
-		public int Speed;
 	}
 }

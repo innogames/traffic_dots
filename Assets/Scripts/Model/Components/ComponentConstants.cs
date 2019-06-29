@@ -1,3 +1,5 @@
+using Unity.Mathematics;
+
 namespace Model.Components
 {
 	public static class ComponentConstants
@@ -9,5 +11,10 @@ namespace Model.Components
 		public const int ConnectionSlotAverage = 10;
 		
 		public const int IntPrecision = 100; //1 unit of float will be converted to this amount of int units
+
+		public static int ToCityInt(this float val)
+		{
+			return (int)math.round(val * IntPrecision);
+		}
 	}
 }

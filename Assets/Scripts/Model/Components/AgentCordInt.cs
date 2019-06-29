@@ -4,10 +4,11 @@ using Unity.Entities;
 namespace Model.Components
 {
 	[Serializable]
-	public struct AgentStateInt : IComponentData
+	public struct AgentCordInt : IComponentData
 	{
-		public Entity TailCon;
-		public int TailCord;
+		public Entity HeadCon;
+		public int HeadCord;
+
 		public int MoveDist;
 	}
 }
