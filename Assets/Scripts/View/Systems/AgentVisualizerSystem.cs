@@ -41,7 +41,7 @@ namespace View.Systems
 				}
 
 				translation.Value = (headPos + tailPos) * 0.5f;
-				rotation.Value = quaternion.LookRotation(tailPos - headPos, math.up());
+				rotation.Value = quaternion.LookRotation(headPos - tailPos, math.up());
 			}
 		}
 

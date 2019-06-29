@@ -12,6 +12,14 @@ namespace Model.Systems
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
 	public class AgentTrailingSystem : JobComponentSystem
 	{
+		private EntityCommandBufferSystem _bufferSystem;
+
+		protected override void OnCreate()
+		{
+			base.OnCreate();
+			_bufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+		}
+
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			//propose 2: con.pullCord could have more than one value? NO! there is ONLY one gap at a time!
@@ -39,7 +47,10 @@ namespace Model.Systems
 			//
 			//- pull = min(headCon.pullDist, headCon.len - agent.headCord)
 			//- agent.moveDist += pull
-			//- tailCon.pullCord = agent.tailCord //pullCord CREATE
+			//- if tailCon != headCon
+			//- - headCon.pullCord = headCon.len //pullCord RESET
+			//- - headCon.pullDist = 0
+			//- tailCon.pullCord = agent.tailCord //pullCord PROPAGATE
 			//- tailCon.pullDist = pull
 
 			//last agent move: one match per connection! no clash!
@@ -66,7 +77,20 @@ namespace Model.Systems
 			//- agent.tailCord += move
 			//- agent.moveDist -= move
 			//- if (agent.tailCord == tailCon.len) tailCon = next(tailCon)
+			
+			//new propose
+			//exitAgent = headCord == headCon.len: is a one-frame state!
+			//bridgeAgent = headCon != tailCon: is a MULTI-FRAME state! => has a flag
 
+			//these are 3 jobs, can't combine because of race-condition
+			//every exitAgent: tailCon.pullForce = min(moveDist, tailCon.len - tailCord), life = 1
+			//every non-exit agent: agent.moveDist += headCon.pullForce, agent.pullFlag = true
+			//propagate: every bridge agent with pullFlag: tailCon.pullForce = cap(headCon.pullForce), life = 2, pullFlag = false
+			
+			//decrease all pullForce life, remove one with 0 life!
+			
+
+			var commandBuffer = _bufferSystem.CreateCommandBuffer().ToConcurrent();
 			var conLens = GetComponentDataFromEntity<ConnectionLengthInt>();
 			var connections = GetComponentDataFromEntity<Connection>();
 			var conTraffics = GetComponentDataFromEntity<ConnectionTraffic>();
@@ -75,9 +99,10 @@ namespace Model.Systems
 			var states = GetComponentDataFromEntity<ConnectionStateInt>();
 			var pulls = GetComponentDataFromEntity<ConnectionPullInt>();
 			var next = GetBufferFromEntity<NextBuffer>();
-			
+
 			var firstAgentMove = new FirstAgentMove
 			{
+				CommandBuffer = commandBuffer,
 				Connections = connections,
 				ConLens = conLens,
 				ConTraffics = conTraffics,
@@ -109,13 +134,15 @@ namespace Model.Systems
 				ConSpeeds = conSpeeds,
 				Pulls = pulls,
 			}.Schedule(this, lastAgentMove);
-			
+
 			return moveForward;
 		}
 
-		[BurstCompile]
+//		[BurstCompile]
 		private struct FirstAgentMove : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
 		{
+			public EntityCommandBuffer.Concurrent CommandBuffer;
+
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
@@ -136,12 +163,23 @@ namespace Model.Systems
 					var headConEnt = cord.HeadCon;
 					int headConLen = ConLens[headConEnt].Length;
 					bool endHeadCon = cord.HeadCord == headConLen;
-					//because moveDist may overshoot conLen and remain positive at end con
 
 					//reached target
 					if (endHeadCon) //end of connection
 					{
-						//TODO check reach final target!
+						if (target.Connection == cord.HeadCon)
+						{
+							CommandBuffer.DestroyEntity(index, agentEnt);
+							//create "death pull"
+							Pulls[agentState.TailCon] = new ConnectionPullInt
+							{
+								PullCord = agentState.TailCord,
+								PullDist = agent.Length,
+							};
+							agentState.MoveDist = agent.Length; //so that LastAgentMove will clean up EnterLen
+							return;
+						}
+
 						//compute next path
 						var nextConEnt = ComputeNextCon(ref target, ref headConEnt);
 
@@ -192,7 +230,7 @@ namespace Model.Systems
 			}
 		}
 
-		[BurstCompile]
+//		[BurstCompile]
 		private struct PullPropagate : IJobForEachWithEntity<AgentInt, AgentCordInt, AgentStateInt>
 		{
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
@@ -210,8 +248,18 @@ namespace Model.Systems
 					var headConPull = Pulls[headConEnt];
 					if (headConPull.PullDist > 0 && cord.HeadCord == headConPull.PullCord)
 					{
-						int pullDist = math.min(headConPull.PullDist, ConLens[headConEnt].Length - cord.HeadCord);
+						int headConLen = ConLens[headConEnt].Length;
+						int pullDist = math.min(headConPull.PullDist, headConLen - cord.HeadCord);
 						agentState.MoveDist += pullDist;
+						if (agentState.TailCon != headConEnt)
+						{
+							Pulls[headConEnt] = new ConnectionPullInt
+							{
+								PullCord = headConLen,
+								PullDist = 0,
+							};
+						}
+
 						Pulls[agentState.TailCon] = new ConnectionPullInt
 						{
 							PullCord = agentState.TailCord,
@@ -222,7 +270,7 @@ namespace Model.Systems
 			}
 		}
 
-		[BurstCompile]
+//		[BurstCompile]
 		private struct LastAgentMove : IJobForEachWithEntity<AgentInt, AgentStateInt>
 		{
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
@@ -251,15 +299,16 @@ namespace Model.Systems
 					}
 				}
 			}
+		}
 
-		[BurstCompile]
+//		[BurstCompile]
 		private struct MoveForward : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
 		{
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
-			
+
 			[ReadOnly] public ComponentDataFromEntity<ConnectionSpeedInt> ConSpeeds;
 
 //			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
@@ -275,8 +324,8 @@ namespace Model.Systems
 				{
 					int speed = ConSpeeds[cord.HeadCon].Speed;
 					int moveDist = math.min(speed, agentState.MoveDist);
-					
-					cord.HeadCord += moveDist;
+
+//					cord.HeadCord += moveDist;
 
 					while (moveDist > 0)
 					{
@@ -285,6 +334,7 @@ namespace Model.Systems
 						int curDist = math.min(moveDist, tailConLen - agentState.TailCord);
 
 						agentState.TailCord += curDist;
+						cord.HeadCord += curDist;
 						agentState.MoveDist -= curDist;
 
 						if (agentState.TailCord == tailConLen)
