@@ -8,7 +8,5 @@ namespace Model.Components
 	{
 		public Entity HeadCon;
 		public int HeadCord;
-
-		public int MoveDist;
 	}
 }

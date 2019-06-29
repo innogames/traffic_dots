@@ -121,8 +121,8 @@ namespace Config
 			};
 			gameObject.AddComponent<ConnectionPullIntProxy>().Value = new ConnectionPullInt
 			{
-				PullCord = conLen,
-				PullDist = 0,
+				PullLife = conLen,
+				PullForce = 0,
 			};
 			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt

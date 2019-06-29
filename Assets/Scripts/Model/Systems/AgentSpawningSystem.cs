@@ -48,6 +48,7 @@ namespace Model.Systems
 							TailCon = entity,
 							TailCord = 0,
 							MoveDist = connectionState.EnterLength - agentLen,
+							PullForce = 0,
 						});
 						UpdateCommands.SetComponent(index, agentEnt, agentTarget);
 
