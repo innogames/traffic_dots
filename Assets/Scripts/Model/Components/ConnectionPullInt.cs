@@ -8,5 +8,6 @@ namespace Model.Components
 	{
 		public int PullLife;
 		public int PullForce;
+		public bool PullFromExit;
 	}
 }
