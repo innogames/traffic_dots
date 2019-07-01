@@ -124,8 +124,8 @@ namespace Model.Systems
 				ConLens = conLens,
 				Pulls = pulls,
 			}.Schedule(this, nonExitAgentGotPulled);
-			
-			
+
+
 //			var lastAgentMove = new LastAgentMove
 //			{
 //				ConLens = conLens,
@@ -188,7 +188,7 @@ namespace Model.Systems
 							Pulls[tailConEnt] = new ConnectionPullInt
 							{
 								PullLife = 0,
-								PullForce = math.min( agent.Length, tailConLen - agentState.TailCord),
+								PullForce = math.min(agent.Length, tailConLen - agentState.TailCord),
 								PullFromExit = true,
 							};
 //							agentState.MoveDist = agent.Length; //so that LastAgentMove will clean up EnterLen
@@ -212,13 +212,27 @@ namespace Model.Systems
 							//create pull
 							var tailConEnt = agentState.TailCon;
 							int tailConLen = ConLens[tailConEnt].Length;
-							Assert.IsTrue(Pulls[tailConEnt].PullForce == 0);
+
+							var oldPull = Pulls[tailConEnt];
+							if (oldPull.PullForce != 0)
+							{
+								int abc = 123;
+							}
+
 							Pulls[tailConEnt] = new ConnectionPullInt
 							{
 								PullLife = 0,
 								PullForce = math.min(moveDist, tailConLen - agentState.TailCord),
 								PullFromExit = true,
 							};
+
+							//wrong
+//							Pulls[headConEnt] = new ConnectionPullInt
+//							{
+//								PullLife = 0,
+//								PullForce = agent.Length,
+//								PullFromExit = true,
+//							};
 
 							//update next connection
 //							nextState.EnterLength = math.max(0, nextState.EnterLength - agent.Length);
@@ -273,18 +287,18 @@ namespace Model.Systems
 					{
 						if (cord.HeadCon != agentState.TailCon)
 						{
-						 	agentState.PullForce = pullForce; //non-cap, will be cap in next job
-						} 
+							agentState.PullForce = pullForce; //non-cap, will be cap in next job
+						}
 						else
- 						{
- 							agentState.MoveDist += pullForce;
- //							Assert.IsFalse((cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length));
-							if (cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length)
+						{
+							if (cord.HeadCord + agentState.MoveDist + pullForce > ConLens[headConEnt].Length)
 							{
-								agentState.MoveDist = ConLens[headConEnt].Length - cord.HeadCord;
 								int abc = 123;
 							}
+
+							agentState.MoveDist += pullForce;
 						}
+
 //						if (cord.HeadCord + agentState.MoveDist > headConLen)
 //						{
 //							agentState.MoveDist = headConLen - cord.HeadCord;
@@ -310,12 +324,17 @@ namespace Model.Systems
 					var headConEnt = cord.HeadCon;
 					var tailConEnt = agentState.TailCon;
 					int tailConLen = ConLens[tailConEnt].Length;
-					Assert.IsTrue(tailConEnt != headConEnt);
+//					Assert.IsTrue(tailConEnt != headConEnt);
 					int pullForce = math.min(agentState.PullForce,
 						math.max(0, tailConLen - agentState.TailCord - agentState.MoveDist));
 					if (pullForce > 0)
 					{
-						Assert.IsTrue(Pulls[tailConEnt].PullForce == 0);
+						var oldPull = Pulls[tailConEnt];
+						if (oldPull.PullForce != 0)
+						{
+							int def = 123;
+						}
+
 						Pulls[tailConEnt] = new ConnectionPullInt
 						{
 							PullLife = 1,
@@ -324,17 +343,17 @@ namespace Model.Systems
 							PullFromExit = false,
 						};
 					}
+
+					if (cord.HeadCord + agentState.MoveDist + agentState.PullForce > ConLens[headConEnt].Length)
+					{
+						int abc = 123;
+					}
+
 					//capped by head!
 					agentState.MoveDist += agentState.PullForce;
 					agentState.PullForce = 0;
-					
-//					Assert.IsFalse(cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length);
 
-					if (cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length)
-					{
-						agentState.MoveDist = ConLens[headConEnt].Length - cord.HeadCord;
-						int abc = 123;
-					}
+//					Assert.IsFalse(cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length);
 				}
 			}
 		}
@@ -342,7 +361,9 @@ namespace Model.Systems
 		private struct PullForceClear : IJobForEachWithEntity<ConnectionPullInt, ConnectionStateInt>
 		{
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-			public void Execute(Entity entity, int index, ref ConnectionPullInt conPull, ref ConnectionStateInt conState)
+
+			public void Execute(Entity entity, int index, ref ConnectionPullInt conPull,
+				ref ConnectionStateInt conState)
 			{
 				if (conPull.PullLife > 0)
 				{
@@ -357,6 +378,7 @@ namespace Model.Systems
 						conState.EnterLength = ConLens[entity].Length;
 						int abc = 123;
 					}
+
 					conPull.PullForce = 0;
 				}
 			}
@@ -409,11 +431,11 @@ namespace Model.Systems
 				{
 					int speed = ConSpeeds[cord.HeadCon].Speed;
 					int moveDist = math.min(speed, agentState.MoveDist);
-					
+
 //					var headConEnt = cord.HeadCon;
 //					int headConLen = ConLens[headConEnt].Length;
 //					moveDist = math.min(moveDist, headConLen - cord.HeadCord);
-					
+
 //					cord.HeadCord += moveDist;
 
 					while (moveDist > 0)
@@ -428,14 +450,18 @@ namespace Model.Systems
 
 						if (agentState.TailCord == tailConLen)
 						{
-							agentState.TailCon = ComputeNextCon(ref target, ref tailConEnt);
+							var nextCon = ComputeNextCon(ref target, ref tailConEnt);
+							agentState.TailCon = nextCon;
 							agentState.TailCord = 0;
 
-							var conState = States[agentState.TailCon];
-							conState.EnterLength = math.min(math.max(conState.EnterLength, agentState.MoveDist),
-								ConLens[agentState.TailCon].Length);
-							
-							States[agentState.TailCon] = conState;
+							int nextLen = ConLens[nextCon].Length;
+							if (nextCon != cord.HeadCon) //only for agent occupy full connection, WRONG! because car behind would screw this up!
+							{
+								States[nextCon] = new ConnectionStateInt
+								{
+									EnterLength = math.min(agentState.MoveDist, nextLen),
+								};
+							}
 						}
 
 						moveDist = 0; // use the one below, but have to clear EnterLen and Pull
