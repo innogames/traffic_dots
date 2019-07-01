@@ -357,11 +357,11 @@ namespace Model.Systems
 #if !CITY_DEBUG
 		[BurstCompile]
 #endif
-		private struct ConnectionJob : IJobForEach<ConnectionStateInt, ConnectionPullInt, ConnectionStateQInt,
+		private struct ConnectionJob : IJobForEach<ConnectionStateInt, ConnectionPullInt,
 			ConnectionPullQInt, ConnectionLengthInt>
 		{
 			public void Execute(ref ConnectionStateInt state, ref ConnectionPullInt pull,
-				ref ConnectionStateQInt stateQ, ref ConnectionPullQInt pullQ,
+				ref ConnectionPullQInt pullQ,
 				[ReadOnly] ref ConnectionLengthInt conLen)
 			{
 				pull.Pull = pullQ.PullQ;
