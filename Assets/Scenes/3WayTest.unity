@@ -189,8 +189,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1000
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &2250742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,8 +308,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1000
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &17014460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,8 +489,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 2806
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &212714012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -841,8 +844,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1551
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &325575516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1291,8 +1295,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1055
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &378396258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,8 +1414,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 2400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &381810563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1539,8 +1545,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1558
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &385516984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1999,8 +2006,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1103
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &607486602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2129,8 +2137,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1558
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &650630130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2345,8 +2354,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &811706961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2535,8 +2545,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 3448
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &846775317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2689,8 +2700,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 817
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &883082374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3180,8 +3192,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1055
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1024103121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3310,8 +3323,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1600
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1029582052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3416,8 +3430,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1040960775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3683,8 +3698,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1103
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1141328569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3813,8 +3829,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 947
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1148964664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4319,8 +4336,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 817
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1289637272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4577,8 +4595,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1600
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1348286886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4683,8 +4702,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 2400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1358415557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4957,8 +4977,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1000
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1542388699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5490,8 +5511,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1631985649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5885,8 +5907,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1055
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1691193114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6032,8 +6055,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 1103
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1743985241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6193,13 +6217,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1788572614}
-  m_LocalRotation: {x: 0.39436767, y: 0.28671393, z: -0.13099034, w: 0.86319804}
-  m_LocalPosition: {x: -30.9, y: 30.8, z: -23.2}
+  m_LocalRotation: {x: 0.39143825, y: 0.267952, z: -0.13950062, w: 0.86920506}
+  m_LocalPosition: {x: -32.77, y: 34.4, z: -25.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 49.108, y: 36.748, z: 0}
+  m_LocalEulerAnglesHint: {x: 49.046, y: 32.960003, z: -2.8630002}
 --- !u!1 &1793948000 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000013250721970, guid: 08ba396d269e54ad5bf3de36bd06759d,
@@ -6295,8 +6319,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 817
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1826494532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6425,8 +6450,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 932
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1869071390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6531,8 +6557,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 2400
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1959892143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6661,8 +6688,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    PullCord: 947
-    PullDist: 0
+    PullLife: 0
+    PullForce: 0
+    PullFromExit: 0
 --- !u!114 &1999649125
 MonoBehaviour:
   m_ObjectHideFlags: 0
