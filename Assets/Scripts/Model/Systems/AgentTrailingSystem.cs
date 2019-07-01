@@ -90,6 +90,58 @@ namespace Model.Systems
 
 			//decrease all pullForce life, remove one with 0 life!
 			//move all agent forward
+			
+			//when agent-head enter connection: con.EnterLen -= agent.Length (done)
+			//when agent-head leave connection: start taking back part of agent.Length to connection
+			//when agent-tail enter connection: begin partial-return process?
+			//when agent-tail leave connection: assert(con.EnterLen not contains agent.Length)
+			
+			//heuristic: enterLen of connection "inside" an agent does not matter, it's not used by anyone: WRONG! it's used by intersection!
+			
+			//propose 1:
+			//exit-agent:
+			//- agent.force = min(nextCon.EnterLen, agent.tailLen)
+			//- nextCon.EnterLen -= agent.len
+			//- nextCon.queue.push(agent)
+			//connection queue:
+			//- if (queue[0].force > 0): queue[all - last].moveDist += force
+			//- con.addComp(conForce = queue[0].force)
+			//- queue[0].force = 0
+			//connection: all con with conForce
+			//- queue[last].force = min(conForce, last.tailLen)
+			//- con.removeComp(conForce)
+			//moveForward
+			//- consume moveDist to move headCord and tailCord
+			//- if tailCord == tailLen: tailCon.queue.pop, tailCon.EnterLen = min(force, tailLen), tailCon = next(tailCon)
+			
+			//propose 2:
+			//exit-agent
+			//- agent.queue.add(nextCon)
+			//- agent.force = min(nextCon.EnterLen, agent.tailLen)
+			//- nextCon.EnterLen -= agent.len
+			//pull connection: per agent
+			//- if agent.force > 0
+			//- agent.queue[all].EnterLen += force //CLASH: because some con share agents!
+			
+			//propose 3: all adjustment are queued!
+			//foreach(agent):
+			//- exit-agent: moveDist == 0 && nextCon.EnterLen > 0
+			
+			//- - agent.headCon = nextCon; agent.headCord = 0; agent.moveDist = nextCon.EnterLen // (C)
+			//- - nextCon.EnterLen -= agent.len //(A), not clash with (C)
+			//- - tailCon.pullQ = min(moveDist, tailLen)  //(B)
+			//- non-exit-agent:
+			//- - agent.moveDist += min(headCon.pull, headRoom) //avoid (B)
+			//- - if bridge-agent: tailCon.pullQ = min(headCon.pull, tailLen) //not collide with (B)
+			//- all-agent: moveDist > 0
+			//- - headCord += speed; tailCord += speed
+			//- - if tailCross: nextTailCon.EnterLenQ = min(agent.moveDist, nextCon.len) //avoid clash (A)
+			//foreach(con)
+			//- con.pull = con.pullQ
+			//- con.pullQ = 0 //this mean pull exist for 1 frame only!
+			//- con.EnterLen = con.EnterLenQ + con.pull
+			//- con.EnterLenQ = con.EnterLen
+			
 
 			var commandBuffer = _bufferSystem.CreateCommandBuffer().ToConcurrent();
 			var conLens = GetComponentDataFromEntity<ConnectionLengthInt>();
@@ -452,16 +504,12 @@ namespace Model.Systems
 						{
 							var nextCon = ComputeNextCon(ref target, ref tailConEnt);
 							agentState.TailCon = nextCon;
-							agentState.TailCord = 0;
-
+							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
 							int nextLen = ConLens[nextCon].Length;
-							if (nextCon != cord.HeadCon) //only for agent occupy full connection, WRONG! because car behind would screw this up!
+							States[nextCon] = new ConnectionStateInt
 							{
-								States[nextCon] = new ConnectionStateInt
-								{
-									EnterLength = math.min(agentState.MoveDist, nextLen),
-								};
-							}
+								EnterLength = math.min(agentState.MoveDist, nextLen),
+							};
 						}
 
 						moveDist = 0; // use the one below, but have to clear EnterLen and Pull
