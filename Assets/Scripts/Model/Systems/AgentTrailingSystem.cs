@@ -201,7 +201,7 @@ namespace Model.Systems
 			{
 				var headConEnt = cord.HeadCon;
 				int headConLen = ConLens[headConEnt].Length;
-				bool endHeadCon = cord.HeadCord == headConLen;
+				bool endHeadCon = cord.HeadCord >= headConLen;
 
 				var tailConEnt = agentState.TailCon;
 				int tailConLen = ConLens[tailConEnt].Length;
@@ -233,6 +233,10 @@ namespace Model.Systems
 						    nextState.EnterLen > 0)
 						{
 							int moveDist = nextState.EnterLen;
+							if (moveDist > ConLens[nextConEnt].Length)
+							{
+								int abc = 123;
+							}
 							//update agent
 							agentState.MoveDist = moveDist;
 							cord.HeadCon = nextConEnt;
@@ -245,11 +249,8 @@ namespace Model.Systems
 							};
 
 							//update next connection
-//							nextState.EnterLen -= agent.Length; //it's necessary to stay negative!
-							StateQs[nextConEnt] = new ConnectionStateQInt
-							{
-								EnterLenQ = nextState.EnterLen - agent.Length,
-							};
+							nextState.EnterLen -= agent.Length; //it's necessary to stay negative!
+							States[nextConEnt] = nextState;
 						}
 						else
 						{
@@ -262,21 +263,24 @@ namespace Model.Systems
 				{
 					var headConPull = Pulls[headConEnt];
 					int pullForce = headConPull.Pull;
+					if (cord.HeadCord + agentState.MoveDist + pullForce > headConLen)
+					{
+						int abc = 123;
+						//because the pull is 1 frame delay!
+						pullForce = headConLen - cord.HeadCord - agentState.MoveDist;
+					}
 					if (pullForce > 0)
 					{
-						if (cord.HeadCord + agentState.MoveDist + pullForce > headConLen)
+						agentState.MoveDist += pullForce;
+						if (cord.HeadCord + agentState.MoveDist > headConLen)
 						{
 							int abc = 123;
-							//because the pull is 1 frame delay!
-							pullForce = headConLen - cord.HeadCord - agentState.MoveDist;
 						}
-
-						agentState.MoveDist += pullForce;
-						if (cord.HeadCon != agentState.TailCon)
+						if (headConEnt != tailConEnt)//bridge-agent
 						{
 							PullQs[tailConEnt] = new ConnectionPullQInt
 							{
-								PullQ = math.min(pullForce, tailConLen - agentState.TailCord),
+								PullQ = math.min(agentState.MoveDist, tailConLen - agentState.TailCord),
 							};
 						}
 					}
@@ -288,9 +292,8 @@ namespace Model.Systems
 					int speed = ConSpeeds[cord.HeadCon].Speed;
 					int moveDist = math.min(speed, agentState.MoveDist);
 
-//					var headConEnt = cord.HeadCon;
-//					int headConLen = ConLens[headConEnt].Length;
-//					moveDist = math.min(moveDist, headConLen - cord.HeadCord);
+					//because of 1 frame delay could lead to overshoot
+					moveDist = math.min(moveDist, headConLen - cord.HeadCord);
 
 //					cord.HeadCord += moveDist;
 
@@ -306,16 +309,20 @@ namespace Model.Systems
 						}
 
 						agentState.MoveDist -= curDist;
+						if (agentState.MoveDist < 0)
+						{
+							int abc = 123;
+						}
 
 						if (agentState.TailCord == tailConLen)
 						{
-							var nextCon = ComputeNextCon(ref target, ref tailConEnt);
-							agentState.TailCon = nextCon;
+							var nextTailCon = ComputeNextCon(ref target, ref tailConEnt);
+							agentState.TailCon = nextTailCon;
 							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
-							int nextLen = ConLens[nextCon].Length;
-							StateQs[nextCon] = new ConnectionStateQInt
+							int nextLen = ConLens[nextTailCon].Length;
+							States[nextTailCon] = new ConnectionStateInt
 							{
-								EnterLenQ = math.min(agentState.MoveDist, nextLen),
+								EnterLen = math.min(agentState.MoveDist, nextLen),
 							};
 						}
 
@@ -337,16 +344,27 @@ namespace Model.Systems
 			}
 		}
 
-		private struct ConnectionJob : IJobForEachWithEntity<ConnectionStateInt, ConnectionPullInt, ConnectionStateQInt,
-			ConnectionPullQInt>
+		private struct ConnectionJob : IJobForEach<ConnectionStateInt, ConnectionPullInt, ConnectionStateQInt,
+			ConnectionPullQInt, ConnectionLengthInt>
 		{
-			public void Execute(Entity entity, int index, ref ConnectionStateInt state, ref ConnectionPullInt pull,
-				ref ConnectionStateQInt stateQ, ref ConnectionPullQInt pullQ)
+			public void Execute(ref ConnectionStateInt state, ref ConnectionPullInt pull,
+				ref ConnectionStateQInt stateQ, ref ConnectionPullQInt pullQ,
+				[ReadOnly] ref ConnectionLengthInt conLen)
 			{
 				pull.Pull = pullQ.PullQ;
 				pullQ.PullQ = 0;
-				state.EnterLen = stateQ.EnterLenQ + pull.Pull;
-				stateQ.EnterLenQ = state.EnterLen;
+//				state.EnterLen = stateQ.EnterLenQ + pull.Pull;
+//				stateQ.EnterLenQ = state.EnterLen;
+				if (pull.Pull > 0)
+				{
+					state.EnterLen += pull.Pull;
+				}
+
+				if (state.EnterLen > conLen.Length)
+				{
+					int abc = 123;
+					state.EnterLen = conLen.Length;
+				}
 			}
 		}
 	}

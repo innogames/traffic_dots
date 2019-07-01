@@ -10,6 +10,7 @@ namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
+	[UpdateBefore(typeof(AgentTrailingSystem))]
 	public class AgentSpawningSystem : JobComponentSystem //TODO consider turning to job!
 	{
 		private struct SpawnJob : IJobForEachWithEntity_EBCCCCC<SpawnerBuffer, AgentSpawner, Timer, TimerState,
@@ -19,10 +20,8 @@ namespace Model.Systems
 
 			[ReadOnly] public ComponentDataFromEntity<AgentInt> Agents;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
 			
-			[NativeDisableParallelForRestriction] 
-			public ComponentDataFromEntity<ConnectionStateQInt> StateQs;
-
 			public void Execute(Entity entity, int index,
 				DynamicBuffer<SpawnerBuffer> buffer,
 				[ReadOnly] ref AgentSpawner spawner,
@@ -44,21 +43,23 @@ namespace Model.Systems
 						UpdateCommands.SetComponent(index, agentEnt, new AgentCordInt
 						{
 							HeadCon = entity,
-							HeadCord = agentLen,
+							HeadCord = 0,
 						});
 						UpdateCommands.SetComponent(index, agentEnt, new AgentStateInt
 						{
 							TailCon = entity,
-							TailCord = 0,
-							MoveDist = connectionState.EnterLen - agentLen,
+							TailCord = -agentLen,
+							MoveDist = connectionState.EnterLen,
 						});
+
+						if (connectionState.EnterLen > ConLens[entity].Length)
+						{
+							int abc = 123;
+						}
+						
 						UpdateCommands.SetComponent(index, agentEnt, agentTarget);
 
 						connectionState.EnterLen -= agentLen;
-						StateQs[entity] = new ConnectionStateQInt
-						{
-							EnterLenQ = connectionState.EnterLen,
-						};
 						
 						//no pulling needed
 
@@ -88,7 +89,7 @@ namespace Model.Systems
 				UpdateCommands = commandBuffer,
 				Agents = GetComponentDataFromEntity<AgentInt>(),
 				ConTraffics = GetComponentDataFromEntity<ConnectionTraffic>(),
-				StateQs = GetComponentDataFromEntity<ConnectionStateQInt>(),
+				ConLens = GetComponentDataFromEntity<ConnectionLengthInt>(),
 			}.Schedule(this, inputDeps);
 			spawnJob.Complete();
 			return spawnJob;
