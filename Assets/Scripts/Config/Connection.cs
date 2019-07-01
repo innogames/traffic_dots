@@ -131,7 +131,7 @@ namespace Config
 			{
 				PullQ = 0,
 			};
-			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
+			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt
 			{
 				Speed = CachedSpeed.ToCityInt(),
