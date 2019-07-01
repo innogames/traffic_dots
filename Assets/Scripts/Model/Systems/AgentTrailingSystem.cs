@@ -90,14 +90,14 @@ namespace Model.Systems
 
 			//decrease all pullForce life, remove one with 0 life!
 			//move all agent forward
-			
+
 			//when agent-head enter connection: con.EnterLen -= agent.Length (done)
 			//when agent-head leave connection: start taking back part of agent.Length to connection
 			//when agent-tail enter connection: begin partial-return process?
 			//when agent-tail leave connection: assert(con.EnterLen not contains agent.Length)
-			
+
 			//heuristic: enterLen of connection "inside" an agent does not matter, it's not used by anyone: WRONG! it's used by intersection!
-			
+
 			//propose 1:
 			//exit-agent:
 			//- agent.force = min(nextCon.EnterLen, agent.tailLen)
@@ -113,7 +113,7 @@ namespace Model.Systems
 			//moveForward
 			//- consume moveDist to move headCord and tailCord
 			//- if tailCord == tailLen: tailCon.queue.pop, tailCon.EnterLen = min(force, tailLen), tailCon = next(tailCon)
-			
+
 			//propose 2:
 			//exit-agent
 			//- agent.queue.add(nextCon)
@@ -122,26 +122,28 @@ namespace Model.Systems
 			//pull connection: per agent
 			//- if agent.force > 0
 			//- agent.queue[all].EnterLen += force //CLASH: because some con share agents!
-			
-			//propose 3: all adjustment are queued!
+
+			//propose 3: all adjustments are queued!
 			//foreach(agent):
-			//- exit-agent: moveDist == 0 && nextCon.EnterLen > 0
-			
+			//- exit-agent: headCord == headLen
+			//- if targetCon == headCon: tailCon.pullQ = min(agent.Length, tailLen) //not clash with (B)
+			//- else if nextCon.EnterLen > 0
+			//- - assert(moveDist == 0)
 			//- - agent.headCon = nextCon; agent.headCord = 0; agent.moveDist = nextCon.EnterLen // (C)
-			//- - nextCon.EnterLen -= agent.len //(A), not clash with (C)
+			//- - nextCon.EnterLenQ -= agent.len //(A), not clash with (C)
 			//- - tailCon.pullQ = min(moveDist, tailLen)  //(B)
 			//- non-exit-agent:
 			//- - agent.moveDist += min(headCon.pull, headRoom) //avoid (B)
 			//- - if bridge-agent: tailCon.pullQ = min(headCon.pull, tailLen) //not collide with (B)
 			//- all-agent: moveDist > 0
 			//- - headCord += speed; tailCord += speed
-			//- - if tailCross: nextTailCon.EnterLenQ = min(agent.moveDist, nextCon.len) //avoid clash (A)
+			//- - if tailCross: nextTailCon.EnterLenQ = min(agent.moveDist, nextCon.len) //can't clash with (A)
 			//foreach(con)
 			//- con.pull = con.pullQ
 			//- con.pullQ = 0 //this mean pull exist for 1 frame only!
 			//- con.EnterLen = con.EnterLenQ + con.pull
 			//- con.EnterLenQ = con.EnterLen
-			
+
 
 			var commandBuffer = _bufferSystem.CreateCommandBuffer().ToConcurrent();
 			var conLens = GetComponentDataFromEntity<ConnectionLengthInt>();
@@ -150,10 +152,12 @@ namespace Model.Systems
 			var conSpeeds = GetComponentDataFromEntity<ConnectionSpeedInt>();
 			var indexes = GetComponentDataFromEntity<IndexInNetwork>();
 			var states = GetComponentDataFromEntity<ConnectionStateInt>();
+			var stateQs = GetComponentDataFromEntity<ConnectionStateQInt>();
 			var pulls = GetComponentDataFromEntity<ConnectionPullInt>();
+			var pullQs = GetComponentDataFromEntity<ConnectionPullQInt>();
 			var next = GetBufferFromEntity<NextBuffer>();
 
-			var firstAgentMove = new ExitAgentPull
+			var agentJob = new AgentJob
 			{
 				CommandBuffer = commandBuffer,
 				Connections = connections,
@@ -161,49 +165,19 @@ namespace Model.Systems
 				ConTraffics = conTraffics,
 				Indexes = indexes,
 				Next = next,
-				States = states,
-				Pulls = pulls,
-			}.Schedule(this, inputDeps);
-
-			var nonExitAgentGotPulled = new NonExitAgentsGotPulled
-			{
-				ConLens = conLens,
-				Pulls = pulls,
-			}.Schedule(this, firstAgentMove);
-
-			var bridgeAgentPropagatePull = new BridgeAgentPropagatePull
-			{
-				ConLens = conLens,
-				Pulls = pulls,
-			}.Schedule(this, nonExitAgentGotPulled);
-
-
-//			var lastAgentMove = new LastAgentMove
-//			{
-//				ConLens = conLens,
-//				States = states,
-//			}.Schedule(this, bridgeAgentPropagatePull);
-
-			var moveForward = new MoveForward
-			{
-				Connections = connections,
-				ConLens = conLens,
-				Indexes = indexes,
-				Next = next,
 				ConSpeeds = conSpeeds,
 				States = states,
-			}.Schedule(this, bridgeAgentPropagatePull);
-
-			var pullForceClear = new PullForceClear
-			{
-				ConLens = conLens,
-			}.Schedule(this, moveForward);
-
-			return pullForceClear;
+				Pulls = pulls,
+				StateQs = stateQs,
+				PullQs = pullQs,
+			}.Schedule(this, inputDeps);
+			var connectionJob = new ConnectionJob().Schedule(this, agentJob);
+			connectionJob.Complete(); //for entity remove
+			return connectionJob;
 		}
 
 //		[BurstCompile]
-		private struct ExitAgentPull : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
+		private struct AgentJob : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 
@@ -212,9 +186,12 @@ namespace Model.Systems
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
 			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionPullInt> Pulls;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionSpeedInt> ConSpeeds;
 
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
-			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullInt> Pulls;
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullQInt> PullQs;
+			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateQInt> StateQs;
 
 			public void Execute(Entity agentEnt, int index,
 				[ReadOnly] ref AgentInt agent,
@@ -222,74 +199,57 @@ namespace Model.Systems
 				ref AgentCordInt cord,
 				ref AgentStateInt agentState)
 			{
-				if (agentState.MoveDist == 0)
+				var headConEnt = cord.HeadCon;
+				int headConLen = ConLens[headConEnt].Length;
+				bool endHeadCon = cord.HeadCord == headConLen;
+
+				var tailConEnt = agentState.TailCon;
+				int tailConLen = ConLens[tailConEnt].Length;
+				//reached target
+				if (endHeadCon) //end of connection
 				{
-					var headConEnt = cord.HeadCon;
-					int headConLen = ConLens[headConEnt].Length;
-					bool endHeadCon = cord.HeadCord == headConLen;
-
-					//reached target
-					if (endHeadCon) //end of connection
+					if (agentState.MoveDist != 0)
 					{
-						if (target.Connection == cord.HeadCon)
-						{
-							CommandBuffer.DestroyEntity(index, agentEnt);
-							//create "death pull"
-							var tailConEnt = agentState.TailCon;
-							int tailConLen = ConLens[tailConEnt].Length;
-							Pulls[tailConEnt] = new ConnectionPullInt
-							{
-								PullLife = 0,
-								PullForce = math.min(agent.Length, tailConLen - agentState.TailCord),
-								PullFromExit = true,
-							};
-//							agentState.MoveDist = agent.Length; //so that LastAgentMove will clean up EnterLen
-							return;
-						}
+						int abc = 123;
+					}
 
+					if (target.Connection == cord.HeadCon) //reach destination!
+					{
+						CommandBuffer.DestroyEntity(index, agentEnt);
+						//create "death pull"
+						PullQs[tailConEnt] = new ConnectionPullQInt
+						{
+							PullQ = math.min(agent.Length, tailConLen - agentState.TailCord),
+						};
+					}
+					else
+					{
 						//compute next path
 						var nextConEnt = ComputeNextCon(ref target, ref headConEnt);
 
 						var nextTraffic = ConTraffics[nextConEnt];
 						var nextState = States[nextConEnt];
 						if (nextTraffic.TrafficType != ConnectionTrafficType.NoEntrance &&
-						    nextState.EnterLength > 0)
+						    nextState.EnterLen > 0)
 						{
-							int moveDist = nextState.EnterLength;
+							int moveDist = nextState.EnterLen;
 							//update agent
 							agentState.MoveDist = moveDist;
 							cord.HeadCon = nextConEnt;
 							cord.HeadCord = 0;
 
 							//create pull
-							var tailConEnt = agentState.TailCon;
-							int tailConLen = ConLens[tailConEnt].Length;
-
-							var oldPull = Pulls[tailConEnt];
-							if (oldPull.PullForce != 0)
+							PullQs[tailConEnt] = new ConnectionPullQInt
 							{
-								int abc = 123;
-							}
-
-							Pulls[tailConEnt] = new ConnectionPullInt
-							{
-								PullLife = 0,
-								PullForce = math.min(moveDist, tailConLen - agentState.TailCord),
-								PullFromExit = true,
+								PullQ = math.min(moveDist, tailConLen - agentState.TailCord),
 							};
 
-							//wrong
-//							Pulls[headConEnt] = new ConnectionPullInt
-//							{
-//								PullLife = 0,
-//								PullForce = agent.Length,
-//								PullFromExit = true,
-//							};
-
 							//update next connection
-//							nextState.EnterLength = math.max(0, nextState.EnterLength - agent.Length);
-							nextState.EnterLength -= agent.Length; //it's necessary to stay negative!
-							States[nextConEnt] = nextState; //may clash here!
+//							nextState.EnterLen -= agent.Length; //it's necessary to stay negative!
+							StateQs[nextConEnt] = new ConnectionStateQInt
+							{
+								EnterLenQ = nextState.EnterLen - agent.Length,
+							};
 						}
 						else
 						{
@@ -297,190 +257,34 @@ namespace Model.Systems
 							//next frame will check for connection enter again
 						}
 					}
-					else //middle of connection, and no fuel
-					{
-						//stand still, do nothing!, consider adding Frozen?
-					}
 				}
-			}
-
-			private Entity ComputeNextCon(ref ConnectionTarget target, ref Entity curConEnt)
-			{
-				var startNode = Connections[curConEnt].EndNode;
-				var targetConnectionEnt = target.Connection;
-				var endNode = Connections[targetConnectionEnt].StartNode;
-				var nextConEnt = startNode == endNode
-					? targetConnectionEnt
-					: Next[startNode][Indexes[endNode].Index].Connection;
-				return nextConEnt;
-			}
-		}
-
-//		[BurstCompile]
-		private struct NonExitAgentsGotPulled : IJobForEachWithEntity<AgentInt, AgentCordInt, AgentStateInt>
-		{
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-
-			[ReadOnly] public ComponentDataFromEntity<ConnectionPullInt> Pulls;
-
-			public void Execute(Entity agentEnt, int index,
-				[ReadOnly] ref AgentInt agent,
-				[ReadOnly] ref AgentCordInt cord,
-				ref AgentStateInt agentState)
-			{
-				var headConEnt = cord.HeadCon;
-				int headConLen = ConLens[headConEnt].Length;
-				bool nonExitAgent = cord.HeadCord + agentState.MoveDist < headConLen;
-				if (nonExitAgent) //non-exit agent
+				else //middle of connection
 				{
 					var headConPull = Pulls[headConEnt];
-					int pullForce = headConPull.PullForce;
+					int pullForce = headConPull.Pull;
 					if (pullForce > 0)
 					{
+						if (cord.HeadCord + agentState.MoveDist + pullForce > headConLen)
+						{
+							int abc = 123;
+							//because the pull is 1 frame delay!
+							pullForce = headConLen - cord.HeadCord - agentState.MoveDist;
+						}
+
+						agentState.MoveDist += pullForce;
 						if (cord.HeadCon != agentState.TailCon)
 						{
-							agentState.PullForce = pullForce; //non-cap, will be cap in next job
-						}
-						else
-						{
-							if (cord.HeadCord + agentState.MoveDist + pullForce > ConLens[headConEnt].Length)
+							PullQs[tailConEnt] = new ConnectionPullQInt
 							{
-								int abc = 123;
-							}
-
-							agentState.MoveDist += pullForce;
+								PullQ = math.min(pullForce, tailConLen - agentState.TailCord),
+							};
 						}
-
-//						if (cord.HeadCord + agentState.MoveDist > headConLen)
-//						{
-//							agentState.MoveDist = headConLen - cord.HeadCord;
-//						}
 					}
 				}
-			}
-		}
 
-		private struct BridgeAgentPropagatePull : IJobForEachWithEntity<AgentInt, AgentCordInt, AgentStateInt>
-		{
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-
-			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullInt> Pulls;
-
-			public void Execute(Entity agentEnt, int index,
-				[ReadOnly] ref AgentInt agent,
-				[ReadOnly] ref AgentCordInt cord,
-				ref AgentStateInt agentState)
-			{
-				if (agentState.PullForce > 0) //bridge agent
-				{
-					var headConEnt = cord.HeadCon;
-					var tailConEnt = agentState.TailCon;
-					int tailConLen = ConLens[tailConEnt].Length;
-//					Assert.IsTrue(tailConEnt != headConEnt);
-					int pullForce = math.min(agentState.PullForce,
-						math.max(0, tailConLen - agentState.TailCord - agentState.MoveDist));
-					if (pullForce > 0)
-					{
-						var oldPull = Pulls[tailConEnt];
-						if (oldPull.PullForce != 0)
-						{
-							int def = 123;
-						}
-
-						Pulls[tailConEnt] = new ConnectionPullInt
-						{
-							PullLife = 1,
-							//capped by tail
-							PullForce = pullForce,
-							PullFromExit = false,
-						};
-					}
-
-					if (cord.HeadCord + agentState.MoveDist + agentState.PullForce > ConLens[headConEnt].Length)
-					{
-						int abc = 123;
-					}
-
-					//capped by head!
-					agentState.MoveDist += agentState.PullForce;
-					agentState.PullForce = 0;
-
-//					Assert.IsFalse(cord.HeadCord + agentState.MoveDist > ConLens[headConEnt].Length);
-				}
-			}
-		}
-
-		private struct PullForceClear : IJobForEachWithEntity<ConnectionPullInt, ConnectionStateInt>
-		{
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-
-			public void Execute(Entity entity, int index, ref ConnectionPullInt conPull,
-				ref ConnectionStateInt conState)
-			{
-				if (conPull.PullLife > 0)
-				{
-					conPull.PullLife--;
-				}
-				else
-				{
-					conState.EnterLength += conPull.PullForce;
-//					Assert.IsFalse(conState.EnterLength > ConLens[entity].Length);
-					if (conState.EnterLength > ConLens[entity].Length)
-					{
-						conState.EnterLength = ConLens[entity].Length;
-						int abc = 123;
-					}
-
-					conPull.PullForce = 0;
-				}
-			}
-		}
-
-//		[BurstCompile]
-		private struct LastAgentMove : IJobForEachWithEntity<AgentInt, AgentStateInt> //TODO combine with MoveForward?
-		{
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-
-			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
-
-			public void Execute(Entity agentEnt, int index,
-				[ReadOnly] ref AgentInt agent,
-				[ReadOnly] ref AgentStateInt agentState)
-			{
 				if (agentState.MoveDist > 0)
 				{
-					var tailConEnt = agentState.TailCon;
-					var tailConState = States[tailConEnt];
-					if (agentState.TailCord == tailConState.EnterLength) //last agent
-					{
-						int moveDist = math.min(ConLens[tailConEnt].Length - agentState.TailCord, agentState.MoveDist);
-						tailConState.EnterLength += moveDist;
-						States[tailConEnt] = tailConState;
-					}
-				}
-			}
-		}
-
-//		[BurstCompile]
-		private struct MoveForward : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
-		{
-			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
-			[ReadOnly] public BufferFromEntity<NextBuffer> Next;
-
-			[ReadOnly] public ComponentDataFromEntity<ConnectionSpeedInt> ConSpeeds;
-
-			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
-
-			public void Execute(Entity agentEnt, int index,
-				[ReadOnly] ref AgentInt agent,
-				[ReadOnly] ref ConnectionTarget target,
-				ref AgentCordInt cord,
-				ref AgentStateInt agentState)
-			{
-				if (agentState.MoveDist > 0)
-				{
+					//move forward here
 					int speed = ConSpeeds[cord.HeadCon].Speed;
 					int moveDist = math.min(speed, agentState.MoveDist);
 
@@ -492,12 +296,15 @@ namespace Model.Systems
 
 					while (moveDist > 0)
 					{
-						var tailConEnt = agentState.TailCon;
-						int tailConLen = ConLens[tailConEnt].Length;
 						int curDist = math.min(moveDist, tailConLen - agentState.TailCord);
 
 						agentState.TailCord += curDist;
 						cord.HeadCord += curDist;
+						if (cord.HeadCord > headConLen)
+						{
+							int abc = 123;
+						}
+
 						agentState.MoveDist -= curDist;
 
 						if (agentState.TailCord == tailConLen)
@@ -506,9 +313,9 @@ namespace Model.Systems
 							agentState.TailCon = nextCon;
 							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
 							int nextLen = ConLens[nextCon].Length;
-							States[nextCon] = new ConnectionStateInt
+							StateQs[nextCon] = new ConnectionStateQInt
 							{
-								EnterLength = math.min(agentState.MoveDist, nextLen),
+								EnterLenQ = math.min(agentState.MoveDist, nextLen),
 							};
 						}
 
@@ -527,6 +334,19 @@ namespace Model.Systems
 					? targetConnectionEnt
 					: Next[startNode][Indexes[endNode].Index].Connection;
 				return nextConEnt;
+			}
+		}
+
+		private struct ConnectionJob : IJobForEachWithEntity<ConnectionStateInt, ConnectionPullInt, ConnectionStateQInt,
+			ConnectionPullQInt>
+		{
+			public void Execute(Entity entity, int index, ref ConnectionStateInt state, ref ConnectionPullInt pull,
+				ref ConnectionStateQInt stateQ, ref ConnectionPullQInt pullQ)
+			{
+				pull.Pull = pullQ.PullQ;
+				pullQ.PullQ = 0;
+				state.EnterLen = stateQ.EnterLenQ + pull.Pull;
+				stateQ.EnterLenQ = state.EnterLen;
 			}
 		}
 	}

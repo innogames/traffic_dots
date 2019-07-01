@@ -85,7 +85,7 @@ namespace Model.Systems
 			{
 				var conState = ConStates[connectionAEnt];
 				var conLen = ConLengths[connectionAEnt];
-				return conState.EnterLength >= conLen.Length;
+				return conState.EnterLen >= conLen.Length;
 			}
 
 			private void ChangeConnectionTraffic(ref Entity connectionAEnt, ConnectionTrafficType trafficType)

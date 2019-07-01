@@ -9,6 +9,5 @@ namespace Model.Components
 		public Entity TailCon;
 		public int TailCord;
 		public int MoveDist;
-		public int PullForce;
 	}
 }

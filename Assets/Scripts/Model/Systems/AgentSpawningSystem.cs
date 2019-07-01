@@ -19,6 +19,9 @@ namespace Model.Systems
 
 			[ReadOnly] public ComponentDataFromEntity<AgentInt> Agents;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
+			
+			[NativeDisableParallelForRestriction] 
+			public ComponentDataFromEntity<ConnectionStateQInt> StateQs;
 
 			public void Execute(Entity entity, int index,
 				DynamicBuffer<SpawnerBuffer> buffer,
@@ -35,7 +38,7 @@ namespace Model.Systems
 					var connectionTraffic = ConTraffics[entity];
 
 					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
-					    && connectionState.EnterLength >= agentLen)
+					    && connectionState.EnterLen >= agentLen)
 					{
 						var agentEnt = UpdateCommands.Instantiate(index, agentPrefab);
 						UpdateCommands.SetComponent(index, agentEnt, new AgentCordInt
@@ -47,12 +50,16 @@ namespace Model.Systems
 						{
 							TailCon = entity,
 							TailCord = 0,
-							MoveDist = connectionState.EnterLength - agentLen,
-							PullForce = 0,
+							MoveDist = connectionState.EnterLen - agentLen,
 						});
 						UpdateCommands.SetComponent(index, agentEnt, agentTarget);
 
-						connectionState.EnterLength -= agentLen;
+						connectionState.EnterLen -= agentLen;
+						StateQs[entity] = new ConnectionStateQInt
+						{
+							EnterLenQ = connectionState.EnterLen,
+						};
+						
 						//no pulling needed
 
 						timer.TimerType = TimerType.Ticking;
@@ -81,6 +88,7 @@ namespace Model.Systems
 				UpdateCommands = commandBuffer,
 				Agents = GetComponentDataFromEntity<AgentInt>(),
 				ConTraffics = GetComponentDataFromEntity<ConnectionTraffic>(),
+				StateQs = GetComponentDataFromEntity<ConnectionStateQInt>(),
 			}.Schedule(this, inputDeps);
 			spawnJob.Complete();
 			return spawnJob;

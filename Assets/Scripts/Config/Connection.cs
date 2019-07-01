@@ -117,12 +117,19 @@ namespace Config
 			};
 			gameObject.AddComponent<ConnectionStateIntProxy>().Value = new ConnectionStateInt
 			{
-				EnterLength = conLen,
+				EnterLen = conLen,
+			};
+			gameObject.AddComponent<ConnectionStateQIntProxy>().Value = new ConnectionStateQInt
+			{
+				EnterLenQ = conLen,
 			};
 			gameObject.AddComponent<ConnectionPullIntProxy>().Value = new ConnectionPullInt
 			{
-				PullLife = conLen,
-				PullForce = 0,
+				Pull = 0,
+			};
+			gameObject.AddComponent<ConnectionPullQIntProxy>().Value = new ConnectionPullQInt
+			{
+				PullQ = 0,
 			};
 			CachedSpeed = 6f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt

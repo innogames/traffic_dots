@@ -4,8 +4,8 @@ using Unity.Entities;
 namespace Model.Components
 {
 	[Serializable]
-	public struct ConnectionStateInt : IComponentData
+	public struct ConnectionStateQInt : IComponentData
 	{
-		public int EnterLen;
+		public int EnterLenQ;
 	}
 }

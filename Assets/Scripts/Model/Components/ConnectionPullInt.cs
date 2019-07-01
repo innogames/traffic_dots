@@ -6,8 +6,6 @@ namespace Model.Components
 	[Serializable]
 	public struct ConnectionPullInt : IComponentData
 	{
-		public int PullLife;
-		public int PullForce;
-		public bool PullFromExit;
+		public int Pull;
 	}
 }
