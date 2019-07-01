@@ -119,10 +119,6 @@ namespace Config
 			{
 				EnterLen = conLen,
 			};
-			gameObject.AddComponent<ConnectionStateQIntProxy>().Value = new ConnectionStateQInt
-			{
-				EnterLenQ = conLen,
-			};
 			gameObject.AddComponent<ConnectionPullIntProxy>().Value = new ConnectionPullInt
 			{
 				Pull = 0,

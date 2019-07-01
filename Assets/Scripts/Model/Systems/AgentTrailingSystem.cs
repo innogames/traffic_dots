@@ -152,7 +152,6 @@ namespace Model.Systems
 			var conSpeeds = GetComponentDataFromEntity<ConnectionSpeedInt>();
 			var indexes = GetComponentDataFromEntity<IndexInNetwork>();
 			var states = GetComponentDataFromEntity<ConnectionStateInt>();
-			var stateQs = GetComponentDataFromEntity<ConnectionStateQInt>();
 			var pulls = GetComponentDataFromEntity<ConnectionPullInt>();
 			var pullQs = GetComponentDataFromEntity<ConnectionPullQInt>();
 			var next = GetBufferFromEntity<NextBuffer>();
@@ -168,15 +167,15 @@ namespace Model.Systems
 				ConSpeeds = conSpeeds,
 				States = states,
 				Pulls = pulls,
-				StateQs = stateQs,
 				PullQs = pullQs,
 			}.Schedule(this, inputDeps);
 			var connectionJob = new ConnectionJob().Schedule(this, agentJob);
 			connectionJob.Complete(); //for entity remove
 			return connectionJob;
 		}
-
-//		[BurstCompile]
+#if !CITY_DEBUG
+		[BurstCompile]
+#endif
 		private struct AgentJob : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
@@ -191,7 +190,6 @@ namespace Model.Systems
 
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullQInt> PullQs;
-			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateQInt> StateQs;
 
 			public void Execute(Entity agentEnt, int index,
 				[ReadOnly] ref AgentInt agent,
@@ -208,12 +206,13 @@ namespace Model.Systems
 				//reached target
 				if (endHeadCon) //end of connection
 				{
+#if CITY_DEBUG
 					if (agentState.MoveDist != 0)
 					{
 						int abc = 123;
 					}
-
-					if (target.Connection == cord.HeadCon) //reach destination!
+#endif
+					if (target.Connection == headConEnt) //reach destination!
 					{
 						CommandBuffer.DestroyEntity(index, agentEnt);
 						//create "death pull"
@@ -233,10 +232,12 @@ namespace Model.Systems
 						    nextState.EnterLen > 0)
 						{
 							int moveDist = nextState.EnterLen;
+#if CITY_DEBUG
 							if (moveDist > ConLens[nextConEnt].Length)
 							{
 								int abc = 123;
 							}
+#endif
 							//update agent
 							agentState.MoveDist = moveDist;
 							cord.HeadCon = nextConEnt;
@@ -265,17 +266,19 @@ namespace Model.Systems
 					int pullForce = headConPull.Pull;
 					if (cord.HeadCord + agentState.MoveDist + pullForce > headConLen)
 					{
-						int abc = 123;
 						//because the pull is 1 frame delay!
 						pullForce = headConLen - cord.HeadCord - agentState.MoveDist;
 					}
+
 					if (pullForce > 0)
 					{
 						agentState.MoveForce += pullForce;
+#if CITY_DEBUG
 						if (cord.HeadCord + agentState.MoveDist + agentState.MoveForce > headConLen)
 						{
 							int abc = 123;
 						}
+#endif
 					}
 				}
 
@@ -296,17 +299,19 @@ namespace Model.Systems
 
 						agentState.TailCord += curDist;
 						cord.HeadCord += curDist;
+#if CITY_DEBUG
 						if (cord.HeadCord > headConLen)
 						{
 							int abc = 123;
 						}
-
+#endif
 						agentState.MoveDist -= curDist;
+#if CITY_DEBUG
 						if (agentState.MoveDist < 0)
 						{
 							int abc = 123;
 						}
-
+#endif
 						if (agentState.TailCord == tailConLen)
 						{
 							var nextTailCon = ComputeNextCon(ref target, ref tailConEnt);
@@ -327,7 +332,7 @@ namespace Model.Systems
 				{
 					agentState.MoveDist = agentState.MoveForce;
 					agentState.MoveForce = 0;
-					if (headConEnt != tailConEnt && agentState.MoveDist > 0)//bridge-agent
+					if (headConEnt != tailConEnt && agentState.MoveDist > 0) //bridge-agent
 					{
 						PullQs[tailConEnt] = new ConnectionPullQInt
 						{
@@ -349,6 +354,9 @@ namespace Model.Systems
 			}
 		}
 
+#if !CITY_DEBUG
+		[BurstCompile]
+#endif
 		private struct ConnectionJob : IJobForEach<ConnectionStateInt, ConnectionPullInt, ConnectionStateQInt,
 			ConnectionPullQInt, ConnectionLengthInt>
 		{
@@ -358,16 +366,10 @@ namespace Model.Systems
 			{
 				pull.Pull = pullQ.PullQ;
 				pullQ.PullQ = 0;
-//				state.EnterLen = stateQ.EnterLenQ + pull.Pull;
-//				stateQ.EnterLenQ = state.EnterLen;
-				if (pull.Pull > 0)
-				{
-					state.EnterLen += pull.Pull;
-				}
+				state.EnterLen += pull.Pull;
 
 				if (state.EnterLen > conLen.Length)
 				{
-					int abc = 123;
 					state.EnterLen = conLen.Length;
 				}
 			}

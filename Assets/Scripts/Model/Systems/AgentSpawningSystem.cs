@@ -20,8 +20,9 @@ namespace Model.Systems
 
 			[ReadOnly] public ComponentDataFromEntity<AgentInt> Agents;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
+#if CITY_DEBUG
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
-			
+#endif
 			public void Execute(Entity entity, int index,
 				DynamicBuffer<SpawnerBuffer> buffer,
 				[ReadOnly] ref AgentSpawner spawner,
@@ -52,16 +53,16 @@ namespace Model.Systems
 							MoveDist = connectionState.EnterLen,
 							MoveForce = 0,
 						});
-
+#if CITY_DEBUG
 						if (connectionState.EnterLen > ConLens[entity].Length)
 						{
 							int abc = 123;
 						}
-						
+#endif
 						UpdateCommands.SetComponent(index, agentEnt, agentTarget);
 
 						connectionState.EnterLen -= agentLen;
-						
+
 						//no pulling needed
 
 						timer.TimerType = TimerType.Ticking;
@@ -90,7 +91,9 @@ namespace Model.Systems
 				UpdateCommands = commandBuffer,
 				Agents = GetComponentDataFromEntity<AgentInt>(),
 				ConTraffics = GetComponentDataFromEntity<ConnectionTraffic>(),
+#if CITY_DEBUG
 				ConLens = GetComponentDataFromEntity<ConnectionLengthInt>(),
+#endif
 			}.Schedule(this, inputDeps);
 			spawnJob.Complete();
 			return spawnJob;
