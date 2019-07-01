@@ -50,6 +50,7 @@ namespace Model.Systems
 							TailCon = entity,
 							TailCord = -agentLen,
 							MoveDist = connectionState.EnterLen,
+							MoveForce = 0,
 						});
 
 						if (connectionState.EnterLen > ConLens[entity].Length)

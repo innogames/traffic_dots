@@ -271,17 +271,10 @@ namespace Model.Systems
 					}
 					if (pullForce > 0)
 					{
-						agentState.MoveDist += pullForce;
-						if (cord.HeadCord + agentState.MoveDist > headConLen)
+						agentState.MoveForce += pullForce;
+						if (cord.HeadCord + agentState.MoveDist + agentState.MoveForce > headConLen)
 						{
 							int abc = 123;
-						}
-						if (headConEnt != tailConEnt)//bridge-agent
-						{
-							PullQs[tailConEnt] = new ConnectionPullQInt
-							{
-								PullQ = math.min(agentState.MoveDist, tailConLen - agentState.TailCord),
-							};
 						}
 					}
 				}
@@ -322,12 +315,24 @@ namespace Model.Systems
 							int nextLen = ConLens[nextTailCon].Length;
 							States[nextTailCon] = new ConnectionStateInt
 							{
-								EnterLen = math.min(agentState.MoveDist, nextLen),
+								EnterLen = math.min(agentState.MoveDist + agentState.MoveForce, nextLen),
 							};
 						}
 
 						moveDist = 0; // use the one below, but have to clear EnterLen and Pull
 //						moveDist -= curDist;
+					}
+				}
+				else
+				{
+					agentState.MoveDist = agentState.MoveForce;
+					agentState.MoveForce = 0;
+					if (headConEnt != tailConEnt && agentState.MoveDist > 0)//bridge-agent
+					{
+						PullQs[tailConEnt] = new ConnectionPullQInt
+						{
+							PullQ = math.min(agentState.MoveDist, tailConLen - agentState.TailCord),
+						};
 					}
 				}
 			}
