@@ -42,25 +42,31 @@ namespace Model.Systems
 		private NativeHashMap<Path, Entity> _next;
 		private NativeHashMap<Path, float> _dist;
 		private NativeHashMap<Entity, int> _nodes;
+		private NativeList<Entity> _cons;
+		private NativeList<Path> _conInfos;
 
 		public static NetworkCache Create(Entity networkEntity)
 		{
 			return new NetworkCache
 			{
 				_networkEntityIndex = networkEntity.Index,
-				_next = new NativeHashMap<Path, Entity>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
-				_dist = new NativeHashMap<Path, float>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
-				_nodes = new NativeHashMap<Entity, int>(SystemConstants.MapNodeSize, Allocator.Temp)
+				_next = new NativeHashMap<Path, Entity>(SystemConstants.NetworkNodeSqrSize, Allocator.Temp),
+				_dist = new NativeHashMap<Path, float>(SystemConstants.NetworkNodeSqrSize, Allocator.Temp),
+				_nodes = new NativeHashMap<Entity, int>(SystemConstants.NetworkNodeSize, Allocator.Temp),
+				_cons = new NativeList<Entity>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
+				_conInfos = new NativeList<Path>(SystemConstants.NetworkConnectionSize, Allocator.Temp),
 			};
 		}
 
-		public void AddConnection(Entity from, Entity to, float cost, Entity connection)
+		public void AddConnection(Entity from, Entity to, float cost, Entity conEnt)
 		{
+			_cons.Add(conEnt);
 			_nodes.TryAdd(from, _nodes.Length);
 			_nodes.TryAdd(to, _nodes.Length);
 			var fromTo = new Path(from, to);
+			_conInfos.Add(fromTo);
 			_dist.TryAdd(fromTo, cost);
-			WriteNext(fromTo, connection);
+			WriteNext(fromTo, conEnt);
 		}
 
 		private float ReadDist(Path path)
@@ -99,7 +105,6 @@ namespace Model.Systems
 			for (int k = 0; k < len; k++)
 			{
 				var nodeK = nodes[k];
-				commandBuffer.AddComponent(index, nodeK, new IndexInNetwork {Index = k});
 				for (int i = 0; i < len; i++)
 				{
 					var nodeI = nodes[i];
@@ -119,20 +124,42 @@ namespace Model.Systems
 				}
 			}
 
-			for (int i = 0; i < len; i++)
+			int conLen = _cons.Length;
+			for (int i = 0; i < conLen; i++)
 			{
-				var nodeI = nodes[i];
-				var buffer = commandBuffer.AddBuffer<NextBuffer>(index, nodeI);
-				for (int j = 0; j < len; j++)
+				var conEnt = _cons[i];
+				commandBuffer.AddComponent(index, conEnt, new IndexInNetwork {Index = i});
+			}
+
+			for (int i = 0; i < conLen; i++)
+			{
+				var conI = _cons[i];
+				var endI = _conInfos[i].To;
+				var buffer = commandBuffer.AddBuffer<NextBuffer>(index, conI);
+				for (int j = 0; j < conLen; j++)
 				{
-					var nodeJ = nodes[j];
-					var ij = new Path(nodeI, nodeJ);
+					Entity nextCon;
+					var conJ = _cons[j];
+					var fromJ = _conInfos[j].From;
+					if (i == j)
+					{
+						nextCon = Entity.Null;
+					}
+					else if (endI == fromJ)
+					{
+						nextCon = conJ;
+					}
+					else
+					{
+						if (!_next.TryGetValue(new Path(endI, fromJ), out nextCon))
+						{
+							nextCon = Entity.Null;
+						}
+					}
 
 					buffer.Add(new NextBuffer
 					{
-						Connection = _next.TryGetValue(ij, out var connection)
-							? connection
-							: Entity.Null
+						Connection = nextCon,
 					});
 				}
 			}
@@ -144,7 +171,9 @@ namespace Model.Systems
 		{
 			_next.Dispose();
 			_dist.Dispose();
-			_nodes.Dispose();			
+			_nodes.Dispose();
+			_cons.Dispose();
+			_conInfos.Dispose();
 		}
 
 		public bool Equals(NetworkCache other)

@@ -344,13 +344,14 @@ namespace Model.Systems
 
 			private Entity ComputeNextCon(ref ConnectionTarget target, ref Entity curConEnt)
 			{
-				var startNode = Connections[curConEnt].EndNode;
-				var targetConnectionEnt = target.Connection;
-				var endNode = Connections[targetConnectionEnt].StartNode;
-				var nextConEnt = startNode == endNode
-					? targetConnectionEnt
-					: Next[startNode][Indexes[endNode].Index].Connection;
-				return nextConEnt;
+//				var startNode = Connections[curConEnt].EndNode;
+//				var targetConnectionEnt = target.Connection;
+//				var endNode = Connections[targetConnectionEnt].StartNode;
+//				var nextConEnt = startNode == endNode
+//					? targetConnectionEnt
+//					: Next[startNode][Indexes[endNode].Index].Connection;
+//				return nextConEnt;
+				return Next[curConEnt][Indexes[target.Connection].Index].Connection;
 			}
 		}
 
