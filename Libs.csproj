@@ -15,10 +15,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{D0E27FE1-549B-4229-824F-1DEFB46603B7}</ProjectGuid>
+    <ProjectGuid>{9A32B00F-9C13-CDEB-A64A-988648EDD501}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Components</AssemblyName>
+    <AssemblyName>Libs</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoConfig>true</NoConfig>
@@ -62,50 +62,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Model\Components\Agent.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AgentCordInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AgentInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AgentSpawner.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AgentState.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AgentStateInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\AllComponents.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Buffer\AgentQueueBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Buffer\IntersectionConBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Buffer\IntersectionPhaseBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Buffer\SpawnerBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Buffer\TargetBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ComponentConstants.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Connection.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionCoord.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionDestination.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionLength.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionLengthInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionLocation.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionPullInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionPullQInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionSpeedInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionState.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionStateInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionStateQInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionTarget.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionTraffic.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\ConnectionTrafficType.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\EntitySlot.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Intersection.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\IntersectionPhaseType.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Node.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Spline.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Target.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\TargetSeeker.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\TargetType.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\Timer.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\TimerState.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\TimerType.cs" />
-    <Compile Include="Assets\Scripts\Model\Components\TrailAgent.cs" />
-    <None Include="Assets\Scripts\Model\Components\Components.asmdef" />
-    <Reference Include="Unity.Entities">
-      <HintPath>/Users/hainam.pham/ecs_experiments/Library/ScriptAssemblies/Unity.Entities.dll</HintPath>
-    </Reference>
+    <Compile Include="Assets\Scripts\Libs\BinaryHeap.cs" />
+    <Compile Include="Assets\Scripts\Libs\MinHeap.cs" />
+    <None Include="Assets\Scripts\Libs\Libs.asmdef" />
     <Reference Include="Unity.Mathematics">
       <HintPath>/Users/hainam.pham/ecs_experiments/Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
     </Reference>
