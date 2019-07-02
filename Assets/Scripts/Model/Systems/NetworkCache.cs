@@ -92,7 +92,82 @@ namespace Model.Systems
 
 			_next.TryAdd(path, connection);
 		}
+		public void Compute2(EntityManager entityManager)
+		{
+			int len = _nodes.Length;
+			var nodes = _nodes.GetKeyArray(Allocator.Temp);
 
+			for (int k = 0; k < len; k++)
+			{
+				var nodeK = nodes[k];
+				var kk = new Path(nodeK, nodeK);
+				WriteDist(kk, 0);
+			}
+
+			for (int k = 0; k < len; k++)
+			{
+				var nodeK = nodes[k];
+				for (int i = 0; i < len; i++)
+				{
+					var nodeI = nodes[i];
+					for (int j = 0; j < len; j++)
+					{
+						var nodeJ = nodes[j];
+						var ij = new Path(nodeI, nodeJ);
+						var ik = new Path(nodeI, nodeK);
+						float newDist = ReadDist(ik) + ReadDist(new Path(nodeK, nodeJ));
+
+						if (ReadDist(ij) > newDist)
+						{
+							WriteDist(ij, newDist);
+							WriteNext(ij, _next[ik]);
+						}
+					}
+				}
+			}
+
+			int conLen = _cons.Length;
+			for (int i = 0; i < conLen; i++)
+			{
+				var conEnt = _cons[i];
+				entityManager.AddComponentData(conEnt, new IndexInNetwork {Index = i});
+			}
+
+			for (int i = 0; i < conLen; i++)
+			{
+				var conI = _cons[i];
+				var endI = _conInfos[i].To;
+				var buffer = entityManager.AddBuffer<NextBuffer>(conI);
+				for (int j = 0; j < conLen; j++)
+				{
+					Entity nextCon;
+					var conJ = _cons[j];
+					var fromJ = _conInfos[j].From;
+					if (i == j)
+					{
+						nextCon = Entity.Null;
+					}
+					else if (endI == fromJ)
+					{
+						nextCon = conJ;
+					}
+					else
+					{
+						if (!_next.TryGetValue(new Path(endI, fromJ), out nextCon))
+						{
+							nextCon = Entity.Null;
+						}
+					}
+
+					buffer.Add(new NextBuffer
+					{
+						Connection = nextCon,
+					});
+				}
+			}
+
+			nodes.Dispose();
+		}
 		public void Compute(int index, EntityCommandBuffer.Concurrent commandBuffer)
 		{
 			int len = _nodes.Length;

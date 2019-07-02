@@ -37,13 +37,14 @@ namespace Model.Systems
 		private NativeList<Entity> _network;
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
+		private EntityCommandBufferSystem _bufferSystem;
 
 		protected override void OnCreate()
 		{
 			base.OnCreate();
 			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(Network)),
 				new ComponentType(typeof(NetAdjust)));
-			World.GetOrCreateSystem<PathCacheCommandBufferSystem>();
+			_bufferSystem = World.GetOrCreateSystem<PathCacheCommandBufferSystem>();
 			_outCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_inCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_conToNets = new NativeHashMap<Entity, int>(SystemConstants.MapConnectionSize, Allocator.Persistent);
@@ -177,22 +178,34 @@ namespace Model.Systems
 					}
 					
 					//compute NetAdjust
-					var buffer = EntityManager.GetBuffer<NetAdjust>(networkEnt);
+//					var buffer = EntityManager.GetBuffer<NetAdjust>(networkEnt);
+//					for (int i = 0; i < _network.Length; i++)
+//					{
+//						var conEnt = _network[i];
+//						var connection = EntityManager.GetComponentData<Connection>(conEnt);
+//						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
+//						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
+//						buffer.Add(new NetAdjust
+//						{
+//							Connection = conEnt,
+//							Cost = (float)conLen.Length / conSpeed.Speed,
+//							StartNode = connection.StartNode,
+//							EndNode = connection.EndNode,
+//							OnlyNext = connection.OnlyNext,
+//						});
+//					}
+					var networkCache = NetworkCache.Create(networkEnt);
 					for (int i = 0; i < _network.Length; i++)
 					{
 						var conEnt = _network[i];
 						var connection = EntityManager.GetComponentData<Connection>(conEnt);
 						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
 						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
-						buffer.Add(new NetAdjust
-						{
-							Connection = conEnt,
-							Cost = (float)conLen.Length / conSpeed.Speed,
-							StartNode = connection.StartNode,
-							EndNode = connection.EndNode,
-							OnlyNext = connection.OnlyNext,
-						});
+						networkCache.AddConnection(connection.StartNode, connection.EndNode, 
+							(float)conLen.Length / conSpeed.Speed, conEnt, connection.OnlyNext);
 					}
+					networkCache.Compute2(EntityManager);
+					networkCache.Dispose();
 				}
 			}
 			

@@ -6,9 +6,4 @@ namespace Model.Systems.States
 	{
 		public int Index;
 	}
-
-	public struct NetworkDone : ISystemStateComponentData
-	{
-		public int Something;
-	}
 }
