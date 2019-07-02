@@ -55,7 +55,7 @@ namespace Config
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
-				Speed = CachedSpeed,
+				Speed = CachedSpeed.ToCityInt(), //TODO merge this with ConnectionSpeedInt
 				Level = Level,
 			};
 		}
@@ -105,24 +105,33 @@ namespace Config
 			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
-			var conLen = ComputeLength();
-			gameObject.AddComponent<ConnectionLengthProxy>().Value = new ConnectionLength
-			{
-				Length = conLen,
-			};
 			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);
 			gameObject.AddComponent<ConnectionTrafficProxy>().Value = new ConnectionTraffic
 			{
 				TrafficType = trafficType,
 			};
-			gameObject.AddComponent<ConnectionStateProxy>().Value = new ConnectionState
+			int conLen = ComputeLength().ToCityInt();
+			gameObject.AddComponent<ConnectionLengthIntProxy>().Value = new ConnectionLengthInt
 			{
-				EnterLength = conLen,
-				ExitLength = 0f,
+				Length = conLen,
 			};
-			gameObject.AddComponent<AgentQueueBufferProxy>(); //empty!
-
-			CachedSpeed = 12f / 60f * GetComponentInParent<RoadSegment>().SpeedMultiplier;
+			gameObject.AddComponent<ConnectionStateIntProxy>().Value = new ConnectionStateInt
+			{
+				EnterLen = conLen,
+			};
+			gameObject.AddComponent<ConnectionPullIntProxy>().Value = new ConnectionPullInt
+			{
+				Pull = 0,
+			};
+			gameObject.AddComponent<ConnectionPullQIntProxy>().Value = new ConnectionPullQInt
+			{
+				PullQ = 0,
+			};
+			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate * GetComponentInParent<RoadSegment>().SpeedMultiplier;
+			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt
+			{
+				Speed = CachedSpeed.ToCityInt(),
+			};
 		}
 
 		private Spline ComputeBezierPoints()

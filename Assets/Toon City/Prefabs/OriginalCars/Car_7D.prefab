@@ -243,8 +243,6 @@ GameObject:
   - component: {fileID: 33000010853780164}
   - component: {fileID: 23000014005228706}
   - component: {fileID: 64000013422806688}
-  - component: {fileID: 7005274433266629925}
-  - component: {fileID: 6560582018296956040}
   m_Layer: 0
   m_Name: Car_7D
   m_TagString: Untagged
@@ -329,32 +327,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: ec3b39671ed20447aad51c8deb252da5, type: 3}
---- !u!114 &7005274433266629925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000012389131226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bf10cdea1344482e91a4f2b58506b77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6560582018296956040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000012389131226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b6468947af64eb081cd280ccf1502b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedData:
-    Speed: 1
 --- !u!1 &1000012638540380
 GameObject:
   m_ObjectHideFlags: 0

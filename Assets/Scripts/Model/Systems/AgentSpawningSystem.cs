@@ -10,62 +10,60 @@ namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
+	[UpdateBefore(typeof(AgentTrailingSystem))]
 	public class AgentSpawningSystem : JobComponentSystem //TODO consider turning to job!
 	{
 		private struct SpawnJob : IJobForEachWithEntity_EBCCCCC<SpawnerBuffer, AgentSpawner, Timer, TimerState,
-			ConnectionState, ConnectionTarget>
+			ConnectionStateInt, ConnectionTarget>
 		{
 			public EntityCommandBuffer.Concurrent UpdateCommands;
 
-			[NativeDisableParallelForRestriction] public BufferFromEntity<AgentQueueBuffer> Queues;
-
-			[ReadOnly] public ComponentDataFromEntity<Agent> Agents;
-			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
+			[ReadOnly] public ComponentDataFromEntity<AgentInt> Agents;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
-
+#if CITY_DEBUG
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
+#endif
 			public void Execute(Entity entity, int index,
 				DynamicBuffer<SpawnerBuffer> buffer,
 				[ReadOnly] ref AgentSpawner spawner,
 				ref Timer timer, ref TimerState timerState,
-				ref ConnectionState connectionState,
+				ref ConnectionStateInt connectionState,
 				[ReadOnly] ref ConnectionTarget agentTarget)
 			{
 				if (timerState.CountDown == 0)
 				{
 					var agentPrefab = buffer[spawner.CurrentIndex].Agent;
 					spawner.CurrentIndex = (spawner.CurrentIndex + 1) % buffer.Length;
-					var agent = Agents[agentPrefab];
-					var conSpeed = Connections[entity];
-					var conLength = ConLengths[entity];
+					int agentLen = Agents[agentPrefab].Length;
 					var connectionTraffic = ConTraffics[entity];
 
 					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
-					    && connectionState.CouldAgentEnter(ref agent, ref conLength))
+					    && connectionState.EnterLen >= agentLen)
 					{
 						var agentEnt = UpdateCommands.Instantiate(index, agentPrefab);
-						UpdateCommands.SetComponent(index, agentEnt, new ConnectionCoord
+						UpdateCommands.SetComponent(index, agentEnt, new AgentCordInt
 						{
-							Connection = entity,
-							Coord = connectionState.NewAgentCoord(ref conLength),
+							HeadCon = entity,
+							HeadCord = 0,
 						});
+						UpdateCommands.SetComponent(index, agentEnt, new AgentStateInt
+						{
+							TailCon = entity,
+							TailCord = -agentLen,
+							MoveDist = connectionState.EnterLen,
+							MoveForce = 0,
+						});
+#if CITY_DEBUG
+						if (connectionState.EnterLen > ConLens[entity].Length)
+						{
+							int abc = 123;
+						}
+#endif
 						UpdateCommands.SetComponent(index, agentEnt, agentTarget);
-						int interval = connectionState.FramesToEnter(ref conSpeed);
-						UpdateCommands.SetComponent(index, agentEnt, new Timer
-						{
-							Frames = interval,
-							TimerType = TimerType.Ticking,
-						});
-						UpdateCommands.SetComponent(index, agentEnt,
-							new TimerState //need this so that it can move immediately!
-							{
-								CountDown = interval,
-							});
 
-						connectionState.AcceptAgent(ref agent);
+						connectionState.EnterLen -= agentLen;
 
-						var queue = Queues[entity];
-						queue.Add(new AgentQueueBuffer {Agent = agentEnt});
+						//no pulling needed
 
 						timer.TimerType = TimerType.Ticking;
 					}
@@ -91,11 +89,11 @@ namespace Model.Systems
 			var spawnJob = new SpawnJob
 			{
 				UpdateCommands = commandBuffer,
-				Agents = GetComponentDataFromEntity<Agent>(),
-				ConLengths = GetComponentDataFromEntity<ConnectionLength>(),
-				Connections = GetComponentDataFromEntity<Connection>(),
+				Agents = GetComponentDataFromEntity<AgentInt>(),
 				ConTraffics = GetComponentDataFromEntity<ConnectionTraffic>(),
-				Queues = GetBufferFromEntity<AgentQueueBuffer>(),
+#if CITY_DEBUG
+				ConLens = GetComponentDataFromEntity<ConnectionLengthInt>(),
+#endif
 			}.Schedule(this, inputDeps);
 			spawnJob.Complete();
 			return spawnJob;

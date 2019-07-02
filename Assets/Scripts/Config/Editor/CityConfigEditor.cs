@@ -16,8 +16,6 @@ namespace Config.CityEditor
 			{
 				config.Segments = Resources.FindObjectsOfTypeAll<RoadSegment>()
 					.Where(seg => EditorUtility.IsPersistent(seg.gameObject)).ToArray();
-				config.Vehicles = Resources.FindObjectsOfTypeAll<AgentProxy>()
-					.Where(seg => EditorUtility.IsPersistent(seg.gameObject)).ToArray();
 				EditorUtility.SetDirty(config);
 			}
 		}

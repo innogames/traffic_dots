@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a9c69e886f449187f6b3f379c1fd9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   Agents:
-  - {fileID: 1000013281362706, guid: 9017d95f607e942a7aa0dbd619ded6cc, type: 3}
-  - {fileID: 1000010801063532, guid: d7712ae12a9a443d5924224621fb72e5, type: 3}
-  - {fileID: 1000010603113068, guid: 9c89b8165b9d54e90a47b1663eefb92f, type: 3}
-  - {fileID: 1000010975236142, guid: 23dee292e3a9e4d8ea247628b1c0a248, type: 3}
-  - {fileID: 1000011772067806, guid: 7f34d41b84df54fcdbf864e4f6369501, type: 3}
+  - {fileID: 3496409543696375735, guid: 3fd0db134c8a645718fd3699211c1adf, type: 3}
+  - {fileID: 6100964896464688053, guid: ac613e86c95e444faa69c37b69b800d3, type: 3}
+  - {fileID: 730375125265982804, guid: 78cebd3d1608b4baf9d7b5f0f866c24e, type: 3}
+  - {fileID: 274112156881693883, guid: cf67e0c52fbf146d7a13429af451c03a, type: 3}
   TargetMask: 1
   Interval: 60
   Targets: []
@@ -180,6 +180,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road_1J_Donut
       objectReference: {fileID: 0}
+    - target: {fileID: 5475468262908204463, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 6538493591124932079, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
     - target: {fileID: 4000011847114926, guid: fbdf6a91aa4254c2e9c40c9cf005ec99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 50.9
@@ -224,6 +236,84 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 779010822778205754, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 8082082009311614403, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 3624648999577924931, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 1071586371681808375, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 3575794046921962120, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 2344353104494618192, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 738392624638003175, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 8263539473725346851, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 2738971406558347949, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 1040748456127556432, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 5836772406521379835, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 7037793477521714612, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
+    - target: {fileID: 7044100566558586154, guid: fbdf6a91aa4254c2e9c40c9cf005ec99,
+        type: 3}
+      propertyPath: CachedConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
+        type: 2}
     m_RemovedComponents:
     - {fileID: 6450711894782188998, guid: fbdf6a91aa4254c2e9c40c9cf005ec99, type: 3}
     - {fileID: 7292923566983595920, guid: fbdf6a91aa4254c2e9c40c9cf005ec99, type: 3}

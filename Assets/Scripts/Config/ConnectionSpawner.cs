@@ -21,7 +21,7 @@ namespace Config
 
 			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
 			{
-				CurrentIndex = Random.Range(0, Agents.Length),
+				CurrentIndex = Mathf.Abs(transform.position.GetHashCode()) % Agents.Length, //Random.Range(0, Agents.Length), make it deterministic for testing!
 			};
 			gameObject.AddComponent<SpawnerBufferProxy>().SetValue(
 				Agents.Select(agent => new SpawnerBuffer
