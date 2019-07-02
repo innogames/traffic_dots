@@ -6,7 +6,7 @@ using Unity.Jobs;
 namespace Model.Systems
 {
 	[UpdateInGroup(typeof(CitySystemGroup))]
-	[UpdateAfter(typeof(CityAddConnectionSeqSystem))]
+	[UpdateAfter(typeof(NetworkGroupCreationSystem))]
 	[UpdateBefore(typeof(PathCacheCommandBufferSystem))]
 	public class NetworkCreationSystem : JobComponentSystem
 	{

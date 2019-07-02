@@ -6,6 +6,7 @@ using Unity.Mathematics;
 
 namespace Model.Systems
 {
+	[DisableAutoCreation]
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	public class CityAddConnectionSeqSystem : ComponentSystem
 	{
