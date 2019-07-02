@@ -132,6 +132,16 @@ namespace Config
 			{
 				Speed = CachedSpeed.ToCityInt(),
 			};
+			
+			var marker = gameObject.GetComponent<TargetMarker>();
+			if (marker != null)
+			{
+				gameObject.AddComponent<TargetProxy>().Value = new Target
+				{
+					TargetMask = (int)marker.TargetMask,
+				};
+					
+			}
 		}
 
 		private Spline ComputeBezierPoints()

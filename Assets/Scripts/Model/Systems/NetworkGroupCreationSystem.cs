@@ -165,6 +165,7 @@ namespace Model.Systems
 								do
 								{
 									count++;
+									if (count > 1) break;
 								} while (_outCons.TryGetNextValue(out _, ref it));
 							}
 							if (count == 1)
