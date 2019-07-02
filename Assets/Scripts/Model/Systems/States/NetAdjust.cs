@@ -9,5 +9,6 @@ namespace Model.Systems.States
 		public Entity StartNode;
 		public Entity EndNode;
 		public float Cost;
+		public Entity OnlyNext;
 	}
 }

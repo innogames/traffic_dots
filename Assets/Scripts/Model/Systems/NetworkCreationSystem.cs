@@ -25,7 +25,8 @@ namespace Model.Systems
 				for (int i = 0; i < adjusts.Length; i++)
 				{
 					var adjust = adjusts[i];
-					networkCache.AddConnection(adjust.StartNode, adjust.EndNode, adjust.Cost, adjust.Connection);
+					networkCache.AddConnection(adjust.StartNode, adjust.EndNode, 
+						adjust.Cost, adjust.Connection, adjust.OnlyNext);
 				}
 
 				networkCache.Compute(index, CommandBuffer);

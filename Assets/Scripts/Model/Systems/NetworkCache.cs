@@ -58,13 +58,16 @@ namespace Model.Systems
 			};
 		}
 
-		public void AddConnection(Entity from, Entity to, float cost, Entity conEnt)
+		public void AddConnection(Entity from, Entity to, float cost, Entity conEnt, Entity onlyNext)
 		{
-			_cons.Add(conEnt);
 			_nodes.TryAdd(from, _nodes.Length);
 			_nodes.TryAdd(to, _nodes.Length);
 			var fromTo = new Path(from, to);
-			_conInfos.Add(fromTo);
+			if (onlyNext == Entity.Null)
+			{
+				_cons.Add(conEnt);
+				_conInfos.Add(fromTo);
+			}
 			_dist.TryAdd(fromTo, cost);
 			WriteNext(fromTo, conEnt);
 		}

@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEditor.UIElements;
 using Network = Model.Systems.States.Network;
 
 namespace Model.Systems
@@ -143,6 +144,38 @@ namespace Model.Systems
 					{
 						Index = _networkCount,
 					});
+
+					//add NetworkGroup & assign OnlyNext
+					for (int i = 0; i < _network.Length; i++)
+					{
+						var conEnt = _network[i];
+						EntityManager.AddSharedComponentData(conEnt, new NetworkGroup
+						{
+							NetworkId = networkEnt.Index,
+						});
+						
+						//assign OnlyNext
+						if (!EntityManager.HasComponent<Target>(conEnt)) //target will always participate network indexes
+						{
+							var connection = EntityManager.GetComponentData<Connection>(conEnt);
+							int count = 0;
+							Entity onlyNext = Entity.Null;
+							if (_outCons.TryGetFirstValue(connection.EndNode, out onlyNext, out var it))
+							{
+								do
+								{
+									count++;
+								} while (_outCons.TryGetNextValue(out _, ref it));
+							}
+							if (count == 1)
+							{
+								connection.OnlyNext = onlyNext;
+								EntityManager.SetComponentData(conEnt, connection);
+							}
+						}
+					}
+					
+					//compute NetAdjust
 					var buffer = EntityManager.GetBuffer<NetAdjust>(networkEnt);
 					for (int i = 0; i < _network.Length; i++)
 					{
@@ -156,15 +189,7 @@ namespace Model.Systems
 							Cost = (float)conLen.Length / conSpeed.Speed,
 							StartNode = connection.StartNode,
 							EndNode = connection.EndNode,
-						});
-					}
-
-					for (int i = 0; i < _network.Length; i++)
-					{
-						var conEnt = _network[i];
-						EntityManager.AddSharedComponentData(conEnt, new NetworkGroup
-						{
-							NetworkId = networkEnt.Index,
+							OnlyNext = connection.OnlyNext,
 						});
 					}
 				}

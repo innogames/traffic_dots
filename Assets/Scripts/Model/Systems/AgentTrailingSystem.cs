@@ -351,7 +351,10 @@ namespace Model.Systems
 //					? targetConnectionEnt
 //					: Next[startNode][Indexes[endNode].Index].Connection;
 //				return nextConEnt;
-				return Next[curConEnt][Indexes[target.Connection].Index].Connection;
+				var con = Connections[curConEnt];
+				return con.OnlyNext == Entity.Null 
+					? Next[curConEnt][Indexes[target.Connection].Index].Connection
+					: con.OnlyNext;
 			}
 		}
 
