@@ -10,6 +10,7 @@ namespace Config
 	public class RoadSegment : BaseGenerator
 	{
 		public float SpeedMultiplier = 1f;
+		public int Level = 1;
 		public TrafficPhases[] Phases;
 
 		public Connector[] Connectors => GetComponentsInChildren<Connector>();

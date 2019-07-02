@@ -13,7 +13,6 @@ namespace Config
 	{
 		public Node StartNode;
 		public Node EndNode;
-		public int Level = 1;
 
 		public float CurveIn = 1.0f;
 
@@ -51,12 +50,13 @@ namespace Config
 		{
 			base.PlayModeGenerate(config);
 			var connection = gameObject.AddComponent<ConnectionProxy>();
+			var roadSegment = GetComponentInParent<RoadSegment>();
 			connection.Value = new Model.Components.Connection
 			{
 				StartNode = LinkedStartNode.Entity,
 				EndNode = LinkedEndNode.Entity,
 				Speed = CachedSpeed.ToCityInt(), //TODO merge this with ConnectionSpeedInt
-				Level = Level,
+				Level = roadSegment == null ? 1 : roadSegment.Level,
 			};
 		}
 
