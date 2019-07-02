@@ -148,11 +148,12 @@ namespace Model.Systems
 					{
 						var conEnt = _network[i];
 						var connection = EntityManager.GetComponentData<Connection>(conEnt);
-						var conLen = EntityManager.GetComponentData<ConnectionLength>(conEnt);
+						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
+						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
 						buffer.Add(new NetAdjust
 						{
 							Connection = conEnt,
-							Cost = conLen.Length / connection.Speed,
+							Cost = (float)conLen.Length / conSpeed.Speed,
 							StartNode = connection.StartNode,
 							EndNode = connection.EndNode,
 						});
