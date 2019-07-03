@@ -35,8 +35,8 @@ namespace Model.Systems
 		private NativeHashMap<Entity, int> _conToNets;
 		private NativeQueue<Entity> _bfsOpen;
 		private NativeList<Entity> _network;
-		private NativeList<Entity> _entrances;
-		private NativeList<Entity> _exits;
+		private NativeHashMap<Entity, int> _entrances;
+		private NativeHashMap<Entity, int> _exits;
 
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
@@ -54,8 +54,8 @@ namespace Model.Systems
 			_newCons = new NativeQueue<Entity>(Allocator.Persistent);
 			_bfsOpen = new NativeQueue<Entity>(Allocator.Persistent);
 			_network = new NativeList<Entity>(SystemConstants.MapConnectionSize, Allocator.Persistent);
-			_entrances = new NativeList<Entity>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
-			_exits = new NativeList<Entity>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
+			_entrances = new NativeHashMap<Entity, int>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
+			_exits = new NativeHashMap<Entity, int>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
 			_networkCount = 0;
 		}
 
@@ -278,8 +278,39 @@ namespace Model.Systems
 							(float) conLen.Length / conSpeed.Speed, conEnt, connection.OnlyNext);
 					}
 
-					networkCache.Compute2(EntityManager);
+					var entrances = _entrances.GetKeyArray(Allocator.Temp);
+					//add entrances
+					for (int i = 0; i < entrances.Length; i++)
+					{
+						var node = entrances[i];
+						EntityManager.AddComponentData(node, new Entrance
+						{
+							NetIdx = networkEnt.Index,
+							Level = level,
+						});
+					}
+
+					var exits = _exits.GetKeyArray(Allocator.Temp);
+					int conCount = networkCache.ConnectionCount();
+					//add exits
+					for (int i = 0; i < exits.Length; i++)
+					{
+						var node = exits[i];
+						EntityManager.AddComponentData(node, new Exit
+						{
+							NetIdx = networkEnt.Index,
+							Level = level,
+						});
+						EntityManager.AddComponentData(node, new IndexInNetwork
+						{
+							Index = i + conCount,
+						});
+					}
+
+					networkCache.Compute2(EntityManager, ref entrances, ref exits);
 					networkCache.Dispose();
+					entrances.Dispose();
+					exits.Dispose();
 				}
 			}
 
@@ -288,24 +319,24 @@ namespace Model.Systems
 
 		private void BFS(ref NativeMultiHashMap<Entity, Entity> cons,
 			ref NativeList<Entity> network, Entity curNode,
-			EntityManager entityManager, int level, bool isOut, ref NativeList<Entity> netTravelNodes)
+			EntityManager entityManager, int level, bool isOut, ref NativeHashMap<Entity, int> netTravelNodes)
 		{
-			if (cons.TryGetFirstValue(curNode, out var outCon, out var it))
+			if (cons.TryGetFirstValue(curNode, out var inoutCon, out var it))
 			{
 				do
 				{
-					if (_conToNets.TryGetValue(outCon, out int _)) continue;
-					var con = entityManager.GetComponentData<Connection>(outCon);
+					var con = entityManager.GetComponentData<Connection>(inoutCon);
 					if (con.Level != level)
 					{
-						netTravelNodes.Add(isOut ? con.EndNode : con.StartNode);
+						netTravelNodes.TryAdd(isOut ? con.StartNode : con.EndNode, 0);
 						continue;
 					}
+					if (_conToNets.TryGetValue(inoutCon, out int _)) continue; //visited
 
-					_conToNets.TryAdd(outCon, _networkCount);
-					_bfsOpen.Enqueue(outCon);
-					network.Add(outCon);
-				} while (cons.TryGetNextValue(out outCon, ref it));
+					_conToNets.TryAdd(inoutCon, _networkCount);
+					_bfsOpen.Enqueue(inoutCon);
+					network.Add(inoutCon);
+				} while (cons.TryGetNextValue(out inoutCon, ref it));
 			}
 		}
 	}

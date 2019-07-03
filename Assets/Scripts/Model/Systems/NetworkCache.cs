@@ -68,6 +68,7 @@ namespace Model.Systems
 				_cons.Add(conEnt);
 				_conInfos.Add(fromTo);
 			}
+
 			_dist.TryAdd(fromTo, cost);
 			WriteNext(fromTo, conEnt);
 		}
@@ -92,7 +93,14 @@ namespace Model.Systems
 
 			_next.TryAdd(path, connection);
 		}
-		public void Compute2(EntityManager entityManager)
+
+		public int ConnectionCount()
+		{
+			return _cons.Length;
+		}
+
+		public void Compute2(EntityManager entityManager, ref NativeArray<Entity> entrances,
+			ref NativeArray<Entity> exits)
 		{
 			int len = _nodes.Length;
 			var nodes = _nodes.GetKeyArray(Allocator.Temp);
@@ -127,43 +135,72 @@ namespace Model.Systems
 			}
 
 			int conLen = _cons.Length;
-
 			for (int i = 0; i < conLen; i++)
 			{
 				var conI = _cons[i];
 				entityManager.AddComponentData(conI, new IndexInNetwork {Index = i});
 				var endI = _conInfos[i].To;
 				var buffer = entityManager.AddBuffer<NextBuffer>(conI);
-				for (int j = 0; j < conLen; j++)
-				{
-					Entity nextCon;
-					var conJ = _cons[j];
-					var fromJ = _conInfos[j].From;
-					if (i == j)
-					{
-						nextCon = Entity.Null;
-					}
-					else if (endI == fromJ)
-					{
-						nextCon = conJ;
-					}
-					else
-					{
-						if (!_next.TryGetValue(new Path(endI, fromJ), out nextCon))
-						{
-							nextCon = Entity.Null;
-						}
-					}
+				ComputeNextBuffer(ref exits, conLen, i, ref endI, ref buffer);
+			}
 
-					buffer.Add(new NextBuffer
-					{
-						Connection = nextCon,
-					});
-				}
+			for (int i = 0; i < entrances.Length; i++)
+			{
+				var entrance = entrances[i];
+				var buffer = entityManager.AddBuffer<NextBuffer>(entrance);
+				ComputeNextBuffer(ref exits, conLen, -1, ref entrance, ref buffer);
 			}
 
 			nodes.Dispose();
 		}
+
+		private void ComputeNextBuffer(ref NativeArray<Entity> exits, int conLen, int index, ref Entity startNode,
+			ref DynamicBuffer<NextBuffer> buffer)
+		{
+			//con to con
+			for (int j = 0; j < conLen; j++)
+			{
+				Entity nextCon;
+				var conJ = _cons[j];
+				var endNode = _conInfos[j].From;
+				if (index == j)
+				{
+					nextCon = Entity.Null;
+				}
+				else if (startNode == endNode)
+				{
+					nextCon = conJ;
+				}
+				else
+				{
+					if (!_next.TryGetValue(new Path(startNode, endNode), out nextCon))
+					{
+						nextCon = Entity.Null;
+					}
+				}
+
+				buffer.Add(new NextBuffer
+				{
+					Connection = nextCon,
+				});
+			}
+
+			//con to exit
+			for (int j = 0; j < exits.Length; j++)
+			{
+				var exit = exits[j];
+				if (!_next.TryGetValue(new Path(startNode, exit), out var nextCon))
+				{
+					nextCon = Entity.Null;
+				}
+
+				buffer.Add(new NextBuffer
+				{
+					Connection = nextCon,
+				});
+			}
+		}
+
 		public void Compute(int index, EntityCommandBuffer.Concurrent commandBuffer)
 		{
 			int len = _nodes.Length;

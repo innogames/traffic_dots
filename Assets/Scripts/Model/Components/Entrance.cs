@@ -8,6 +8,5 @@ namespace Model.Components
 	{
 		public int NetIdx;
 		public int Level;
-		public int IndexInNetwork;
 	}
 }
