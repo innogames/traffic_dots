@@ -1,4 +1,5 @@
 using System;
+using Model.Components;
 using Model.Systems.States;
 using Unity.Collections;
 using Unity.Entities;
@@ -135,20 +136,63 @@ namespace Model.Systems
 			}
 
 			int conLen = _cons.Length;
-			for (int i = 0; i < conLen; i++)
+			for (int i = 0; i < conLen; i++)//compute next for all connections
 			{
 				var conI = _cons[i];
 				entityManager.AddComponentData(conI, new IndexInNetwork {Index = i});
-				var endI = _conInfos[i].To;
+				var conTo = _conInfos[i].To;
 				var buffer = entityManager.AddBuffer<NextBuffer>(conI);
-				ComputeNextBuffer(ref exits, conLen, i, ref endI, ref buffer);
+				ComputeNextBuffer(ref exits, conLen, i, ref conTo, ref buffer);
 			}
 
-			for (int i = 0; i < entrances.Length; i++)
+			for (int i = 0; i < entrances.Length; i++)//compute next for all entrances
 			{
 				var entrance = entrances[i];
 				var buffer = entityManager.AddBuffer<NextBuffer>(entrance);
 				ComputeNextBuffer(ref exits, conLen, -1, ref entrance, ref buffer);
+			}
+
+			for (int i = 0; i < conLen; i++)//compute NetPathInfo
+			{
+				var conTo = _conInfos[i].To;
+				var conFrom = _conInfos[i].From;
+
+				float minExitDist = float.MaxValue;
+				var nearestExit = Entity.Null;
+				for (int j = 0; j < exits.Length; j++)
+				{
+					var exit = exits[j];
+					if (_dist.TryGetValue(new Path(conTo, exit), out float dist))
+					{
+						if (minExitDist > dist)
+						{
+							minExitDist = dist;
+							nearestExit = exit;
+						};
+					}
+				}
+				
+				float minEntranceDist = float.MaxValue;
+				var nearestEntrance = Entity.Null;
+				for (int j = 0; j < entrances.Length; j++)
+				{
+					var entrance = entrances[j];
+					if (_dist.TryGetValue(new Path(entrance, conFrom), out float dist))
+					{
+						if (minEntranceDist > dist)
+						{
+							minEntranceDist = dist;
+							nearestEntrance = entrance;
+						};
+					}
+				}
+				
+				var con = _cons[i];
+				entityManager.AddComponentData(con, new NetPathInfo
+				{
+					NearestEntrance = nearestEntrance,
+					NearestExit = nearestExit,
+				});
 			}
 
 			nodes.Dispose();
