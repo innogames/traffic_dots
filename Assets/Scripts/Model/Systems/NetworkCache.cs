@@ -127,15 +127,11 @@ namespace Model.Systems
 			}
 
 			int conLen = _cons.Length;
-			for (int i = 0; i < conLen; i++)
-			{
-				var conEnt = _cons[i];
-				entityManager.AddComponentData(conEnt, new IndexInNetwork {Index = i});
-			}
 
 			for (int i = 0; i < conLen; i++)
 			{
 				var conI = _cons[i];
+				entityManager.AddComponentData(conI, new IndexInNetwork {Index = i});
 				var endI = _conInfos[i].To;
 				var buffer = entityManager.AddBuffer<NextBuffer>(conI);
 				for (int j = 0; j < conLen; j++)

@@ -20,7 +20,7 @@ namespace Model.Systems
 			public NativeMultiHashMap<Entity, Entity>.Concurrent OutCons;
 			public NativeMultiHashMap<Entity, Entity>.Concurrent InCons;
 			public NativeQueue<Entity>.Concurrent NewCons;
-			
+
 			public void Execute(Entity conEnt, int index, [ReadOnly] ref Connection connection)
 			{
 				OutCons.Add(connection.StartNode, conEnt);
@@ -35,6 +35,9 @@ namespace Model.Systems
 		private NativeHashMap<Entity, int> _conToNets;
 		private NativeQueue<Entity> _bfsOpen;
 		private NativeList<Entity> _network;
+		private NativeList<Entity> _entrances;
+		private NativeList<Entity> _exits;
+
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
 		private EntityCommandBufferSystem _bufferSystem;
@@ -51,6 +54,8 @@ namespace Model.Systems
 			_newCons = new NativeQueue<Entity>(Allocator.Persistent);
 			_bfsOpen = new NativeQueue<Entity>(Allocator.Persistent);
 			_network = new NativeList<Entity>(SystemConstants.MapConnectionSize, Allocator.Persistent);
+			_entrances = new NativeList<Entity>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
+			_exits = new NativeList<Entity>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
 			_networkCount = 0;
 		}
 
@@ -73,20 +78,83 @@ namespace Model.Systems
 			//breath first search with its in_con & out_con, add all the node to visited node, the con to one color group
 			//all con must have the same level as the first con selected!
 			//repeat with remaining nodes & con
+
+			//a node connecting two connections of different levels is an exit node
+			//nothing can have two IndexInNetwork comp
+			//can a node belong to two networks? and have two indexes?
 			
-			//a node connection two connection of different levels is an exit node
+			//propose 1: treat exit & entrance nodes differently
+			//entrance: contain a Next list to all network nodes
+			//exit: every node has a Next to every exit node (indexed differently)
+			//need a way to connect an exit of this network to an entrance of another
+			//
+			//path finding algo
+			//target:
+			//- finalTarget: conEnt
+			//- nextTarget: entity
+			//- targetIdx: int
+			//- curLoc: entity
+			//- curLevel: int
+			//- curNet: int
+			//
+			// NetworkGroup[connection].Index
+			// Entrances[node].NetId
+			// Exits[node].NetId
+			//
+			// Connection[connection].Level
+			// Entrances[node].Level
+			// Exits[node].Level
+			//
+			//curNet = curCon.Network
+			//curLevel = curCon.Level
+			//curLoc = curCon
+			//
+			//if curCon == finalTarget: done
+			//elseif curCon.endNode == nextTarget:
+			//  curNet = Entrances[nextTarget].NetId
+			//  curLevel = Entrances[nextTarget].Level
+			//  curLoc = nextTarget
+			//  find_target
 			
+			//if curNet == finalTarget.Network: targetIdx = Indices[finalTarget]
+			//else
+			//  if curLevel <= finalTarget.Level //climb
+			//    nextTarget = curLoc.exit
+			//    targetIdx = Exits[nextTarget].Idx
+			//  else //descend
+			//    nextTarget = finalTarget
+			//    do
+			//      nextTarget = finalTarget.entrance
+			//    while (curLevel > Exits[nextTarget].Level)
+			//    var exitInfo = Exits[nextTarget]
+			//    if curNet == exitInfo.NetId
+			//      targetIdx = exitInfo.Idx
+			//    else //climb
+			//      nextTarget = nextTarget.exit
+			//      targetIdx = Exits[nextTarget].Idx
+			//Next[curCon][targetIdx]
+
+
+
+			//propose 2: treat exit & entrance like every other con in the network
+			//nearest_exit or entrance will have to choose 1 among multiples (also happens with node, but less)
+			//the exit/entrance con is still in the same network, it has to be an OnlyNext con to push the agent
+			//to the other network => can't have entrance as intersection! must buffer it with a straight road!
+			
+			//propose 3: create a new connection with startNode == endNode == exitNode
+			//this is not good!
+
 			//compute direct pointer: for connection with 1 exit
 			//scan through node with 1 out_con_node: set all connection in in_con_node to has direct pointer
-			
+
 			//compute index in network
 			//all con without direct pointer will be indexed incrementally based on network
 			//follow the direct_pointer to compute combined-distance to Dist array
 			//compute Dist & Next 
-			
+
 			//compute node.Exit = nearest_exit_node, node.Entrance = nearest_entrance_node
 			//during computation of Dist, record the smallest Dist[i,j] to Exit[i] if j is an exit node
-			
+
 			//path finding:
 			//conTarget:
 			//- finalTarget: connection
@@ -111,7 +179,7 @@ namespace Model.Systems
 				InCons = _inCons.ToConcurrent(),
 				NewCons = _newCons.ToConcurrent(),
 			}.Schedule(this, inputDeps);
-			
+
 			inout.Complete();
 
 			if (_newCons.Count > 0)
@@ -127,17 +195,20 @@ namespace Model.Systems
 					_networkCount++;
 
 					_network.Clear();
-					
+					_entrances.Clear();
+					_exits.Clear();
+
 					_conToNets.TryAdd(newCon, _networkCount);
 					_bfsOpen.Enqueue(newCon);
 					_network.Add(newCon);
-					
+
 					while (_bfsOpen.Count > 0)
 					{
 						var curConEnt = _bfsOpen.Dequeue();
 						var connection = EntityManager.GetComponentData<Connection>(curConEnt);
-						BFS(ref _outCons, ref _network, connection.EndNode, EntityManager, level);
-						BFS(ref _inCons, ref _network, connection.StartNode, EntityManager, level);
+						BFS(ref _outCons, ref _network, connection.EndNode, EntityManager, level, true, ref _exits);
+						BFS(ref _inCons, ref _network, connection.StartNode, EntityManager, level, false,
+							ref _entrances);
 					}
 
 					var networkEnt = EntityManager.CreateEntity(_networkArchetype);
@@ -154,9 +225,10 @@ namespace Model.Systems
 						{
 							NetworkId = networkEnt.Index,
 						});
-						
+
 						//assign OnlyNext
-						if (!EntityManager.HasComponent<Target>(conEnt)) //target will always participate network indexes
+						if (!EntityManager.HasComponent<Target>(conEnt)
+						) //target will always participate network indexes
 						{
 							var connection = EntityManager.GetComponentData<Connection>(conEnt);
 							int count = 0;
@@ -169,6 +241,7 @@ namespace Model.Systems
 									if (count > 1) break;
 								} while (_outCons.TryGetNextValue(out _, ref it));
 							}
+
 							if (count == 1)
 							{
 								connection.OnlyNext = onlyNext;
@@ -176,7 +249,7 @@ namespace Model.Systems
 							}
 						}
 					}
-					
+
 					//compute NetAdjust
 //					var buffer = EntityManager.GetBuffer<NetAdjust>(networkEnt);
 //					for (int i = 0; i < _network.Length; i++)
@@ -201,27 +274,34 @@ namespace Model.Systems
 						var connection = EntityManager.GetComponentData<Connection>(conEnt);
 						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
 						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
-						networkCache.AddConnection(connection.StartNode, connection.EndNode, 
-							(float)conLen.Length / conSpeed.Speed, conEnt, connection.OnlyNext);
+						networkCache.AddConnection(connection.StartNode, connection.EndNode,
+							(float) conLen.Length / conSpeed.Speed, conEnt, connection.OnlyNext);
 					}
+
 					networkCache.Compute2(EntityManager);
 					networkCache.Dispose();
 				}
 			}
-			
+
 			return inout;
 		}
 
 		private void BFS(ref NativeMultiHashMap<Entity, Entity> cons,
 			ref NativeList<Entity> network, Entity curNode,
-			EntityManager entityManager, int level)
+			EntityManager entityManager, int level, bool isOut, ref NativeList<Entity> netTravelNodes)
 		{
 			if (cons.TryGetFirstValue(curNode, out var outCon, out var it))
 			{
 				do
 				{
 					if (_conToNets.TryGetValue(outCon, out int _)) continue;
-					if (entityManager.GetComponentData<Connection>(outCon).Level != level) continue;
+					var con = entityManager.GetComponentData<Connection>(outCon);
+					if (con.Level != level)
+					{
+						netTravelNodes.Add(isOut ? con.EndNode : con.StartNode);
+						continue;
+					}
+
 					_conToNets.TryAdd(outCon, _networkCount);
 					_bfsOpen.Enqueue(outCon);
 					network.Add(outCon);
