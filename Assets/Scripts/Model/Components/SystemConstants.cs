@@ -6,7 +6,7 @@ namespace Model.Components
 		public const int NetworkNodeSqrSize = NetworkNodeSize * NetworkNodeSize;
 		public const int NetworkConnectionSize = 100;
 
-		public const int MapConnectionSize = 500;		
-		public const int MapNodeSize = 500;
+		public const int MapConnectionSize = 2000;		
+		public const int MapNodeSize = 2000;
 	}
 }

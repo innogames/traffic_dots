@@ -333,9 +333,11 @@ namespace Model.Systems
 					}
 					else
 					{
+						var curTraffic = ConTraffics[headConEnt];
 						var nextTraffic = ConTraffics[nextConEnt];
 						var nextState = States[nextConEnt];
-						if (nextTraffic.TrafficType != ConnectionTrafficType.NoEntrance &&
+						if ((nextTraffic.TrafficType != ConnectionTrafficType.NoEntrance
+						     || curTraffic.TrafficType == ConnectionTrafficType.NoEntrance) &&
 						    nextState.EnterLen > 0)
 						{
 							int moveDist = nextState.EnterLen;
