@@ -138,7 +138,7 @@ namespace Config
 						: (selected
 							? (isEven ? Color.red : Color.green)
 							: Color.white);
-					if ((mode & DrawMode.Darker) != 0) color *= 0.5f;
+					if ((mode & DrawMode.Darker) != 0) color *= 0.75f;
 					Gizmos.color = color;
 					Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ,
 						endPoint + ConfigConstants.OffsetZ);

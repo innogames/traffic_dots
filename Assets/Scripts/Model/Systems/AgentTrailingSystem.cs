@@ -178,7 +178,7 @@ namespace Model.Systems
 			return connectionJob;
 		}
 #if !CITY_DEBUG
-//		[BurstCompile]
+		[BurstCompile]
 #endif
 		private struct AgentJob : IJobForEachWithEntity<AgentInt, ConnectionTarget, ConnectionTargetState, AgentCordInt,
 			AgentStateInt>
@@ -203,6 +203,12 @@ namespace Model.Systems
 			private Entity ComputeNextCon(ref Entity curConEnt,
 				ref ConnectionTargetState state)
 			{
+#if CITY_DEBUG
+				if ((Next[curConEnt][state.TargetIndex].Connection == Entity.Null))
+				{
+					int abc = 123;  
+				}
+#endif
 				return Next[curConEnt][state.TargetIndex].Connection;
 			}
 
@@ -269,6 +275,12 @@ namespace Model.Systems
 					int curLevel = Entrances[state.NextTarget].Level;
 					var curLoc = state.NextTarget;
 					ComputeTargetState(ref finalTarget, out state, curNet, curLevel, ref curLoc);
+#if CITY_DEBUG
+					if ((Next[curLoc][state.TargetIndex].Connection == Entity.Null))
+					{
+						int abc = 123;  
+					}
+#endif
 					return Next[curLoc][state.TargetIndex].Connection;
 				}
 
