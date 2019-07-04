@@ -19,25 +19,28 @@ namespace Config
 		public override void PlayModeGenerate(CityConfig config)
 		{
 			base.PlayModeGenerate(config);
-			var phaseList = new List<IntersectionPhaseBuffer>();
-			int index = 0;
-			foreach (var phase in Phases)
+			if (IsIntersection())
 			{
-				phaseList.Add(new IntersectionPhaseBuffer
+				var phaseList = new List<IntersectionPhaseBuffer>();
+				int index = 0;
+				foreach (var phase in Phases)
 				{
-					StartIndex = index,
-					EndIndex = index + phase.Connections.Length - 1,
-					Frames = phase.Frames,
-				});
-				index += phase.Connections.Length;
-			}
+					phaseList.Add(new IntersectionPhaseBuffer
+					{
+						StartIndex = index,
+						EndIndex = index + phase.Connections.Length - 1,
+						Frames = phase.Frames,
+					});
+					index += phase.Connections.Length;
+				}
 
-			gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(phaseList);
-			var conList = Phases.SelectMany(phase => phase.Connections).Select(con => new IntersectionConBuffer()
-			{
-				Connection = con.GetComponent<GameObjectEntity>().Entity,
-			}).ToList();
-			gameObject.AddComponent<IntersectionConBufferProxy>().SetValue(conList);
+				gameObject.AddComponent<IntersectionPhaseBufferProxy>().SetValue(phaseList);
+				var conList = Phases.SelectMany(phase => phase.Connections).Select(con => new IntersectionConBuffer()
+				{
+					Connection = con.GetComponent<GameObjectEntity>().Entity,
+				}).ToList();
+				gameObject.AddComponent<IntersectionConBufferProxy>().SetValue(conList);
+			}
 		}
 
 #if UNITY_EDITOR
