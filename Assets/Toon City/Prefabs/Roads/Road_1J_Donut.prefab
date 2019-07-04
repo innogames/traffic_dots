@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 730375125265982804, guid: 78cebd3d1608b4baf9d7b5f0f866c24e, type: 3}
   - {fileID: 274112156881693883, guid: cf67e0c52fbf146d7a13429af451c03a, type: 3}
   TargetMask: 1
-  Interval: 60
+  Interval: 180
   Targets: []
 --- !u!114 &5519094984675393084
 MonoBehaviour:
