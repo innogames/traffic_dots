@@ -1,4 +1,4 @@
-namespace Model.Systems
+namespace Model.Components
 {
 	public static class SystemConstants
 	{

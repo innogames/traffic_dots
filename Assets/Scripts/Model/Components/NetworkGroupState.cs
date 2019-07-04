@@ -7,5 +7,6 @@ namespace Model.Components
 	public struct NetworkGroupState : IComponentData
 	{
 		public int NetworkId;
+		public Entity Network;
 	}
 }

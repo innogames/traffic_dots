@@ -1,7 +1,9 @@
 using Config.Proxy;
 using Model.Components;
+using Model.Components.Buffer;
 using Unity.Entities;
 #if UNITY_EDITOR
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
 #endif
@@ -163,6 +165,7 @@ namespace Config
 			var entity = GetComponent<GameObjectEntity>().Entity;
 			DrawEntranceExit(entityManager, entity);
 			DrawOnlyNext(entityManager, entity);
+			DrawNextPos(entityManager, entity);
 		}
 
 		private void DrawEntranceExit(EntityManager entityManager, Entity entity)
@@ -185,6 +188,36 @@ namespace Config
 				var exitPos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestExit).Position;
 				Gizmos.DrawCube(exitPos, Vector3.one);
 				Gizmos.DrawLine(EndNode.transform.position, exitPos);
+			}
+		}
+
+		private void DrawNextPos(EntityManager entityManager, Entity entity)
+		{
+			if (!entityManager.HasComponent<NextBuffer>(entity)) return;
+			if (!entityManager.HasComponent<Model.Components.Connection>(entity)) return;
+//			if (entityManager.GetComponentData<Model.Components.Connection>(entity).OnlyNext != Entity.Null) return;
+			var netGroup = entityManager.GetComponentData<Model.Components.NetworkGroupState>(entity);
+			var indexToTarget = entityManager.GetBuffer<IndexToTargetBuffer>(netGroup.Network);
+			var buffer = entityManager.GetBuffer<NextBuffer>(entity);
+			for (int i = 0; i < buffer.Length; i++)
+			{
+				var nextCon = buffer[i].Connection;
+				if (nextCon == Entity.Null) continue;
+				var target = indexToTarget[i].Target;
+				var pos = new float3(0,0,0);
+				if (entityManager.HasComponent<Connection>(target))
+				{
+					var node = entityManager.GetComponentData<Model.Components.Connection>(target).EndNode;
+					pos = entityManager.GetComponentData<Model.Components.Node>(node).Position;
+				}
+
+				if (entityManager.HasComponent<Model.Components.Node>(target))
+				{
+					pos = entityManager.GetComponentData<Model.Components.Node>(target).Position;
+				}
+				Gizmos.color = Color.red;
+				Gizmos.DrawLine(EndNode.transform.position, pos);
+				Gizmos.DrawSphere(pos, 0.25f);
 			}
 		}
 

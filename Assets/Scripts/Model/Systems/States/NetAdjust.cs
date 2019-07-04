@@ -1,3 +1,4 @@
+using Model.Components;
 using Unity.Entities;
 
 namespace Model.Systems.States

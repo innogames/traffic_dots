@@ -1,5 +1,6 @@
 using System;
 using Model.Components;
+using Model.Components.Buffer;
 using Model.Systems.States;
 using Unity.Collections;
 using Unity.Entities;
@@ -93,6 +94,11 @@ namespace Model.Systems
 			if (_next.TryGetValue(path, out var result)) _next.Remove(path);
 
 			_next.TryAdd(path, connection);
+		}
+
+		public Entity GetConnection(int index)
+		{
+			return _cons[index];
 		}
 
 		public int ConnectionCount()

@@ -1,4 +1,5 @@
 using Model.Components;
+using Model.Components.Buffer;
 using Model.Systems.States;
 using Unity.Burst;
 using Unity.Collections;
@@ -84,7 +85,7 @@ namespace Model.Systems
 			//a node connecting two connections of different levels is an exit node
 			//nothing can have two IndexInNetwork comp
 			//can a node belong to two networks? and have two indexes?
-			
+
 			//propose 1: treat exit & entrance nodes differently
 			//entrance: contain a Next list to all network nodes
 			//exit: every node has a Next to every exit node (indexed differently)
@@ -117,7 +118,7 @@ namespace Model.Systems
 			//  curLevel = Entrances[nextTarget].Level
 			//  curLoc = nextTarget
 			//  find_target
-			
+
 			//if curNet == finalTarget.Network: targetIdx = Indices[finalTarget]
 			//else
 			//  if curLevel <= finalTarget.Level //climb
@@ -137,12 +138,11 @@ namespace Model.Systems
 			//Next[curCon][targetIdx]
 
 
-
 			//propose 2: treat exit & entrance like every other con in the network
 			//nearest_exit or entrance will have to choose 1 among multiples (also happens with node, but less)
 			//the exit/entrance con is still in the same network, it has to be an OnlyNext con to push the agent
 			//to the other network => can't have entrance as intersection! must buffer it with a straight road!
-			
+
 			//propose 3: create a new connection with startNode == endNode == exitNode
 			//this is not good!
 
@@ -230,6 +230,7 @@ namespace Model.Systems
 						EntityManager.SetComponentData(conEnt, new NetworkGroupState
 						{
 							NetworkId = _networkCount,
+							Network = networkEnt,
 						});
 
 						//assign OnlyNext
@@ -238,7 +239,7 @@ namespace Model.Systems
 						{
 							var connection = EntityManager.GetComponentData<Connection>(conEnt);
 							int count = 0;
-							Entity onlyNext = Entity.Null;
+							var onlyNext = Entity.Null;
 							if (_outCons.TryGetFirstValue(connection.EndNode, out onlyNext, out var it))
 							{
 								do
@@ -256,23 +257,6 @@ namespace Model.Systems
 						}
 					}
 
-					//compute NetAdjust
-//					var buffer = EntityManager.GetBuffer<NetAdjust>(networkEnt);
-//					for (int i = 0; i < _network.Length; i++)
-//					{
-//						var conEnt = _network[i];
-//						var connection = EntityManager.GetComponentData<Connection>(conEnt);
-//						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
-//						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
-//						buffer.Add(new NetAdjust
-//						{
-//							Connection = conEnt,
-//							Cost = (float)conLen.Length / conSpeed.Speed,
-//							StartNode = connection.StartNode,
-//							EndNode = connection.EndNode,
-//							OnlyNext = connection.OnlyNext,
-//						});
-//					}
 					var networkCache = NetworkCache.Create(networkEnt);
 					for (int i = 0; i < _network.Length; i++)
 					{
@@ -296,18 +280,35 @@ namespace Model.Systems
 						});
 					}
 
-					var exits = _exits.GetKeyArray(Allocator.Temp);
+					var indexToTarget = EntityManager.AddBuffer<IndexToTargetBuffer>(networkEnt);
 					int conCount = networkCache.ConnectionCount();
+					for (int i = 0; i < conCount; i++)
+					{
+						indexToTarget.Add(new IndexToTargetBuffer
+						{
+							Target = networkCache.GetConnection(i),
+						});
+					}
+					var exits = _exits.GetKeyArray(Allocator.Temp);
+					for (int i = 0; i < exits.Length; i++)
+					{
+						var exitNode = exits[i];
+						indexToTarget.Add(new IndexToTargetBuffer
+						{
+							Target = exitNode,
+						});
+					}
+
 					//add exits
 					for (int i = 0; i < exits.Length; i++)
 					{
-						var node = exits[i];
-						EntityManager.AddComponentData(node, new Exit
+						var exitNode = exits[i];
+						EntityManager.AddComponentData(exitNode, new Exit
 						{
 							NetIdx = _networkCount,
 							Level = level,
 						});
-						EntityManager.AddComponentData(node, new IndexInNetwork
+						EntityManager.AddComponentData(exitNode, new IndexInNetwork
 						{
 							Index = i + conCount,
 						});
@@ -337,6 +338,7 @@ namespace Model.Systems
 						netTravelNodes.TryAdd(isOut ? con.StartNode : con.EndNode, 0);
 						continue;
 					}
+
 					if (_conToNets.TryGetValue(inoutCon, out int _)) continue; //visited
 
 					_conToNets.TryAdd(inoutCon, _networkCount);
