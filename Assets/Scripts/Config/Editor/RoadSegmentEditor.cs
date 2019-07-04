@@ -51,16 +51,14 @@ namespace Config.CityEditor
 						.SelectMany(segment => segment.Connectors).ToArray();
 					foreach (var connector in connectors)
 					{
-						if (connector.ConnectedTo == null)
+						foreach (var other in connectors)
 						{
-							foreach (var other in connectors)
+							if (other != connector &&
+							    ConfigConstants.Connected(other.transform, connector.transform))
 							{
-								if (other != connector && other.ConnectedTo == null &&
-								    ConfigConstants.Connected(other.transform, connector.transform))
-								{
-									//TODO provide correct index for edge case usability
-									Connect(connector, 0, other, 0);
-								}
+								//TODO provide correct index for edge case usability
+								Connect(connector, 0, other, 0);
+								break;
 							}
 						}
 					}
