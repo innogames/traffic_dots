@@ -152,41 +152,15 @@ namespace Model.Systems
 				ComputeNextBuffer(ref exits, conLen, -1, ref entrance, ref buffer);
 			}
 
-			for (int i = 0; i < conLen; i++)//compute NetPathInfo
+			//compute NetPathInfo
+			for (int i = 0; i < conLen; i++) //for connections
 			{
 				var conTo = _conInfos[i].To;
 				var conFrom = _conInfos[i].From;
 
-				float minExitDist = float.MaxValue;
-				var nearestExit = Entity.Null;
-				for (int j = 0; j < exits.Length; j++)
-				{
-					var exit = exits[j];
-					if (_dist.TryGetValue(new Path(conTo, exit), out float dist))
-					{
-						if (minExitDist > dist)
-						{
-							minExitDist = dist;
-							nearestExit = exit;
-						};
-					}
-				}
-				
-				float minEntranceDist = float.MaxValue;
-				var nearestEntrance = Entity.Null;
-				for (int j = 0; j < entrances.Length; j++)
-				{
-					var entrance = entrances[j];
-					if (_dist.TryGetValue(new Path(entrance, conFrom), out float dist))
-					{
-						if (minEntranceDist > dist)
-						{
-							minEntranceDist = dist;
-							nearestEntrance = entrance;
-						};
-					}
-				}
-				
+				var nearestExit = NearestExit(ref exits, conTo);
+				var nearestEntrance = NearestEntrance(ref entrances, conFrom);
+
 				var con = _cons[i];
 				entityManager.AddComponentData(con, new NetPathInfo
 				{
@@ -194,8 +168,80 @@ namespace Model.Systems
 					NearestExit = nearestExit,
 				});
 			}
+			for (int i = 0; i < entrances.Length; i++) //for entrances
+			{
+				var entrance = entrances[i];
+
+				var nearestExit = NearestExit(ref exits, entrance);
+				if (!entityManager.HasComponent<NetPathInfo>(entrance))
+				{
+					entityManager.AddComponentData(entrance, new NetPathInfo());
+				}
+
+				var netPathInfo = entityManager.GetComponentData<NetPathInfo>(entrance);
+				netPathInfo.NearestExit = nearestExit;
+				entityManager.SetComponentData(entrance, netPathInfo);
+			}
+			for (int i = 0; i < exits.Length; i++) //for exits
+			{
+				var exit = exits[i];
+
+				var nearestEntrance = NearestEntrance(ref entrances, exit);
+				if (!entityManager.HasComponent<NetPathInfo>(exit))
+				{
+					entityManager.AddComponentData(exit, new NetPathInfo());
+				}
+
+				var netPathInfo = entityManager.GetComponentData<NetPathInfo>(exit);
+				netPathInfo.NearestEntrance = nearestEntrance;
+				entityManager.SetComponentData(exit, netPathInfo);
+			}
 
 			nodes.Dispose();
+		}
+
+		private Entity NearestEntrance(ref NativeArray<Entity> entrances, Entity toEnt)
+		{
+			float minEntranceDist = float.MaxValue;
+			var nearestEntrance = Entity.Null;
+			for (int j = 0; j < entrances.Length; j++)
+			{
+				var entrance = entrances[j];
+				if (_dist.TryGetValue(new Path(entrance, toEnt), out float dist))
+				{
+					if (minEntranceDist > dist)
+					{
+						minEntranceDist = dist;
+						nearestEntrance = entrance;
+					}
+
+					;
+				}
+			}
+
+			return nearestEntrance;
+		}
+
+		private Entity NearestExit(ref NativeArray<Entity> exits, Entity fromEnt)
+		{
+			float minExitDist = float.MaxValue;
+			var nearestExit = Entity.Null;
+			for (int j = 0; j < exits.Length; j++)
+			{
+				var exit = exits[j];
+				if (_dist.TryGetValue(new Path(fromEnt, exit), out float dist))
+				{
+					if (minExitDist > dist)
+					{
+						minExitDist = dist;
+						nearestExit = exit;
+					}
+
+					;
+				}
+			}
+
+			return nearestExit;
 		}
 
 		private void ComputeNextBuffer(ref NativeArray<Entity> exits, int conLen, int index, ref Entity startNode,
