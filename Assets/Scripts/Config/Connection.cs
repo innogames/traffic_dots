@@ -127,6 +127,10 @@ namespace Config
 			{
 				PullQ = 0,
 			};
+			gameObject.AddComponent<NetworkGroupStateProxy>().Value = new NetworkGroupState
+			{
+				NetworkId = -1,
+			};
 			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate * GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt
 			{

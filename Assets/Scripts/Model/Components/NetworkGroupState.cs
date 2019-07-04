@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-namespace Model.Systems.States
+namespace Model.Components
 {
 	[Serializable]
 	public struct NetworkGroupState : IComponentData

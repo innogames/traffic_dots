@@ -203,16 +203,7 @@ namespace Model.Systems
 			private Entity ComputeNextCon(ref Entity curConEnt,
 				ref ConnectionTargetState state)
 			{
-				var con = Connections[curConEnt];
-
-				if (con.OnlyNext != Entity.Null)
-				{
-					return con.OnlyNext;
-				}
-				else
-				{
-					return Next[curConEnt][state.TargetIndex].Connection;
-				}
+				return Next[curConEnt][state.TargetIndex].Connection;
 			}
 
 			private void ComputeTargetState(ref Entity finalTarget, out ConnectionTargetState state, int curNet,
@@ -262,9 +253,16 @@ namespace Model.Systems
 				return CheckReachTargetTail(ref curConEnt, ref state, ref finalTarget);
 			}
 
-			private Entity CheckReachTargetTail(ref Entity curConEnt, ref ConnectionTargetState state, ref Entity finalTarget)
+			private Entity CheckReachTargetTail(ref Entity curConEnt, ref ConnectionTargetState state,
+				ref Entity finalTarget)
 			{
 				var con = Connections[curConEnt];
+
+				if (con.OnlyNext != Entity.Null)
+				{
+					return con.OnlyNext;
+				}
+
 				if (con.EndNode == state.NextTarget) //reach next target
 				{
 					int curNet = Entrances[state.NextTarget].NetIdx;
@@ -409,7 +407,8 @@ namespace Model.Systems
 #endif
 						if (agentState.TailCord == tailConLen)
 						{
-							var nextTailCon = CheckReachTargetTail(ref tailConEnt, ref targetState, ref target.Connection);
+							var nextTailCon =
+								CheckReachTargetTail(ref tailConEnt, ref targetState, ref target.Connection);
 							agentState.TailCon = nextTailCon;
 							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
 							int nextLen = ConLens[nextTailCon].Length;

@@ -225,9 +225,9 @@ namespace Model.Systems
 						var conEnt = _network[i];
 						EntityManager.AddSharedComponentData(conEnt, new NetworkGroup
 						{
-							NetworkId = networkEnt.Index,
+							NetworkId = _networkCount,
 						});
-						EntityManager.AddComponentData(conEnt, new NetworkGroupState
+						EntityManager.SetComponentData(conEnt, new NetworkGroupState
 						{
 							NetworkId = _networkCount,
 						});
@@ -291,7 +291,7 @@ namespace Model.Systems
 						var node = entrances[i];
 						EntityManager.AddComponentData(node, new Entrance
 						{
-							NetIdx = networkEnt.Index,
+							NetIdx = _networkCount,
 							Level = level,
 						});
 					}
@@ -304,7 +304,7 @@ namespace Model.Systems
 						var node = exits[i];
 						EntityManager.AddComponentData(node, new Exit
 						{
-							NetIdx = networkEnt.Index,
+							NetIdx = _networkCount,
 							Level = level,
 						});
 						EntityManager.AddComponentData(node, new IndexInNetwork
