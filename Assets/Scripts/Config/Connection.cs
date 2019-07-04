@@ -67,35 +67,138 @@ namespace Config
 			{
 				if (PrefabStageUtility.GetCurrentPrefabStage() != null)
 				{
-					DrawConnection(false);
+					DrawConnection(DrawMode.Line | DrawMode.Arrow);
+				}
+				else if (Application.isPlaying)
+				{
+					DrawConnection(DrawMode.Arrow | DrawMode.NetColor);
 				}
 			}
 		}
 
 		private void OnDrawGizmosSelected()
 		{
-			DrawConnection(true);
+			var mode = DrawMode.Selected | DrawMode.Line | DrawMode.Arrow;
+			if (Application.isPlaying) mode |= DrawMode.NetColor;
+			DrawConnection(mode);
+			if (Selection.objects.Length == 1)
+			{
+				DrawPlayingGizmo();
+			}
 		}
 
-		private void DrawConnection(bool selected)
+		[System.Flags]
+		private enum DrawMode
+		{
+			None = 0,
+			Selected = 1 << 0,
+			Line = 1 << 1,
+			Arrow = 1 << 2,
+			NetColor = 1 << 3,
+			Darker = 1 << 4,
+		}
+
+		private int GetNetworkId()
+		{
+			if (!Application.isPlaying) return 0;
+			if (World.Active == null) return 0;
+			var entityManager = World.Active.EntityManager;
+			var entity = GetComponent<GameObjectEntity>().Entity;
+			if (!entityManager.HasComponent<NetworkGroupState>(entity)) return 0;
+			return entityManager.GetComponentData<NetworkGroupState>(entity).NetworkId;
+		}
+
+		private void DrawConnection(DrawMode mode)
 		{
 			var s = PreviewBezier();
+			DrawSpline(mode, s, GetNetworkId());
+		}
+
+		private void DrawSpline(DrawMode mode, Spline s, int netId)
+		{
 			int length = (int) (s.TotalLength() / SegmentLen);
-			for (int i = 0; i <= length - 1; i++)
+			bool selected = (mode & DrawMode.Selected) != 0;
+			if ((mode & DrawMode.Line) != 0)
 			{
-				bool isEven = i % 2 == 0;
-				var startPoint = (Vector3) s.Point((float) i / length);
-				var endPoint = (Vector3) s.Point((float) (i + 1) / length);
-				Gizmos.color = selected ? (isEven ? Color.red : Color.green) : Color.white;
-				Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ,
-					endPoint + ConfigConstants.OffsetZ);
+				bool useNetColor = (mode & DrawMode.NetColor) != 0;
+				var netColor = Color.blue;
+				if (useNetColor)
+				{
+					var colors = GetConfig.NetworkColors;
+					netColor = colors[netId % colors.Length];
+				}
+
+				for (int i = 0; i <= length - 1; i++)
+				{
+					bool isEven = i % 2 == 0;
+					var startPoint = (Vector3) s.Point((float) i / length);
+					var endPoint = (Vector3) s.Point((float) (i + 1) / length);
+					var color = useNetColor
+						? netColor
+						: (selected
+							? (isEven ? Color.red : Color.green)
+							: Color.white);
+					if ((mode & DrawMode.Darker) != 0) color *= 0.5f;
+					Gizmos.color = color;
+					Gizmos.DrawLine(startPoint + ConfigConstants.OffsetZ,
+						endPoint + ConfigConstants.OffsetZ);
+				}
 			}
 
-			Gizmos.color = selected ? Color.cyan : Color.white;
-			var center = s.Point(0.5f);
-			var forward = s.Tangent(0.5f);
-			Gizmos.DrawMesh(GetConfig.ConeMesh, center, Quaternion.LookRotation(forward),
-				new Vector3(1f, 1f, 2f));
+			if ((mode & DrawMode.Arrow) != 0)
+			{
+				Gizmos.color = selected ? Color.cyan : Color.white;
+				var center = s.Point(0.5f);
+				var forward = s.Tangent(0.5f);
+				Gizmos.DrawMesh(GetConfig.ConeMesh, center, Quaternion.LookRotation(forward),
+					new Vector3(1f, 1f, 2f));
+			}
+		}
+
+		private void DrawPlayingGizmo()
+		{
+			if (!Application.isPlaying) return;
+			if (World.Active == null) return;
+			var entityManager = World.Active.EntityManager;
+			var entity = GetComponent<GameObjectEntity>().Entity;
+			DrawEntranceExit(entityManager, entity);
+			DrawOnlyNext(entityManager, entity);
+		}
+
+		private void DrawEntranceExit(EntityManager entityManager, Entity entity)
+		{
+			if (!entityManager.HasComponent<NetPathInfo>(entity)) return;
+			var netPathInfo = entityManager.GetComponentData<NetPathInfo>(entity);
+
+			if (netPathInfo.NearestEntrance != Entity.Null)
+			{
+				Gizmos.color = Color.magenta;
+				var entrancePos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestEntrance)
+					.Position;
+				Gizmos.DrawCube(entrancePos, Vector3.one);
+				Gizmos.DrawLine(entrancePos, StartNode.transform.position);
+			}
+
+			if (netPathInfo.NearestExit != Entity.Null)
+			{
+				Gizmos.color = Color.magenta;
+				var exitPos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestExit).Position;
+				Gizmos.DrawCube(exitPos, Vector3.one);
+				Gizmos.DrawLine(EndNode.transform.position, exitPos);
+			}
+		}
+
+		private void DrawOnlyNext(EntityManager entityManager, Entity entity)
+		{
+			if (!entityManager.HasComponent<Model.Components.Connection>(entity)) return;
+			var connection = entityManager.GetComponentData<Model.Components.Connection>(entity);
+			if (connection.OnlyNext != Entity.Null)
+			{
+				var next = connection.OnlyNext;
+				int netId = entityManager.GetComponentData<NetworkGroupState>(next).NetworkId;
+				var spline = entityManager.GetComponentData<Spline>(next);
+				DrawSpline(DrawMode.Line | DrawMode.NetColor | DrawMode.Darker, spline, netId);
+			}
 		}
 
 		public override void Generate(CityConfig config)
@@ -131,20 +234,20 @@ namespace Config
 			{
 				NetworkId = -1,
 			};
-			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate * GetComponentInParent<RoadSegment>().SpeedMultiplier;
+			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate *
+			              GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt
 			{
 				Speed = CachedSpeed.ToCityInt(),
 			};
-			
+
 			var marker = gameObject.GetComponent<TargetMarker>();
 			if (marker != null)
 			{
 				gameObject.AddComponent<TargetProxy>().Value = new Target
 				{
-					TargetMask = (int)marker.TargetMask,
+					TargetMask = (int) marker.TargetMask,
 				};
-					
 			}
 		}
 

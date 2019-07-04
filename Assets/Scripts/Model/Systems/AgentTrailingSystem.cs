@@ -317,8 +317,6 @@ namespace Model.Systems
 					}
 					else
 					{
-						//compute next path
-
 						var nextTraffic = ConTraffics[nextConEnt];
 						var nextState = States[nextConEnt];
 						if (nextTraffic.TrafficType != ConnectionTrafficType.NoEntrance &&

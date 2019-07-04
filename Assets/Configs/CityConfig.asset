@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffb37b0105b143b8b13e57ff68e57780, type: 3}
   m_Name: CityConfig
   m_EditorClassIdentifier: 
+  ConeMesh: {fileID: -4432124805086160128, guid: 5bf77ab8b0be442e9841a40a806a24bb,
+    type: 3}
+  ConnectionBaseSpeed: 12
+  TargetFramerate: 60
   Segments:
   - {fileID: 1101635072241640843, guid: b5c54f57db90f4134bb8a815c58cc505, type: 3}
   - {fileID: 3830019372405552527, guid: 087cb5e3f18b54759a62ff74f6a64058, type: 3}
@@ -41,6 +45,14 @@ MonoBehaviour:
   - {fileID: 577455343299836148, guid: d59f53b768c7f4b24bb65742cd9d5e8d, type: 3}
   - {fileID: 7836403980786443192, guid: 22c9fb0ac83134eb39bf4cea1c4971b8, type: 3}
   - {fileID: 4366544890952361661, guid: d3b28e7a20129489696e77d3f1481488, type: 3}
-  Vehicles: []
-  ConeMesh: {fileID: -4432124805086160128, guid: 5bf77ab8b0be442e9841a40a806a24bb,
-    type: 3}
+  NetworkColors:
+  - {r: 0, g: 0.2333653, b: 1, a: 1}
+  - {r: 0, g: 0.9218221, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.21209884, a: 1}
+  - {r: 1, g: 0.677743, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0.019385815, a: 1}
+  - {r: 1, g: 0, b: 0.5860157, a: 1}
+  - {r: 0.89986134, g: 0, b: 1, a: 1}
+  - {r: 0.45573044, g: 0, b: 1, a: 1}
+  - {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
+  - {r: 1, g: 0.9977762, b: 0, a: 1}
