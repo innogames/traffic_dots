@@ -168,19 +168,28 @@ namespace Model.Systems
 				States = states,
 				Pulls = pulls,
 				PullQs = pullQs,
+				NetGroups = GetComponentDataFromEntity<NetworkGroupState>(),
+				NetInfos = GetComponentDataFromEntity<NetPathInfo>(),
+				Exits = GetComponentDataFromEntity<Exit>(),
+				Entrances = GetComponentDataFromEntity<Entrance>(),
 			}.Schedule(this, inputDeps);
 			var connectionJob = new ConnectionJob().Schedule(this, agentJob);
 			connectionJob.Complete(); //for entity remove
 			return connectionJob;
 		}
 #if !CITY_DEBUG
-		[BurstCompile]
+//		[BurstCompile]
 #endif
-		private struct AgentJob : IJobForEachWithEntity<AgentInt, ConnectionTarget, AgentCordInt, AgentStateInt>
+		private struct AgentJob : IJobForEachWithEntity<AgentInt, ConnectionTarget, ConnectionTargetState, AgentCordInt,
+			AgentStateInt>
 		{
 			public EntityCommandBuffer.Concurrent CommandBuffer;
 
 			[ReadOnly] public ComponentDataFromEntity<Connection> Connections;
+			[ReadOnly] public ComponentDataFromEntity<NetworkGroupState> NetGroups;
+			[ReadOnly] public ComponentDataFromEntity<NetPathInfo> NetInfos;
+			[ReadOnly] public ComponentDataFromEntity<Exit> Exits;
+			[ReadOnly] public ComponentDataFromEntity<Entrance> Entrances;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLens;
 			[ReadOnly] public ComponentDataFromEntity<ConnectionTraffic> ConTraffics;
 			[ReadOnly] public ComponentDataFromEntity<IndexInNetwork> Indexes;
@@ -191,9 +200,95 @@ namespace Model.Systems
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionStateInt> States;
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullQInt> PullQs;
 
+			private Entity ComputeNextCon(ref Entity curConEnt,
+				ref ConnectionTargetState state)
+			{
+				var con = Connections[curConEnt];
+
+				if (con.OnlyNext != Entity.Null)
+				{
+					return con.OnlyNext;
+				}
+				else
+				{
+					return Next[curConEnt][state.TargetIndex].Connection;
+				}
+			}
+
+			private void ComputeTargetState(ref Entity finalTarget, out ConnectionTargetState state, int curNet,
+				int curLevel,
+				ref Entity curLoc)
+			{
+				int finalNet = NetGroups[finalTarget].NetworkId;
+				int finalLevel = Connections[finalTarget].Level;
+				if (curNet == finalNet) //same net with final
+				{
+					state.NextTarget = finalTarget;
+				}
+				else //dif net with final
+				{
+					if (curLevel <= finalLevel) //climb
+					{
+						state.NextTarget = NetInfos[curLoc].NearestExit;
+					}
+					else //descend
+					{
+						state.NextTarget = finalTarget;
+						do
+						{
+							state.NextTarget = NetInfos[state.NextTarget].NearestEntrance;
+						} while (curLevel > Exits[state.NextTarget].Level);
+
+						var exit = Exits[state.NextTarget];
+						if (curNet != exit.NetIdx) //dif net, climb
+						{
+							state.NextTarget = NetInfos[state.NextTarget].NearestExit;
+						}
+					}
+				}
+
+				state.TargetIndex = Indexes[state.NextTarget].Index;
+			}
+
+			private Entity CheckReachTarget(ref ConnectionTarget target, ref Entity curConEnt,
+				ref ConnectionTargetState state)
+			{
+				var finalTarget = target.Connection;
+				if (curConEnt == finalTarget) //reach final target
+				{
+					return Entity.Null; //done
+				}
+
+				return CheckReachTargetTail(ref curConEnt, ref state, ref finalTarget);
+			}
+
+			private Entity CheckReachTargetTail(ref Entity curConEnt, ref ConnectionTargetState state, ref Entity finalTarget)
+			{
+				var con = Connections[curConEnt];
+				if (con.EndNode == state.NextTarget) //reach next target
+				{
+					int curNet = Entrances[state.NextTarget].NetIdx;
+					int curLevel = Entrances[state.NextTarget].Level;
+					var curLoc = state.NextTarget;
+					ComputeTargetState(ref finalTarget, out state, curNet, curLevel, ref curLoc);
+					return Next[curLoc][state.TargetIndex].Connection;
+				}
+
+				//in the middle of the path
+				if (state.NextTarget == Entity.Null) //state not computed yet
+				{
+					int curNet = NetGroups[curConEnt].NetworkId;
+					int curLevel = con.Level;
+					ComputeTargetState(ref finalTarget, out state, curNet, curLevel, ref curConEnt);
+				}
+
+				return ComputeNextCon(ref curConEnt, ref state);
+			}
+
 			public void Execute(Entity agentEnt, int index,
 				[ReadOnly] ref AgentInt agent,
 				[ReadOnly] ref ConnectionTarget target,
+				ref ConnectionTargetState targetState,
 				ref AgentCordInt cord,
 				ref AgentStateInt agentState)
 			{
@@ -212,7 +307,8 @@ namespace Model.Systems
 						int abc = 123;
 					}
 #endif
-					if (target.Connection == headConEnt) //reach destination!
+					var nextConEnt = CheckReachTarget(ref target, ref headConEnt, ref targetState);
+					if (nextConEnt == Entity.Null) //reach destination!
 					{
 						CommandBuffer.DestroyEntity(index, agentEnt);
 						//create "death pull"
@@ -224,7 +320,6 @@ namespace Model.Systems
 					else
 					{
 						//compute next path
-						var nextConEnt = ComputeNextCon(ref target, ref headConEnt);
 
 						var nextTraffic = ConTraffics[nextConEnt];
 						var nextState = States[nextConEnt];
@@ -314,7 +409,7 @@ namespace Model.Systems
 #endif
 						if (agentState.TailCord == tailConLen)
 						{
-							var nextTailCon = ComputeNextCon(ref target, ref tailConEnt);
+							var nextTailCon = CheckReachTargetTail(ref tailConEnt, ref targetState, ref target.Connection);
 							agentState.TailCon = nextTailCon;
 							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
 							int nextLen = ConLens[nextTailCon].Length;
@@ -340,21 +435,6 @@ namespace Model.Systems
 						};
 					}
 				}
-			}
-
-			private Entity ComputeNextCon(ref ConnectionTarget target, ref Entity curConEnt)
-			{
-//				var startNode = Connections[curConEnt].EndNode;
-//				var targetConnectionEnt = target.Connection;
-//				var endNode = Connections[targetConnectionEnt].StartNode;
-//				var nextConEnt = startNode == endNode
-//					? targetConnectionEnt
-//					: Next[startNode][Indexes[endNode].Index].Connection;
-//				return nextConEnt;
-				var con = Connections[curConEnt];
-				return con.OnlyNext == Entity.Null 
-					? Next[curConEnt][Indexes[target.Connection].Index].Connection
-					: con.OnlyNext;
 			}
 		}
 

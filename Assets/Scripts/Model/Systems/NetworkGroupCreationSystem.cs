@@ -68,6 +68,8 @@ namespace Model.Systems
 			_newCons.Dispose();
 			_bfsOpen.Dispose();
 			_network.Dispose();
+			_entrances.Dispose();
+			_exits.Dispose();
 		}
 
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -124,7 +126,7 @@ namespace Model.Systems
 			//  else //descend
 			//    nextTarget = finalTarget
 			//    do
-			//      nextTarget = finalTarget.entrance
+			//      nextTarget = nextTarget.entrance
 			//    while (curLevel > Exits[nextTarget].Level)
 			//    var exitInfo = Exits[nextTarget]
 			//    if curNet == exitInfo.NetId
@@ -224,6 +226,10 @@ namespace Model.Systems
 						EntityManager.AddSharedComponentData(conEnt, new NetworkGroup
 						{
 							NetworkId = networkEnt.Index,
+						});
+						EntityManager.AddComponentData(conEnt, new NetworkGroupState
+						{
+							NetworkId = _networkCount,
 						});
 
 						//assign OnlyNext
