@@ -232,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   SpeedMultiplier: 1
+  Level: 1
   Phases:
   - Connections:
     - {fileID: 3776656295324570405}
@@ -915,7 +916,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 2917897409827304003}
   EndNode: {fileID: 7666930004334829147}
-  Level: 1
   CurveIn: 4.77
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1011,7 +1011,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 45448192816088043}
   EndNode: {fileID: 236041811069773174}
-  Level: 1
   CurveIn: 3.47
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1063,7 +1062,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4458010533406224408}
   EndNode: {fileID: 7666930004334829147}
-  Level: 1
   CurveIn: 5.16
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1084,7 +1082,7 @@ MonoBehaviour:
   Agents:
   - {fileID: 6100964896464688053, guid: ac613e86c95e444faa69c37b69b800d3, type: 3}
   TargetMask: 32
-  Interval: 400
+  Interval: 500
   Targets: []
 --- !u!1 &3504883596247887876
 GameObject:
@@ -1132,7 +1130,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 236041811069773174}
   EndNode: {fileID: 2917897409827304003}
-  Level: 1
   CurveIn: 5.52
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1281,7 +1278,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4008811710901880040}
   EndNode: {fileID: 6644891953584224926}
-  Level: 1
   CurveIn: 15.51
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1602,7 +1598,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 7666930004334829147}
   EndNode: {fileID: 9030672361993598071}
-  Level: 1
   CurveIn: 5.04
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1654,7 +1649,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 236041811069773174}
   EndNode: {fileID: 4458010533406224408}
-  Level: 1
   CurveIn: 5.91
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}

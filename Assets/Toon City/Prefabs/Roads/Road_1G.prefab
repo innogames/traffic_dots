@@ -355,27 +355,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CachedConfig: {fileID: 0}
   SpeedMultiplier: 1
+  Level: 1
   Phases:
   - Connections:
     - {fileID: 2649446328570356026}
     - {fileID: 1402288606649228234}
     - {fileID: 1819204632860090899}
     - {fileID: 5439702721996276381}
-    Frames: 120
+    Frames: 2
   - Connections:
     - {fileID: 759065514406748366}
     - {fileID: 1191539038493285009}
-    Frames: 60
+    Frames: 2
   - Connections:
     - {fileID: 7282901886948392555}
     - {fileID: 4332122502887873713}
     - {fileID: 8918119564795394894}
     - {fileID: 1888822859599922235}
-    Frames: 120
+    Frames: 2
   - Connections:
     - {fileID: 2449189899468260737}
     - {fileID: 895729748698366804}
-    Frames: 60
+    Frames: 2
 --- !u!1 &1000012335989222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1229,7 +1230,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 2589655313705254567}
   EndNode: {fileID: 4968570058764539248}
-  Level: 1
   CurveIn: 5.09
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1374,7 +1374,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4424869046271391070}
   EndNode: {fileID: 3222089919074118611}
-  Level: 1
   CurveIn: 5.09
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1425,7 +1424,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 5408046424380601078}
   EndNode: {fileID: 3222089919074118611}
-  Level: 1
   CurveIn: 3.6
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1476,7 +1474,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 5408046424380601078}
   EndNode: {fileID: 6811674160920277467}
-  Level: 1
   CurveIn: 5.17
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1572,7 +1569,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4340781413852758738}
   EndNode: {fileID: 6811674160920277467}
-  Level: 1
   CurveIn: 5.09
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1717,7 +1713,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4424869046271391070}
   EndNode: {fileID: 4968570058764539248}
-  Level: 1
   CurveIn: 3.6
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1813,7 +1808,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 5408046424380601078}
   EndNode: {fileID: 1190364478241927989}
-  Level: 1
   CurveIn: 5.09
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1864,7 +1858,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 2589655313705254567}
   EndNode: {fileID: 3222089919074118611}
-  Level: 1
   CurveIn: 5.17
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1915,7 +1908,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4424869046271391070}
   EndNode: {fileID: 1190364478241927989}
-  Level: 1
   CurveIn: 5.17
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -1966,7 +1958,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4340781413852758738}
   EndNode: {fileID: 4968570058764539248}
-  Level: 1
   CurveIn: 5.17
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -2160,7 +2151,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 2589655313705254567}
   EndNode: {fileID: 6811674160920277467}
-  Level: 1
   CurveIn: 3.6
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
@@ -2211,7 +2201,6 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 4340781413852758738}
   EndNode: {fileID: 1190364478241927989}
-  Level: 1
   CurveIn: 3.6
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
