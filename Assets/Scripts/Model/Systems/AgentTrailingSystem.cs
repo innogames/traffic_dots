@@ -265,11 +265,6 @@ namespace Model.Systems
 			{
 				var con = Connections[curConEnt];
 
-				if (con.OnlyNext != Entity.Null)
-				{
-					return con.OnlyNext;
-				}
-
 				if (con.EndNode == state.NextTarget) //reach next target
 				{
 					int curNet = Entrances[state.NextTarget].NetIdx;
@@ -283,6 +278,11 @@ namespace Model.Systems
 					}
 #endif
 					return Next[curLoc][state.TargetIndex].Connection;
+				}
+
+				if (con.OnlyNext != Entity.Null)
+				{
+					return con.OnlyNext;
 				}
 
 				//in the middle of the path
