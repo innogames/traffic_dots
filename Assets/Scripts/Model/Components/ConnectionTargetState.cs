@@ -8,5 +8,8 @@ namespace Model.Components
 	{
 		public Entity NextTarget;
 		public int TargetIndex;
+
+		public Entity TailTarget;
+		public int TailIndex;
 	}
 }

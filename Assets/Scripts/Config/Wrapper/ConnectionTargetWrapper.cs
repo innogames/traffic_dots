@@ -11,7 +11,11 @@ namespace Config.Wrapper
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			dstManager.AddComponentData(entity, new ConnectionTarget());
-			dstManager.AddComponentData(entity, new ConnectionTargetState());
+			dstManager.AddComponentData(entity, new ConnectionTargetState
+			{
+				NextTarget = Entity.Null,
+				TailTarget = Entity.Null,
+			});
 		}
 	}
 }

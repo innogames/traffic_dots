@@ -202,18 +202,19 @@ namespace Model.Systems
 			[NativeDisableParallelForRestriction] public ComponentDataFromEntity<ConnectionPullQInt> PullQs;
 
 			private Entity ComputeNextCon(ref Entity curConEnt,
-				ref ConnectionTargetState state)
+				int targetIndex)
 			{
 #if CITY_DEBUG
-				if ((Next[curConEnt][state.TargetIndex].Connection == Entity.Null))
+				if ((Next[curConEnt][targetIndex].Connection == Entity.Null))
 				{
-					int abc = 123;  
+					int abc = 123;
 				}
 #endif
-				return Next[curConEnt][state.TargetIndex].Connection;
+				return Next[curConEnt][targetIndex].Connection;
 			}
 
-			private void ComputeTargetState(ref Entity finalTarget, out ConnectionTargetState state, int curNet,
+			private void ComputeTargetState(ref Entity finalTarget, out Entity nextTarget, out int targetIndex,
+				int curNet,
 				int curLevel,
 				ref Entity curLoc)
 			{
@@ -221,35 +222,35 @@ namespace Model.Systems
 				int finalLevel = Connections[finalTarget].Level;
 				if (curNet == finalNet) //same net with final
 				{
-					state.NextTarget = finalTarget;
+					nextTarget = finalTarget;
 				}
 				else //dif net with final
 				{
 					if (curLevel <= finalLevel) //climb
 					{
-						state.NextTarget = NetInfos[curLoc].NearestExit;
+						nextTarget = NetInfos[curLoc].NearestExit;
 					}
 					else //descend
 					{
-						state.NextTarget = finalTarget;
+						nextTarget = finalTarget;
 						do
 						{
-							state.NextTarget = NetInfos[state.NextTarget].NearestEntrance;
-						} while (curLevel > Exits[state.NextTarget].Level);
+							nextTarget = NetInfos[nextTarget].NearestEntrance;
+						} while (curLevel > Exits[nextTarget].Level);
 
-						var exit = Exits[state.NextTarget];
+						var exit = Exits[nextTarget];
 						if (curNet != exit.NetIdx) //dif net, climb
 						{
-							state.NextTarget = NetInfos[state.NextTarget].NearestExit;
+							nextTarget = NetInfos[nextTarget].NearestExit;
 						}
 					}
 				}
 
-				state.TargetIndex = Indexes[state.NextTarget].Index;
+				targetIndex = Indexes[nextTarget].Index;
 			}
 
 			private Entity CheckReachTarget(ref ConnectionTarget target, ref Entity curConEnt,
-				ref ConnectionTargetState state)
+				ref Entity nextTarget, ref int targetIndex)
 			{
 				var finalTarget = target.Connection;
 				if (curConEnt == finalTarget) //reach final target
@@ -257,27 +258,27 @@ namespace Model.Systems
 					return Entity.Null; //done
 				}
 
-				return CheckReachTargetTail(ref curConEnt, ref state, ref finalTarget);
+				return CheckReachTargetTail(ref curConEnt, ref nextTarget, ref targetIndex, ref finalTarget);
 			}
 
-			private Entity CheckReachTargetTail(ref Entity curConEnt, ref ConnectionTargetState state,
+			private Entity CheckReachTargetTail(ref Entity curConEnt, ref Entity nextTarget, ref int targetIndex,
 				ref Entity finalTarget)
 			{
 				var con = Connections[curConEnt];
 
-				if (con.EndNode == state.NextTarget) //reach next target
+				if (con.EndNode == nextTarget) //reach next target
 				{
-					int curNet = Entrances[state.NextTarget].NetIdx;
-					int curLevel = Entrances[state.NextTarget].Level;
-					var curLoc = state.NextTarget;
-					ComputeTargetState(ref finalTarget, out state, curNet, curLevel, ref curLoc);
+					int curNet = Entrances[nextTarget].NetIdx;
+					int curLevel = Entrances[nextTarget].Level;
+					var curLoc = nextTarget;
+					ComputeTargetState(ref finalTarget, out nextTarget, out targetIndex, curNet, curLevel, ref curLoc);
 #if CITY_DEBUG
-					if ((Next[curLoc][state.TargetIndex].Connection == Entity.Null))
+					if ((Next[curLoc][targetIndex].Connection == Entity.Null))
 					{
-						int abc = 123;  
+						int abc = 123;
 					}
 #endif
-					return Next[curLoc][state.TargetIndex].Connection;
+					return Next[curLoc][targetIndex].Connection;
 				}
 
 				if (con.OnlyNext != Entity.Null)
@@ -286,14 +287,15 @@ namespace Model.Systems
 				}
 
 				//in the middle of the path
-				if (state.NextTarget == Entity.Null) //state not computed yet
+				if (nextTarget == Entity.Null) //state not computed yet
 				{
 					int curNet = NetGroups[curConEnt].NetworkId;
 					int curLevel = con.Level;
-					ComputeTargetState(ref finalTarget, out state, curNet, curLevel, ref curConEnt);
+					ComputeTargetState(ref finalTarget, out nextTarget, out targetIndex, curNet, curLevel,
+						ref curConEnt);
 				}
 
-				return ComputeNextCon(ref curConEnt, ref state);
+				return ComputeNextCon(ref curConEnt, targetIndex);
 			}
 
 			public void Execute(Entity agentEnt, int index,
@@ -318,7 +320,8 @@ namespace Model.Systems
 						int abc = 123;
 					}
 #endif
-					var nextConEnt = CheckReachTarget(ref target, ref headConEnt, ref targetState);
+					var nextConEnt = CheckReachTarget(ref target, ref headConEnt, ref targetState.NextTarget,
+						ref targetState.TargetIndex);
 					if (nextConEnt == Entity.Null) //reach destination!
 					{
 						CommandBuffer.DestroyEntity(index, agentEnt);
@@ -418,8 +421,8 @@ namespace Model.Systems
 #endif
 						if (agentState.TailCord == tailConLen)
 						{
-							var nextTailCon =
-								CheckReachTargetTail(ref tailConEnt, ref targetState, ref target.Connection);
+							var nextTailCon = CheckReachTargetTail(ref tailConEnt, ref targetState.TailTarget,
+								ref targetState.TailIndex, ref target.Connection);
 							agentState.TailCon = nextTailCon;
 							agentState.TailCord = 0; //this means no other agent can be behind this one in nextCon!
 							int nextLen = ConLens[nextTailCon].Length;

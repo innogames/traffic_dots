@@ -318,7 +318,7 @@ PrefabInstance:
     - target: {fileID: 5209057015984370238, guid: 394feee831b174b34b993b24133e4553,
         type: 3}
       propertyPath: Targets.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5209057015984370238, guid: 394feee831b174b34b993b24133e4553,
         type: 3}
@@ -330,12 +330,12 @@ PrefabInstance:
         type: 3}
       propertyPath: Targets.Array.data[0]
       value: 
-      objectReference: {fileID: 689138362}
+      objectReference: {fileID: 1026206374}
     - target: {fileID: 5209057015984370238, guid: 394feee831b174b34b993b24133e4553,
         type: 3}
       propertyPath: Targets.Array.data[1]
       value: 
-      objectReference: {fileID: 1026206374}
+      objectReference: {fileID: 1356980072}
     - target: {fileID: 5209057015984370238, guid: 394feee831b174b34b993b24133e4553,
         type: 3}
       propertyPath: Targets.Array.data[2]
@@ -20668,6 +20668,11 @@ PrefabInstance:
       propertyPath: Targets.Array.data[3]
       value: 
       objectReference: {fileID: 1356980072}
+    - target: {fileID: 6329350966945147778, guid: 394feee831b174b34b993b24133e4553,
+        type: 3}
+      propertyPath: TargetMask
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5209057015984370238, guid: 394feee831b174b34b993b24133e4553, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 394feee831b174b34b993b24133e4553, type: 3}
@@ -21330,7 +21335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    TargetMask: 32
+    TargetMask: 0
 --- !u!114 &689138408
 MonoBehaviour:
   m_ObjectHideFlags: 0
