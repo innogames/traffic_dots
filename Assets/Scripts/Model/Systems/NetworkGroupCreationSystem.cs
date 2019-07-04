@@ -276,6 +276,7 @@ namespace Model.Systems
 						EntityManager.AddComponentData(node, new Entrance
 						{
 							NetIdx = _networkCount,
+							Network = networkEnt,
 							Level = level,
 						});
 					}

@@ -3,6 +3,7 @@ using Model.Components;
 using Model.Components.Buffer;
 using Unity.Entities;
 #if UNITY_EDITOR
+using System;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
@@ -165,46 +166,50 @@ namespace Config
 			var entity = GetComponent<GameObjectEntity>().Entity;
 			DrawEntranceExit(entityManager, entity);
 			DrawOnlyNext(entityManager, entity);
-			DrawNextPos(entityManager, entity);
+			DrawNextPos(entityManager, entity, DrawF, GetNetGroup);
 		}
 
 		private void DrawEntranceExit(EntityManager entityManager, Entity entity)
 		{
 			if (!entityManager.HasComponent<NetPathInfo>(entity)) return;
+			var offsetY = Vector3.one * 0.5f;
 			var netPathInfo = entityManager.GetComponentData<NetPathInfo>(entity);
 
 			if (netPathInfo.NearestEntrance != Entity.Null)
 			{
 				Gizmos.color = Color.magenta;
-				var entrancePos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestEntrance)
+				Vector3 entrancePos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestEntrance)
 					.Position;
-				Gizmos.DrawCube(entrancePos, Vector3.one);
-				Gizmos.DrawLine(entrancePos, StartNode.transform.position);
+				Gizmos.DrawCube(entrancePos + offsetY, Vector3.one);
+				Gizmos.DrawLine(entrancePos + offsetY, StartNode.transform.position + offsetY);
 			}
 
 			if (netPathInfo.NearestExit != Entity.Null)
 			{
 				Gizmos.color = Color.magenta;
-				var exitPos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestExit).Position;
-				Gizmos.DrawCube(exitPos, Vector3.one);
-				Gizmos.DrawLine(EndNode.transform.position, exitPos);
+				Vector3 exitPos = entityManager.GetComponentData<Model.Components.Node>(netPathInfo.NearestExit)
+					.Position;
+				Gizmos.DrawCube(exitPos + offsetY, Vector3.one);
+				Gizmos.DrawLine(EndNode.transform.position + offsetY, exitPos + offsetY);
 			}
 		}
 
-		private void DrawNextPos(EntityManager entityManager, Entity entity)
+		private Entity GetNetGroup(EntityManager entityManager, Entity entity)
+		{
+			return entityManager.GetComponentData<Model.Components.NetworkGroupState>(entity).Network;
+		}
+		
+		public static void DrawNextPos(EntityManager entityManager, Entity entity, Action<float3> drawF, Func<EntityManager, Entity, Entity> netF)
 		{
 			if (!entityManager.HasComponent<NextBuffer>(entity)) return;
-			if (!entityManager.HasComponent<Model.Components.Connection>(entity)) return;
-//			if (entityManager.GetComponentData<Model.Components.Connection>(entity).OnlyNext != Entity.Null) return;
-			var netGroup = entityManager.GetComponentData<Model.Components.NetworkGroupState>(entity);
-			var indexToTarget = entityManager.GetBuffer<IndexToTargetBuffer>(netGroup.Network);
+			var indexToTarget = entityManager.GetBuffer<IndexToTargetBuffer>(netF(entityManager, entity));
 			var buffer = entityManager.GetBuffer<NextBuffer>(entity);
 			for (int i = 0; i < buffer.Length; i++)
 			{
 				var nextCon = buffer[i].Connection;
 				if (nextCon == Entity.Null) continue;
 				var target = indexToTarget[i].Target;
-				var pos = new float3(0,0,0);
+				var pos = new float3(0, 0, 0);
 				if (entityManager.HasComponent<Connection>(target))
 				{
 					var node = entityManager.GetComponentData<Model.Components.Connection>(target).EndNode;
@@ -215,10 +220,16 @@ namespace Config
 				{
 					pos = entityManager.GetComponentData<Model.Components.Node>(target).Position;
 				}
+
 				Gizmos.color = Color.red;
-				Gizmos.DrawLine(EndNode.transform.position, pos);
-				Gizmos.DrawSphere(pos, 0.25f);
+				drawF(pos);
 			}
+		}
+
+		private void DrawF(float3 pos)
+		{
+			Gizmos.DrawLine(EndNode.transform.position, pos);
+			Gizmos.DrawSphere(pos, 0.25f);
 		}
 
 		private void DrawOnlyNext(EntityManager entityManager, Entity entity)
