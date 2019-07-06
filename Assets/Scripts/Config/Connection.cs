@@ -244,12 +244,28 @@ namespace Config
 				DrawSpline(DrawMode.Line | DrawMode.NetColor | DrawMode.Darker, spline, netId);
 			}
 		}
+		
+		private static string GetGameObjectPath(Transform transform)
+		{
+			string path = transform.name;
+			while (transform.parent != null)
+			{
+				transform = transform.parent;
+				path = transform.name + "/" + path;
+			}
+			return path;
+		}
 
 		public override void Generate(CityConfig config)
 		{
 			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
 			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
+			if (EndNode == null || EndNode.GenTimePointer == null)
+			{
+				Debug.Log(GetGameObjectPath(this.transform));
+				int abc = 123;
+			}
 			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
 			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);

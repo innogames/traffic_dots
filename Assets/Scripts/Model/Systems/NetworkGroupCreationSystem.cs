@@ -5,7 +5,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEditor.UIElements;
 using Network = Model.Systems.States.Network;
 
 namespace Model.Systems

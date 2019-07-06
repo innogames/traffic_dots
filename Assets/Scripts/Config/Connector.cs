@@ -14,6 +14,7 @@ namespace Config
 
 		private readonly Vector3 size = new Vector3(2f, 2f, 4f);
 		
+		#if UNITY_EDITOR
 		private void OnDrawGizmos()
 		{
 			if (ConnectedTo == null)
@@ -23,6 +24,7 @@ namespace Config
 					size);
 			}
 		}
+		#endif
 
 		public void ConnectNodes()
 		{

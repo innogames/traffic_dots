@@ -11,7 +11,7 @@ namespace Model.Systems
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	[UpdateAfter(typeof(PathCacheCommandBufferSystem))]
 	[UpdateBefore(typeof(AgentTrailingSystem))]
-	public class AgentSpawningSystem : JobComponentSystem //TODO consider turning to job!
+	public class AgentSpawningSystem : JobComponentSystem
 	{
 		private struct SpawnJob : IJobForEachWithEntity_EBCCCCC<SpawnerBuffer, AgentSpawner, Timer, TimerState,
 			ConnectionStateInt, ConnectionTarget>

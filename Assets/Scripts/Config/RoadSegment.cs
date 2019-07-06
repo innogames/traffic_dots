@@ -43,6 +43,11 @@ namespace Config
 			}
 		}
 
+		public bool IsIntersection()
+		{
+			return Phases.Length > 0;
+		}
+
 #if UNITY_EDITOR
 		public override void Generate(CityConfig config)
 		{
@@ -66,11 +71,6 @@ namespace Config
 					CountDown = frames,
 				};
 			}
-		}
-
-		public bool IsIntersection()
-		{
-			return Phases.Length > 0;
 		}
 
 		public ConnectionTrafficType GetConnectionTrafficType(Connection connection)
