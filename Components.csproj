@@ -57,17 +57,20 @@
     <Reference Include="UnityEditor">
       <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Microsoft.CSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Model\Components\Agent.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\AgentCordInt.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\AgentInt.cs" />
     <Compile Include="Assets\Scripts\Model\Components\AgentSpawner.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\AgentState.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\AgentStateInt.cs" />
     <Compile Include="Assets\Scripts\Model\Components\AllComponents.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Buffer\AgentQueueBuffer.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\Buffer\IndexToTargetBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Buffer\IntersectionConBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Buffer\IntersectionPhaseBuffer.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\Buffer\NextBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Buffer\SpawnerBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Buffer\TargetBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ComponentConstants.cs" />
@@ -75,22 +78,35 @@
     <Compile Include="Assets\Scripts\Model\Components\ConnectionCoord.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionDestination.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionLength.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionLengthInt.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionLocation.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionPullInt.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionPullQInt.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionSpeedInt.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionState.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionStateInt.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionStateQInt.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionTarget.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\ConnectionTargetState.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionTraffic.cs" />
     <Compile Include="Assets\Scripts\Model\Components\ConnectionTrafficType.cs" />
     <Compile Include="Assets\Scripts\Model\Components\EntitySlot.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\Entrance.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\Exit.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Intersection.cs" />
     <Compile Include="Assets\Scripts\Model\Components\IntersectionPhaseType.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\NetPathInfo.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\NetworkGroupState.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Node.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Spline.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\SystemConstants.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Target.cs" />
     <Compile Include="Assets\Scripts\Model\Components\TargetSeeker.cs" />
     <Compile Include="Assets\Scripts\Model\Components\TargetType.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Timer.cs" />
     <Compile Include="Assets\Scripts\Model\Components\TimerState.cs" />
     <Compile Include="Assets\Scripts\Model\Components\TimerType.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\TrailAgent.cs" />
     <None Include="Assets\Scripts\Model\Components\Components.asmdef" />
     <Reference Include="Unity.Entities">
       <HintPath>/Users/hainam.pham/ecs_experiments/Library/ScriptAssemblies/Unity.Entities.dll</HintPath>

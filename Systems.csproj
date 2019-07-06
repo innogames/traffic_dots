@@ -57,21 +57,21 @@
     <Reference Include="UnityEditor">
       <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Microsoft.CSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Model\Systems\AgentQueuePrepSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\AgentQueueSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\AgentSpawningSystem.cs" />
+    <Compile Include="Assets\Scripts\Model\Systems\AgentTrailingSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\AllSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\CityAddConnectionSeqSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\CitySystemGroup.cs" />
+    <Compile Include="Assets\Scripts\Model\Systems\DemoSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\EntitySlotSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\IntersectionSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\NetworkCache.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\NetworkCreationSystem.cs" />
+    <Compile Include="Assets\Scripts\Model\Systems\NetworkGroupCreationSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\PathCacheCommandBufferSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\PathSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\SplineSystem.cs" />
@@ -79,10 +79,9 @@
     <Compile Include="Assets\Scripts\Model\Systems\States\IndexInNetwork.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\NetAdjust.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\Network.cs" />
+    <Compile Include="Assets\Scripts\Model\Systems\States\NetworkDone.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\NetworkGroup.cs" />
-    <Compile Include="Assets\Scripts\Model\Systems\States\NextBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\SplineSegmentBuffer.cs" />
-    <Compile Include="Assets\Scripts\Model\Systems\SystemConstants.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\TargetSeekerSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\TimerBufferSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\TimerSystem.cs" />

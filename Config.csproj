@@ -57,9 +57,6 @@
     <Reference Include="UnityEditor">
       <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <HintPath>/Applications/Unity/Hub/Editor/2019.1.0f2/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Microsoft.CSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Config\AgentSpawner.cs" />
@@ -73,19 +70,31 @@
     <Compile Include="Assets\Scripts\Config\ConnectorType.cs" />
     <Compile Include="Assets\Scripts\Config\EnumFlagsAttribute.cs" />
     <Compile Include="Assets\Scripts\Config\Node.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\AgentCoordIntProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\AgentProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\AgentQueueBufferProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\AgentSpawnerProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\AgentStateIntProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionCoordProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionLengthIntProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionLengthProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionPullIntProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionPullQIntProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionSpeedIntProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionStateIntProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionStateProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ConnectionStateQIntProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionTargetProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\ConnectionTrafficProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\EntitySlotProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\EntranceProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\ExitProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\IntersectionConBufferProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\IntersectionPhaseBufferProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\IntersectionProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\NetPathInfoProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\NetworkGroupStateProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\NodeProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\PrefabProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\SpawnerBufferProxy.cs" />
@@ -98,7 +107,10 @@
     <Compile Include="Assets\Scripts\Config\RoadSegment.cs" />
     <Compile Include="Assets\Scripts\Config\TargetMarker.cs" />
     <Compile Include="Assets\Scripts\Config\TrafficPhases.cs" />
+    <Compile Include="Assets\Scripts\Config\Wrapper\AgentCordIntWrapper.cs" />
+    <Compile Include="Assets\Scripts\Config\Wrapper\AgentIntWrapper.cs" />
     <Compile Include="Assets\Scripts\Config\Wrapper\AgentSpawnerWrapper.cs" />
+    <Compile Include="Assets\Scripts\Config\Wrapper\AgentStateIntWrapper.cs" />
     <Compile Include="Assets\Scripts\Config\Wrapper\AgentWrapper.cs" />
     <Compile Include="Assets\Scripts\Config\Wrapper\ConnectionCoordWrapper.cs" />
     <Compile Include="Assets\Scripts\Config\Wrapper\ConnectionTargetWrapper.cs" />
