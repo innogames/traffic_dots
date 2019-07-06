@@ -832,7 +832,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 400
+    CountDown: 500
 --- !u!114 &88690056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -846,7 +846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 400
+    Frames: 500
     TimerType: 0
 --- !u!114 &88690057
 MonoBehaviour:
@@ -2235,7 +2235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &133057020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2249,7 +2249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &133057021
 MonoBehaviour:
@@ -3616,7 +3616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &172163612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3630,7 +3630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &172163613
 MonoBehaviour:
@@ -21213,7 +21213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 400
+    CountDown: 500
 --- !u!114 &689138399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21227,7 +21227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 400
+    Frames: 500
     TimerType: 0
 --- !u!114 &689138400
 MonoBehaviour:
@@ -31068,7 +31068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &838002335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31082,7 +31082,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &838002336
 MonoBehaviour:
@@ -35297,7 +35297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 400
+    CountDown: 500
 --- !u!114 &1026206432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35311,7 +35311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 400
+    Frames: 500
     TimerType: 0
 --- !u!114 &1026206433
 MonoBehaviour:
@@ -43911,7 +43911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 400
+    CountDown: 500
 --- !u!114 &1356980126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43925,7 +43925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 400
+    Frames: 500
     TimerType: 0
 --- !u!114 &1356980127
 MonoBehaviour:
@@ -47076,7 +47076,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &1430760374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47090,7 +47090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &1430760375
 MonoBehaviour:
@@ -49909,7 +49909,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &1487126506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49923,7 +49923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &1487126507
 MonoBehaviour:
@@ -53965,7 +53965,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 90
+    CountDown: 2
 --- !u!114 &1613697107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54003,7 +54003,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 90
+    Frames: 2
     TimerType: 0
 --- !u!114 &1613697110
 MonoBehaviour:

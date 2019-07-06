@@ -1186,6 +1186,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
         type: 2}
+    - target: {fileID: 6155619950053939996, guid: f79f3dfca1777476580a6edb29f38498,
+        type: 3}
+      propertyPath: Interval
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 4356356581362155518, guid: f79f3dfca1777476580a6edb29f38498,
         type: 3}
       propertyPath: ConnectedTo
@@ -2159,7 +2164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 60
+    CountDown: 120
 --- !u!114 &607486598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2173,7 +2178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 60
+    Frames: 120
     TimerType: 0
 --- !u!114 &607486599
 MonoBehaviour:
@@ -3363,6 +3368,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
         type: 2}
+    - target: {fileID: 3037994101414721212, guid: 08ba396d269e54ad5bf3de36bd06759d,
+        type: 3}
+      propertyPath: Phases.Array.data[0].Frames
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037994101414721212, guid: 08ba396d269e54ad5bf3de36bd06759d,
+        type: 3}
+      propertyPath: Phases.Array.data[1].Frames
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037994101414721212, guid: 08ba396d269e54ad5bf3de36bd06759d,
+        type: 3}
+      propertyPath: Phases.Array.data[2].Frames
+      value: 90
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08ba396d269e54ad5bf3de36bd06759d, type: 3}
 --- !u!114 &893261733 stripped
@@ -4073,7 +4093,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 60
+    CountDown: 120
 --- !u!114 &1141328565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4087,7 +4107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 60
+    Frames: 120
     TimerType: 0
 --- !u!114 &1141328566
 MonoBehaviour:
@@ -4543,6 +4563,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
         type: 2}
+    - target: {fileID: 6155619950053939996, guid: f79f3dfca1777476580a6edb29f38498,
+        type: 3}
+      propertyPath: Interval
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 4356356581362155518, guid: f79f3dfca1777476580a6edb29f38498,
         type: 3}
       propertyPath: ConnectedTo
@@ -5807,6 +5832,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b,
         type: 2}
+    - target: {fileID: 6155619950053939996, guid: f79f3dfca1777476580a6edb29f38498,
+        type: 3}
+      propertyPath: Interval
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 4356356581362155518, guid: f79f3dfca1777476580a6edb29f38498,
         type: 3}
       propertyPath: ConnectedTo
@@ -6652,7 +6682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    CountDown: 60
+    CountDown: 120
 --- !u!114 &1743985237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6666,7 +6696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Frames: 60
+    Frames: 120
     TimerType: 0
 --- !u!114 &1743985238
 MonoBehaviour:
