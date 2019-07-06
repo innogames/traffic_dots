@@ -1,4 +1,5 @@
 using Model.Components;
+using Model.Systems;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -9,7 +10,8 @@ using TimerState = Model.Components.TimerState;
 
 namespace View.Systems
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateInGroup(typeof(CitySystemGroup))]
+	[UpdateAfter(typeof(AgentTrailingSystem))]
 	public class AgentVisualizerSystem : JobComponentSystem
 	{
 		[BurstCompile]
