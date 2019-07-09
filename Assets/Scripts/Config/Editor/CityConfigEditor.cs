@@ -15,7 +15,9 @@ namespace Config.CityEditor
 			if (GUILayout.Button("Populate"))
 			{
 				config.Segments = Resources.FindObjectsOfTypeAll<RoadSegment>()
-					.Where(seg => EditorUtility.IsPersistent(seg.gameObject)).ToArray();
+					.Where(seg => EditorUtility.IsPersistent(seg.gameObject) && 
+					              (seg.gameObject != PrefabUtility.GetOutermostPrefabInstanceRoot(seg)))
+					.ToArray();
 				EditorUtility.SetDirty(config);
 			}
 		}
