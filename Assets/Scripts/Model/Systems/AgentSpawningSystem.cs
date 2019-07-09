@@ -25,7 +25,7 @@ namespace Model.Systems
 #endif
 			public void Execute(Entity entity, int index,
 				DynamicBuffer<SpawnerBuffer> buffer,
-				[ReadOnly] ref AgentSpawner spawner,
+				ref AgentSpawner spawner,
 				ref Timer timer, ref TimerState timerState,
 				ref ConnectionStateInt connectionState,
 				[ReadOnly] ref ConnectionTarget agentTarget)
@@ -33,13 +33,13 @@ namespace Model.Systems
 				if (timerState.CountDown == 0)
 				{
 					var agentPrefab = buffer[spawner.CurrentIndex].Agent;
-					spawner.CurrentIndex = (spawner.CurrentIndex + 1) % buffer.Length;
 					int agentLen = Agents[agentPrefab].Length;
 					var connectionTraffic = ConTraffics[entity];
 
 					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
 					    && connectionState.EnterLen >= agentLen)
 					{
+						spawner.CurrentIndex = (spawner.CurrentIndex + 1) % buffer.Length;
 						var agentEnt = UpdateCommands.Instantiate(index, agentPrefab);
 						UpdateCommands.SetComponent(index, agentEnt, new AgentCordInt
 						{

@@ -1477,7 +1477,7 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 7695903861398093600}
   EndNode: {fileID: 4254407919358662236}
-  CurveIn: 1
+  CurveIn: 14.75
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
   CachedSpeed: 1
@@ -2496,7 +2496,7 @@ MonoBehaviour:
   CachedConfig: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
   StartNode: {fileID: 7674094501891730489}
   EndNode: {fileID: 2683109600289506883}
-  CurveIn: 1
+  CurveIn: 14.08
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
   CachedSpeed: 1
