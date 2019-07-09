@@ -34,26 +34,24 @@ namespace Model.Systems
 		private NativeQueue<Entity> _newCons;
 		private NativeHashMap<Entity, int> _conToNets;
 		private NativeQueue<Entity> _bfsOpen;
-		private NativeList<Entity> _network;
+		private NativeList<Entity> _networkCons;
 		private NativeHashMap<Entity, int> _entrances;
 		private NativeHashMap<Entity, int> _exits;
 
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
-		private EntityCommandBufferSystem _bufferSystem;
 
 		protected override void OnCreate()
 		{
 			base.OnCreate();
 			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(Network)),
 				new ComponentType(typeof(NetAdjust)));
-			_bufferSystem = World.GetOrCreateSystem<PathCacheCommandBufferSystem>();
 			_outCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_inCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_conToNets = new NativeHashMap<Entity, int>(SystemConstants.MapConnectionSize, Allocator.Persistent);
 			_newCons = new NativeQueue<Entity>(Allocator.Persistent);
 			_bfsOpen = new NativeQueue<Entity>(Allocator.Persistent);
-			_network = new NativeList<Entity>(SystemConstants.MapConnectionSize, Allocator.Persistent);
+			_networkCons = new NativeList<Entity>(SystemConstants.MapConnectionSize, Allocator.Persistent);
 			_entrances = new NativeHashMap<Entity, int>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
 			_exits = new NativeHashMap<Entity, int>(SystemConstants.NetworkNodeSize, Allocator.Persistent);
 			_networkCount = 0;
@@ -67,7 +65,7 @@ namespace Model.Systems
 			_conToNets.Dispose();
 			_newCons.Dispose();
 			_bfsOpen.Dispose();
-			_network.Dispose();
+			_networkCons.Dispose();
 			_entrances.Dispose();
 			_exits.Dispose();
 		}
@@ -181,6 +179,7 @@ namespace Model.Systems
 				NewCons = _newCons.ToConcurrent(),
 			}.Schedule(this, inputDeps);
 
+			//fill _outCons and _inCons: multi hash map for each node, storing all outward connections / inward connections
 			inout.Complete();
 
 			if (_newCons.Count > 0)
@@ -189,26 +188,28 @@ namespace Model.Systems
 				_bfsOpen.Clear();
 				while (_newCons.Count > 0)
 				{
+					//each loop will create a new network group
 					var newCon = _newCons.Dequeue();
 					int level = EntityManager.GetComponentData<Connection>(newCon).Level;
 					if (_conToNets.TryGetValue(newCon, out int _)) continue; //already has net group!
 					//breath-first-search here
 					_networkCount++;
 
-					_network.Clear();
+					_networkCons.Clear();
 					_entrances.Clear();
 					_exits.Clear();
 
 					_conToNets.TryAdd(newCon, _networkCount);
 					_bfsOpen.Enqueue(newCon);
-					_network.Add(newCon);
+					_networkCons.Add(newCon);
 
+					//use BFS to scan all connections belong to the same network as "newCon"
 					while (_bfsOpen.Count > 0)
 					{
 						var curConEnt = _bfsOpen.Dequeue();
 						var connection = EntityManager.GetComponentData<Connection>(curConEnt);
-						BFS(ref _outCons, ref _network, connection.EndNode, EntityManager, level, true, ref _exits);
-						BFS(ref _inCons, ref _network, connection.StartNode, EntityManager, level, false,
+						BFS(ref _outCons, ref _networkCons, connection.EndNode, EntityManager, level, true, ref _exits);
+						BFS(ref _inCons, ref _networkCons, connection.StartNode, EntityManager, level, false,
 							ref _entrances);
 					}
 
@@ -218,19 +219,21 @@ namespace Model.Systems
 						Index = _networkCount,
 					});
 
-					//add NetworkGroup & assign OnlyNext
-					for (int i = 0; i < _network.Length; i++)
+					var networkGroup = new NetworkGroup
 					{
-						var conEnt = _network[i];
-						EntityManager.AddSharedComponentData(conEnt, new NetworkGroup
-						{
-							NetworkId = _networkCount,
-						});
-						EntityManager.SetComponentData(conEnt, new NetworkGroupState
-						{
-							NetworkId = _networkCount,
-							Network = networkEnt,
-						});
+						NetworkId = _networkCount,
+					};
+					var networkGroupState = new NetworkGroupState
+					{
+						NetworkId = _networkCount,
+						Network = networkEnt,
+					};
+					//add NetworkGroup & assign OnlyNext ==> this apply to ALL connection, jobify this!
+					for (int i = 0; i < _networkCons.Length; i++)
+					{
+						var conEnt = _networkCons[i];
+						EntityManager.AddSharedComponentData(conEnt, networkGroup);
+						EntityManager.SetComponentData(conEnt, networkGroupState);
 
 						//assign OnlyNext
 						if (!EntityManager.HasComponent<Target>(conEnt)
@@ -257,9 +260,9 @@ namespace Model.Systems
 					}
 
 					var networkCache = NetworkCache.Create(networkEnt);
-					for (int i = 0; i < _network.Length; i++)
+					for (int i = 0; i < _networkCons.Length; i++)
 					{
-						var conEnt = _network[i];
+						var conEnt = _networkCons[i];
 						var connection = EntityManager.GetComponentData<Connection>(conEnt);
 						var conLen = EntityManager.GetComponentData<ConnectionLengthInt>(conEnt);
 						var conSpeed = EntityManager.GetComponentData<ConnectionSpeedInt>(conEnt);
