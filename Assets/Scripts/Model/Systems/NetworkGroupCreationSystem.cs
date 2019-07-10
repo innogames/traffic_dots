@@ -29,6 +29,31 @@ namespace Model.Systems
 			}
 		}
 
+		[BurstCompile]
+		[ExcludeComponent(typeof(Target), typeof(NetworkGroup))]
+		private struct AddOnlyNext : IJobForEachWithEntity<Connection>
+		{
+			[ReadOnly] public NativeMultiHashMap<Entity, Entity> OutCons;
+			
+			public void Execute(Entity entity, int index, ref Connection connection)
+			{
+				int count = 0;
+				if (OutCons.TryGetFirstValue(connection.EndNode, out var onlyNext, out var it))
+				{
+					do
+					{
+						count++;
+						if (count > 1) break;
+					} while (OutCons.TryGetNextValue(out _, ref it));
+				}
+
+				if (count == 1)
+				{
+					connection.OnlyNext = onlyNext;
+				}
+			}
+		}
+
 		private NativeMultiHashMap<Entity, Entity> _outCons;
 		private NativeMultiHashMap<Entity, Entity> _inCons;
 		private NativeQueue<Entity> _newCons;
@@ -40,12 +65,19 @@ namespace Model.Systems
 
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
+		private EntityQuery _query;
 
 		protected override void OnCreate()
 		{
 			base.OnCreate();
 			_networkArchetype = EntityManager.CreateArchetype(new ComponentType(typeof(Network)),
 				new ComponentType(typeof(NetAdjust)));
+			_query = EntityManager.CreateEntityQuery(new EntityQueryDesc
+			{
+				All = new[] {new ComponentType(typeof(Connection)),},
+				None = new[] {new ComponentType(typeof(NetworkGroup))},
+			});
+			
 			_outCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_inCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_conToNets = new NativeHashMap<Entity, int>(SystemConstants.MapConnectionSize, Allocator.Persistent);
@@ -181,9 +213,17 @@ namespace Model.Systems
 
 			//fill _outCons and _inCons: multi hash map for each node, storing all outward connections / inward connections
 			inout.Complete();
-
+			
 			if (_newCons.Count > 0)
 			{
+				var addOnlyNext = new AddOnlyNext
+				{
+					OutCons = _outCons,
+				}.Schedule(this, inputDeps);
+				addOnlyNext.Complete();
+				
+				EntityManager.AddSharedComponentData(_query, new NetworkGroup());
+				
 				_conToNets.Clear();
 				_bfsOpen.Clear();
 				while (_newCons.Count > 0)
@@ -232,31 +272,8 @@ namespace Model.Systems
 					for (int i = 0; i < _networkCons.Length; i++)
 					{
 						var conEnt = _networkCons[i];
-						EntityManager.AddSharedComponentData(conEnt, networkGroup);
+						EntityManager.SetSharedComponentData(conEnt, networkGroup);
 						EntityManager.SetComponentData(conEnt, networkGroupState);
-
-						//assign OnlyNext
-						if (!EntityManager.HasComponent<Target>(conEnt)
-						) //target will always participate network indexes
-						{
-							var connection = EntityManager.GetComponentData<Connection>(conEnt);
-							int count = 0;
-							var onlyNext = Entity.Null;
-							if (_outCons.TryGetFirstValue(connection.EndNode, out onlyNext, out var it))
-							{
-								do
-								{
-									count++;
-									if (count > 1) break;
-								} while (_outCons.TryGetNextValue(out _, ref it));
-							}
-
-							if (count == 1)
-							{
-								connection.OnlyNext = onlyNext;
-								EntityManager.SetComponentData(conEnt, connection);
-							}
-						}
 					}
 
 					var networkCache = NetworkCache.Create(networkEnt);
