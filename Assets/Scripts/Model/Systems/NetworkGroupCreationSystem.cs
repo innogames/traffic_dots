@@ -66,6 +66,9 @@ namespace Model.Systems
 		private int _networkCount;
 		private EntityArchetype _networkArchetype;
 		private EntityQuery _query;
+		private ComponentType _entranceType;
+		private ComponentType _exitType;
+		private ComponentType _indexInNetworkType;
 
 		protected override void OnCreate()
 		{
@@ -77,6 +80,9 @@ namespace Model.Systems
 				All = new[] {new ComponentType(typeof(Connection)),},
 				None = new[] {new ComponentType(typeof(NetworkGroup))},
 			});
+			_entranceType = new ComponentType(typeof(Entrance));
+			_exitType = new ComponentType(typeof(Exit));
+			_indexInNetworkType = new ComponentType(typeof(IndexInNetwork));
 			
 			_outCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
 			_inCons = new NativeMultiHashMap<Entity, Entity>(SystemConstants.MapNodeSize, Allocator.Persistent);
@@ -289,10 +295,11 @@ namespace Model.Systems
 
 					var entrances = _entrances.GetKeyArray(Allocator.Temp);
 					//add entrances
+					EntityManager.AddComponent(entrances, _entranceType);
 					for (int i = 0; i < entrances.Length; i++)
 					{
 						var node = entrances[i];
-						EntityManager.AddComponentData(node, new Entrance
+						EntityManager.SetComponentData(node, new Entrance
 						{
 							NetIdx = _networkCount,
 							Network = networkEnt,
@@ -320,15 +327,17 @@ namespace Model.Systems
 					}
 
 					//add exits
+					EntityManager.AddComponent(exits, _exitType);
+					EntityManager.AddComponent(exits, _indexInNetworkType);
 					for (int i = 0; i < exits.Length; i++)
 					{
 						var exitNode = exits[i];
-						EntityManager.AddComponentData(exitNode, new Exit
+						EntityManager.SetComponentData(exitNode, new Exit
 						{
 							NetIdx = _networkCount,
 							Level = level,
 						});
-						EntityManager.AddComponentData(exitNode, new IndexInNetwork
+						EntityManager.SetComponentData(exitNode, new IndexInNetwork
 						{
 							Index = i + conCount,
 						});
