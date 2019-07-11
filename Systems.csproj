@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Model\Systems\EntitySlotSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\IntersectionSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\NetworkCache.cs" />
+    <Compile Include="Assets\Scripts\Model\Systems\NetworkCacheJob.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\NetworkCreationSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\NetworkGroupCreationSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\PathCacheCommandBufferSystem.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="Assets\Scripts\Model\Systems\States\NetAdjust.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\Network.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\NetworkDone.cs" />
-    <Compile Include="Assets\Scripts\Model\Systems\States\NetworkGroup.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\States\SplineSegmentBuffer.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\TargetSeekerSystem.cs" />
     <Compile Include="Assets\Scripts\Model\Systems\TimerBufferSystem.cs" />
