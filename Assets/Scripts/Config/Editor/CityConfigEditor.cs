@@ -3,7 +3,7 @@ using Config.Proxy;
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CustomEditor(typeof(CityConfig))]
 	public class CityConfigEditor : Editor
@@ -15,9 +15,9 @@ namespace Config
 			if (GUILayout.Button("Populate"))
 			{
 				config.Segments = Resources.FindObjectsOfTypeAll<RoadSegment>()
-					.Where(seg => EditorUtility.IsPersistent(seg.gameObject)).ToArray();
-				config.Vehicles = Resources.FindObjectsOfTypeAll<AgentProxy>()
-					.Where(seg => EditorUtility.IsPersistent(seg.gameObject)).ToArray();
+					.Where(seg => EditorUtility.IsPersistent(seg.gameObject) && 
+					              (seg.gameObject != PrefabUtility.GetOutermostPrefabInstanceRoot(seg)))
+					.ToArray();
 				EditorUtility.SetDirty(config);
 			}
 		}

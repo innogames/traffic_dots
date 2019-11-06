@@ -1,4 +1,6 @@
 using Model.Components;
+using Model.Systems;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -8,30 +10,40 @@ using TimerState = Model.Components.TimerState;
 
 namespace View.Systems
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateInGroup(typeof(CitySystemGroup))]
+	[UpdateAfter(typeof(AgentTrailingSystem))]
 	public class AgentVisualizerSystem : JobComponentSystem
 	{
-		[RequireComponentTag(typeof(Agent))]
-		private struct MoveJob : IJobForEachWithEntity<ConnectionCoord, Translation, Rotation, Timer, TimerState>
+		[BurstCompile]
+		[RequireComponentTag(typeof(AgentInt))]
+		private struct MoveJob : IJobForEach<AgentCordInt, AgentStateInt, Translation, Rotation>
 		{
-			[ReadOnly] public ComponentDataFromEntity<ConnectionLength> ConLengths;
+			[ReadOnly] public ComponentDataFromEntity<ConnectionLengthInt> ConLengths;
 			[ReadOnly] public ComponentDataFromEntity<Spline> Splines;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref ConnectionCoord coord,
-				ref Translation translation, ref Rotation rotation, [ReadOnly] ref Timer timer, [ReadOnly] ref TimerState timerState)
+			public void Execute([ReadOnly] ref AgentCordInt head, 
+				[ReadOnly] ref AgentStateInt tail,
+				ref Translation translation, ref Rotation rotation)
 			{
-				var spline = Splines[coord.Connection];
-				float length = ConLengths[coord.Connection].Length;
-				
-				//TODO cache this value every time Coord change!
-//				var targetPos = math.lerp(spline.d, spline.a, coord.Coord / length);
-//				translation.Value = math.lerp(targetPos, spline.a, (float) timerState.CountDown / timer.Frames);
-//				rotation.Value = quaternion.LookRotation(spline.d - spline.a, new float3(0, 1, 0));
+				float3 headPos;
+				float3 tailPos;
+				{
+					var conEnt = head.HeadCon;
+					var spline = Splines[head.HeadCon];
+					int length = ConLengths[conEnt].Length;
+					float actualT = (float) head.HeadCord / length;
+					headPos = spline.Point(actualT);
+				}
+				{
+					var conEnt = tail.TailCon;
+					var spline = Splines[tail.TailCon];
+					int length = ConLengths[conEnt].Length;
+					float actualT = (float) tail.TailCord / length;
+					tailPos = spline.Point(actualT);
+				}
 
-				float targetT = 1f - coord.Coord / length;
-				float actualT = targetT * (1f- (float)timerState.CountDown / timer.Frames);
-				translation.Value = spline.Point(actualT);
-				rotation.Value = quaternion.LookRotation(spline.Tangent(actualT), new float3(0, 1, 0));
+				translation.Value = (headPos + tailPos) * 0.5f;
+				rotation.Value = quaternion.LookRotation(headPos - tailPos, math.up());
 			}
 		}
 
@@ -40,7 +52,7 @@ namespace View.Systems
 			return new MoveJob
 			{
 				Splines = GetComponentDataFromEntity<Spline>(),
-				ConLengths = GetComponentDataFromEntity<ConnectionLength>(),
+				ConLengths = GetComponentDataFromEntity<ConnectionLengthInt>(),
 			}.Schedule(this, inputDeps);
 		}
 	}

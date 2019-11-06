@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(RoadSegment))]
@@ -29,21 +29,6 @@ namespace Config
 					}
 				}
 			}
-
-//			foreach (var connection in segment.GetComponentsInChildren<Connection>())
-//			{
-//				int index = 0;
-//				foreach (var pos in connection.SlotSteps(connection.BezierFunc()))
-//				{
-//					if (Handles.Button(pos, Quaternion.LookRotation(Vector3.up), 
-//						1, 1, Handles.CylinderHandleCap))
-//					{
-//						connection.Vehicles[index] = !connection.Vehicles[index];
-//						EditorUtility.SetDirty(connection);
-//					};
-//					index++;
-//				}
-//			}
 		}
 
 		private void OnEnable()
@@ -66,18 +51,27 @@ namespace Config
 						.SelectMany(segment => segment.Connectors).ToArray();
 					foreach (var connector in connectors)
 					{
-						if (connector.ConnectedTo == null)
+						foreach (var other in connectors)
 						{
-							foreach (var other in connectors)
+							if (other != connector &&
+							    ConfigConstants.Connected(other.transform, connector.transform))
 							{
-								if (other != connector && other.ConnectedTo == null &&
-								    ConfigConstants.Connected(other.transform, connector.transform))
-								{
-									//TODO provide correct index for edge case usability
-									Connect(connector, 0, other, 0);
-								}
+								//TODO provide correct index for edge case usability
+								Connect(connector, 0, other, 0);
+								break;
 							}
 						}
+					}
+				}
+
+				if (GUILayout.Button("Disconnect all"))
+				{
+					var connectors = targets.OfType<RoadSegment>()
+						.SelectMany(segment => segment.Connectors).ToArray();
+					foreach (var con in connectors)
+					{
+						con.ConnectedTo = null;
+						EditorUtility.SetDirty(con);
 					}
 				}
 			}
@@ -85,26 +79,20 @@ namespace Config
 			{
 				RoadSegment segment = (RoadSegment) target;
 
-				if (GUILayout.Button("Populate"))
-				{
-//					segment.Connectors = segment.gameObject.GetComponentsInChildren<Connector>();
-					if (segment.Config == null)
-					{
-						segment.Config = Resources.FindObjectsOfTypeAll<CityConfig>().First();
-					}
-
-					EditorUtility.SetDirty(segment);
-				}
-
-				int perRow = Screen.width / IconSize;
+				int perRow = Mathf.FloorToInt(EditorGUIUtility.currentViewWidth / IconSize);
 				if (_selectedConnector != null)
 				{
-					var validSegments = segment.Config.Segments.Where(seg =>
+					var validSegments = segment.GetConfig.Segments.Where(seg =>
 						seg.Connectors.Any(con => con.ConnectorType.Compatible(_selectedConnector.ConnectorType)));
 					int buttonId = 0;
+					bool inHoriBlock = false;
 					foreach (var other in validSegments)
 					{
-						if (buttonId % perRow == 0) EditorGUILayout.BeginHorizontal();
+						if (buttonId % perRow == 0)
+						{
+							EditorGUILayout.BeginHorizontal();
+							inHoriBlock = true;
+						}
 						if (GUILayout.Button(AssetPreview.GetAssetPreview(other.gameObject), GUILayout.Width(IconSize), GUILayout.Height(IconSize)))
 						{
 							int index = 0;
@@ -132,11 +120,15 @@ namespace Config
 							PlaceSegment(segment.transform, _selectedConnector, other, index);
 						}
 
-						if (buttonId % perRow == perRow - 1) EditorGUILayout.EndHorizontal();
+						if (buttonId % perRow == perRow - 1)
+						{
+							EditorGUILayout.EndHorizontal();
+							inHoriBlock = false;
+						}
 						buttonId++;
 					}
 
-					if (buttonId != perRow) EditorGUILayout.EndHorizontal();
+					if (inHoriBlock) EditorGUILayout.EndHorizontal();
 					Repaint();
 //				int selected = GUILayout.SelectionGrid(selected,
 //					validSegments.Select(seg => AssetPreview.GetAssetPreview(seg.gameObject)).ToArray(), 5,

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Config
+namespace Config.CityEditor
 {
 	[CustomEditor(typeof(CityGenerator))]
 	public class CityGeneratorEditor : Editor

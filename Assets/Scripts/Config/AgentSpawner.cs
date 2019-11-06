@@ -2,7 +2,6 @@ using Config.Proxy;
 using Model.Components;
 using Unity.Entities;
 using UnityEngine;
-using Timer = System.Timers.Timer;
 
 namespace Config
 {
@@ -13,22 +12,8 @@ namespace Config
 		public Connection TargetConnection;
 		public int Interval;
 
-#if UNITY_EDITOR
 		public GameObjectEntity LinkedSpawnConnection;
 		public GameObjectEntity LinkedTargetConnection;
-
-		public override void Generate(CityConfig config)
-		{
-			base.Generate(config);
-			LinkedSpawnConnection = SpawnConnection.GetComponent<GameObjectEntity>();
-			LinkedTargetConnection = TargetConnection.GetComponent<GameObjectEntity>();
-
-			gameObject.AddComponent<TimerProxy>().Value = new Model.Components.Timer
-			{
-				Frames = Interval,
-				TimerType = TimerType.Ticking,
-			};
-		}
 
 		public override void PlayModeGenerate(CityConfig config)
 		{
@@ -51,6 +36,20 @@ namespace Config
 			targetLocation.Value = new ConnectionTarget()
 			{
 				Connection = LinkedTargetConnection.Entity,
+			};
+		}
+		
+#if UNITY_EDITOR
+		public override void Generate(CityConfig config)
+		{
+			base.Generate(config);
+			LinkedSpawnConnection = SpawnConnection.GetComponent<GameObjectEntity>();
+			LinkedTargetConnection = TargetConnection.GetComponent<GameObjectEntity>();
+
+			gameObject.AddComponent<TimerProxy>().Value = new Model.Components.Timer
+			{
+				Frames = Interval,
+				TimerType = TimerType.Ticking,
 			};
 		}
 #endif

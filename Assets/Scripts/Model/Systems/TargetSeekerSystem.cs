@@ -16,7 +16,7 @@ namespace Model.Systems
 		{
 			[ReadOnly] public BufferFromEntity<TargetBuffer> Targets;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref TargetSeeker seeker, [ReadOnly] ref Timer timer,
+			public void Execute(Entity entity, int index, ref TargetSeeker seeker, [ReadOnly] ref Timer timer,
 				[ReadOnly] ref TimerState timerState, ref ConnectionTarget connectionTarget)
 			{
 				if (timerState.CountDown == 0 && timer.TimerType == TimerType.Ticking)

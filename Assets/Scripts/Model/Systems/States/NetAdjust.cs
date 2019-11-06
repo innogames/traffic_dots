@@ -1,3 +1,4 @@
+using Model.Components;
 using Unity.Entities;
 
 namespace Model.Systems.States
@@ -9,5 +10,6 @@ namespace Model.Systems.States
 		public Entity StartNode;
 		public Entity EndNode;
 		public float Cost;
+		public Entity OnlyNext;
 	}
 }

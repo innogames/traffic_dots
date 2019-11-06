@@ -15,7 +15,46 @@ namespace Config
 		public int Interval = 60;
 
 		public TargetMarker[] Targets;
+		public override void PlayModeGenerate(CityConfig config)
+		{
+			base.PlayModeGenerate(config);
 
+			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
+			{
+				CurrentIndex = Mathf.Abs(transform.position.GetHashCode()) % Agents.Length, //Random.Range(0, Agents.Length), make it deterministic for testing!
+			};
+			gameObject.AddComponent<SpawnerBufferProxy>().SetValue(
+				Agents.Select(agent => new SpawnerBuffer
+				{
+					Agent = GameObjectConversionUtility.ConvertGameObjectHierarchy(agent, World.Active)
+				}).ToArray());
+
+			var spawnLocation = gameObject.AddComponent<ConnectionCoordProxy>();
+			spawnLocation.Value = new ConnectionCoord()
+			{
+				Connection = gameObject.GetComponent<GameObjectEntity>().Entity, //itself
+				Coord = 0f, //this value is not used
+			};
+			var targetLocation = gameObject.AddComponent<ConnectionTargetProxy>();
+			targetLocation.Value = new ConnectionTarget()
+			{
+				Connection = Entity.Null, //to be filled by TargetSeeker
+			};
+			gameObject.AddComponent<TargetSeekerProxy>().Value = new TargetSeeker()
+			{
+				TargetMask = (int) TargetMask,
+				LastTargetIndex = 0,
+			};
+			var targets = Targets
+				.Select(marker => new TargetBuffer
+				{
+					Target = marker.GetComponent<GameObjectEntity>().Entity
+				})
+				.ToArray();
+			gameObject.AddComponent<TargetBufferProxy>().SetValue(targets);
+		}
+
+#if UNITY_EDITOR
 		protected override bool ShouldCleanComponent() => false;
 
 		public override void Generate(CityConfig config)
@@ -33,7 +72,8 @@ namespace Config
 			Targets = FindObjectsOfType<TargetMarker>()
 				.Where(marker => (marker.TargetMask & TargetMask) != 0).ToArray();
 		}
-
+		
+		
 		private void OnDrawGizmosSelected()
 		{
 			if (Targets == null || Targets.Length == 0) return;
@@ -47,43 +87,16 @@ namespace Config
 			}
 		}
 
-		public override void PlayModeGenerate(CityConfig config)
+		private void OnDrawGizmos()
 		{
-			base.PlayModeGenerate(config);
-
-			gameObject.AddComponent<AgentSpawnerProxy>().Value = new Model.Components.AgentSpawner
+			if (Agents == null || Agents.Length == 0) return;
+			var mesh = Agents[0].GetComponent<MeshFilter>();
+			if (mesh != null)
 			{
-				CurrentIndex = Random.Range(0, Agents.Length),
-			};
-			gameObject.AddComponent<SpawnerBufferProxy>().SetValue(
-				Agents.Select(agent => new SpawnerBuffer
-				{
-					Agent = GameObjectConversionUtility.ConvertGameObjectHierarchy(agent, World.Active)
-				}).ToArray());
-			
-			var spawnLocation = gameObject.AddComponent<ConnectionCoordProxy>();
-			spawnLocation.Value = new ConnectionCoord()
-			{
-				Connection = gameObject.GetComponent<GameObjectEntity>().Entity, //itself
-				Coord = 0f, //this value is not used
-			};
-			var targetLocation = gameObject.AddComponent<ConnectionTargetProxy>();
-			targetLocation.Value = new ConnectionTarget()
-			{
-				Connection = Entity.Null, //to be filled by TargetSeeker
-			};
-			gameObject.AddComponent<TargetSeekerProxy>().Value = new TargetSeeker()
-			{
-				TargetMask = (int)TargetMask,
-				LastTargetIndex = 0,
-			};
-			var targets = Targets
-				.Select(marker => new TargetBuffer
-				{
-					Target = marker.GetComponent<GameObjectEntity>().Entity
-				})
-				.ToArray();
-			gameObject.AddComponent<TargetBufferProxy>().SetValue(targets);
+				Gizmos.color = Color.blue;
+				Gizmos.DrawMesh(mesh.sharedMesh, transform.position, transform.rotation);				
+			}			
 		}
+#endif
 	}
 }

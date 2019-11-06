@@ -10,6 +10,7 @@ namespace Model.Components
 		public Entity EndNode;
 		public float Speed;//TODO move speed out to separate component
 		public int Level;//TODO move Level to NetworkLevel component
+		public Entity OnlyNext;
 
 		public bool Equals(Connection other)
 		{

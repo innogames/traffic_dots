@@ -1,20 +1,39 @@
-using Unity.Entities;
+
+using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+using Unity.Entities;
 using UnityEngine;
 
 namespace Config
 {
 	public abstract class BaseGenerator : MonoBehaviour
 	{
+		public CityConfig CachedConfig;
 #if UNITY_EDITOR
-		public virtual void Generate(CityConfig config)
+		public CityConfig GetConfig
 		{
-			CleanComponentProxys();
-			EditorUtility.SetDirty(this);
+			get
+			{
+				if (CachedConfig != null)
+				{
+					return CachedConfig;
+				}
+				else
+				{
+					CachedConfig = Resources.FindObjectsOfTypeAll<CityConfig>().First();
+					EditorUtility.SetDirty(this);
+					return CachedConfig;
+				}
+			}
 		}
 
-		public virtual void PlayModeGenerate(CityConfig config)
-		{			
+		public virtual void Generate(CityConfig config)
+		{
+			CachedConfig = config;
+			CleanComponentProxys();
+			EditorUtility.SetDirty(this);
 		}
 
 		public virtual void Clean()
@@ -47,5 +66,8 @@ namespace Config
 			}
 		}
 #endif
+		public virtual void PlayModeGenerate(CityConfig config)
+		{			
+		}
 	}
 }

@@ -213,9 +213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e0b24477ed2434b9fd60250f5ea491e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Config: {fileID: 11400000, guid: 3d6282d2902594cf9a2cd63766a74e9b, type: 2}
-  Connectors:
-  - {fileID: 5610056154304512072}
+  CachedConfig: {fileID: 0}
+  SpeedMultiplier: 1
   Phases: []
 --- !u!1 &1245010553616185514
 GameObject:
@@ -260,6 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &1798817201293757791
 GameObject:
@@ -306,12 +306,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e41ca67e23146be9f6c1d1147c815b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   ConnectedTo: {fileID: 0}
   ConnectedToIndex: 0
   ConnectorType: 1
-  SharedNodes:
-  - {fileID: 6693900433529722428}
-  - {fileID: 5887462637509716071}
 --- !u!1 &2577658679770005389
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,6 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66de1e2d5a0441519d3e5a39499e7b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   NodePointer: {fileID: 0}
 --- !u!1 &3808907310473123337
 GameObject:
@@ -399,12 +398,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0dd6f367754ead9667d5ae1a37878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CachedConfig: {fileID: 0}
   StartNode: {fileID: 6693900433529722428}
   EndNode: {fileID: 5887462637509716071}
-  IsIntersection: 0
   Level: 1
-  LaneCount: 1
   CurveIn: 4.23
-  Vehicles: 
   LinkedStartNode: {fileID: 0}
   LinkedEndNode: {fileID: 0}
+  CachedSpeed: 1

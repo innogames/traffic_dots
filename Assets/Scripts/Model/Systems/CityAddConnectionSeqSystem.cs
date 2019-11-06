@@ -6,6 +6,7 @@ using Unity.Mathematics;
 
 namespace Model.Systems
 {
+	[DisableAutoCreation]
 	[UpdateInGroup(typeof(CitySystemGroup))]
 	public class CityAddConnectionSeqSystem : ComponentSystem
 	{
@@ -113,7 +114,7 @@ namespace Model.Systems
 					new NativeHashMap<Entity, DynamicBuffer<NetAdjust>>(SystemConstants.MapNodeSize, Allocator.Temp);
 
 				Entities.WithNone<NetworkGroup>().ForEach((Entity connectionEnt, ref Connection connection,
-					ref ConnectionLength conLength) =>
+					ref ConnectionLengthInt conLength, ref ConnectionSpeedInt conSpeed) =>
 				{
 					int color = finalColor[connectionEnt];
 					var network = colorToNetwork[color];
@@ -131,7 +132,7 @@ namespace Model.Systems
 					buffer.Add(new NetAdjust
 					{
 						Connection = connectionEnt,
-						Cost = conLength.Length / connection.Speed,
+						Cost = (float)conLength.Length / conSpeed.Speed,
 						StartNode = connection.StartNode,
 						EndNode = connection.EndNode
 					});
