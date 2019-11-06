@@ -116,8 +116,8 @@ namespace Model.Systems
 										tailCoord.Connection = nextConnectionEnt;
 
 										curAdjust.MoveForward = agent.Length;
-										tailCoord.Coord = coord.Coord + agent.Length;
 										nextState.EnterLength -= agent.Length;
+										tailCoord.Coord = curLength.Length - nextState.EnterLength;
 									}
 									else //new tail in cur con
 									{
@@ -135,7 +135,7 @@ namespace Model.Systems
 									lastAdjust.WillRemoveAgent = false; //because our agent left lastCon already!
 									if (isNewTailInLastCon)
 									{
-										tailCoord.Coord -= nextState.EnterLength;
+										tailCoord.Coord = agent.Length - curLength.Length - nextState.EnterLength;
 										
 										lastAdjust.MoveForward = nextState.EnterLength;
 										nextState.EnterLength = 0f;
