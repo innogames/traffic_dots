@@ -79,7 +79,7 @@ namespace Config.CityEditor
 			{
 				RoadSegment segment = (RoadSegment) target;
 
-				int perRow = Screen.width / IconSize;
+				int perRow = Mathf.FloorToInt(EditorGUIUtility.currentViewWidth / IconSize);
 				if (_selectedConnector != null)
 				{
 					var validSegments = segment.GetConfig.Segments.Where(seg =>

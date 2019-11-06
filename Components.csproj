@@ -96,6 +96,7 @@
     <Compile Include="Assets\Scripts\Model\Components\Intersection.cs" />
     <Compile Include="Assets\Scripts\Model\Components\IntersectionPhaseType.cs" />
     <Compile Include="Assets\Scripts\Model\Components\NetPathInfo.cs" />
+    <Compile Include="Assets\Scripts\Model\Components\NetworkGroup.cs" />
     <Compile Include="Assets\Scripts\Model\Components\NetworkGroupState.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Node.cs" />
     <Compile Include="Assets\Scripts\Model\Components\Spline.cs" />

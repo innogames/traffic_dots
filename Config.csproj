@@ -94,6 +94,7 @@
     <Compile Include="Assets\Scripts\Config\Proxy\IntersectionPhaseBufferProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\IntersectionProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\NetPathInfoProxy.cs" />
+    <Compile Include="Assets\Scripts\Config\Proxy\NetworkGroupProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\NetworkGroupStateProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\NodeProxy.cs" />
     <Compile Include="Assets\Scripts\Config\Proxy\PrefabProxy.cs" />

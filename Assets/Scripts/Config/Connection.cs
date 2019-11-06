@@ -261,11 +261,13 @@ namespace Config
 			base.Generate(config);
 			gameObject.AddComponent<GameObjectEntity>();
 			LinkedStartNode = StartNode.GenTimePointer.GetComponent<GameObjectEntity>();
+#if CITY_DEBUG
 			if (EndNode == null || EndNode.GenTimePointer == null)
 			{
 				Debug.Log(GetGameObjectPath(this.transform));
 				int abc = 123;
 			}
+#endif
 			LinkedEndNode = EndNode.GenTimePointer.GetComponent<GameObjectEntity>();
 			gameObject.AddComponent<SplineProxy>().Value = ComputeBezierPoints();
 			var trafficType = GetComponentInParent<RoadSegment>().GetConnectionTrafficType(this);
@@ -294,6 +296,10 @@ namespace Config
 			{
 				NetworkId = -1,
 			};
+//			gameObject.AddComponent<NetworkGroupProxy>().Value = new NetworkGroup
+//			{
+//				NetworkId = -1,
+//			};
 			CachedSpeed = config.ConnectionBaseSpeed / config.TargetFramerate *
 			              GetComponentInParent<RoadSegment>().SpeedMultiplier;
 			gameObject.AddComponent<ConnectionSpeedIntProxy>().Value = new ConnectionSpeedInt
