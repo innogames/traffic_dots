@@ -1,23 +1,18 @@
-using System;
+using Model.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Model.Components
+namespace Model.Systems.States
 {
-	[Serializable]
 	public struct ConnectionState : ISystemStateComponentData
 	{
 		public float EnterLength;
+		public float ExitLength;
 
-		public bool CouldAgentFullyEnter(ref Agent agent, ref ConnectionLength conLength)
+		public bool CouldAgentEnter(ref Agent agent, ref ConnectionLength conLength)
 		{
 			return (EnterLength >= agent.Length //car fit 
 			        || EnterLength >= conLength.Length); //car is larger than the road & the road is empty
-		}
-
-		public bool CouldAgentPartiallyEnter()
-		{
-			return EnterLength > 0f;
 		}
 
 		public float NewAgentCoord(ref ConnectionLength conLength)
@@ -25,15 +20,19 @@ namespace Model.Components
 			return conLength.Length - EnterLength;
 		}
 
-		public void AcceptAgentFully(ref Agent agent)
+		public void AcceptAgent(ref Agent agent)
 		{
-			//this allow a connection to accept an agent longer than its own length
 			EnterLength = math.max(0f, EnterLength - agent.Length);
 		}
 
 		public int FramesToEnter(ref Connection connection)
 		{
 			return (int) math.ceil(EnterLength / connection.Speed);
+		}
+
+		public void AgentLeaveThePack(ref Agent agent, ref ConnectionLength conLength)
+		{
+			ExitLength = math.min(ExitLength + agent.Length, conLength.Length);
 		}
 
 		public void ClearConnection(ref ConnectionLength conLength)

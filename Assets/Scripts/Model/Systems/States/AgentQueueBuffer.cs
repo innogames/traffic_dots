@@ -3,8 +3,8 @@ using Unity.Entities;
 namespace Model.Systems.States
 {
 	[InternalBufferCapacity(SystemConstants.ConnectionSlotAverage)]
-	public struct SplineSegmentBuffer : IBufferElementData
+	public struct AgentQueueBuffer : IBufferElementData
 	{
-		public int Length;
+		public Entity Agent;
 	}
 }

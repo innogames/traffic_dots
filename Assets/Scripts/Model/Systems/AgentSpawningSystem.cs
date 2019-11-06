@@ -30,7 +30,7 @@ namespace Model.Systems
 					var connectionTraffic = EntityManager.GetComponentData<ConnectionTraffic>(targetConnectionEnt);
 
 					if (connectionTraffic.TrafficType != ConnectionTrafficType.NoEntrance
-					    && connectionState.CouldAgentFullyEnter(ref agent, ref conLength))
+					    && connectionState.CouldAgentEnter(ref agent, ref conLength))
 					{
 						var agentEnt = PostUpdateCommands.Instantiate(agentPrefab);
 						PostUpdateCommands.SetComponent(agentEnt, new ConnectionCoord
@@ -50,14 +50,8 @@ namespace Model.Systems
 							{
 								CountDown = interval,
 							});
-						PostUpdateCommands.SetComponent(agentEnt,
-							new TailCoord
-							{
-								Connection = targetConnectionEnt,
-								Coord = connectionState.NewAgentCoord(ref conLength) + agent.Length,
-							});
 
-						connectionState.AcceptAgentFully(ref agent);
+						connectionState.AcceptAgent(ref agent);
 						EntityManager.SetComponentData(targetConnectionEnt, connectionState);
 
 						var oldQueue = EntityManager.GetBuffer<AgentQueueBuffer>(targetConnectionEnt);

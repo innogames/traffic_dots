@@ -26,18 +26,12 @@ namespace Model.Systems
 			public void Execute(Entity entity, int index, [ReadOnly] ref Connection connection, 
 				[ReadOnly] ref ConnectionLength conLength)
 			{
-				//TODO change to SetComponent
-				CommandBuffer.SetComponent(index, entity, new ConnectionState
+				CommandBuffer.AddComponent(index, entity, new ConnectionState
 				{
 					EnterLength = conLength.Length,
+					ExitLength = 0f,
 				});
-				CommandBuffer.SetComponent(index, entity, new ConnectionStateAdjust
-				{
-					MoveForward = 0f,
-					WillRemoveAgent = false,
-				});
-				//comment out: because added in generator for inspection
-				//CommandBuffer.AddBuffer<AgentQueueBuffer>(index, entity);
+				CommandBuffer.AddBuffer<AgentQueueBuffer>(index, entity);
 			}
 		}
 
